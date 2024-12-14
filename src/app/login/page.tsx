@@ -29,7 +29,7 @@ export default function LoginPage() {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-token': "Uc6atiW26Vs4Kpauj6Tw4zfNjl0gWMq0",
+          'x-api-token': process.env.NEXT_PUBLIC_API_TOKEN as string,
         },
         body: JSON.stringify({ username, password }),
       });
