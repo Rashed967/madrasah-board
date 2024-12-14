@@ -1,0 +1,52 @@
+'use client';
+
+import { useState } from 'react';
+import { UserIcon } from '@heroicons/react/24/outline';
+
+export default function Navbar() {
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  return (
+    <nav className="bg-[#52b788] shadow-md p-4">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-8">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          <span className="text-white text-2xl font-bold ml-2">মাদরাসা ম্যানেজমেন্ট</span>
+        </div>
+        
+        <div className="relative">
+          <button 
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            className="flex items-center space-x-3 focus:outline-none"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                <UserIcon className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-white">আব্দুল্লাহ</p>
+                <p className="text-xs text-white/80">সুপার অ্যাডমিন</p>
+              </div>
+            </div>
+          </button>
+
+          {showProfileMenu && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+              <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                প্রোফাইল
+              </a>
+              <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                সেটিংস
+              </a>
+              <a href="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                লগ আউট
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
