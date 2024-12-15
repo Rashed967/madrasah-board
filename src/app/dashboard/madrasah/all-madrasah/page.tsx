@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { MdEdit, MdDelete, MdSearch, MdFilterList } from 'react-icons/md';
 import toast, { Toaster } from 'react-hot-toast';
+import Link from 'next/link';
 
 // Dummy data - in a real application, this would come from an API
 const dummyMadrasahs = [
@@ -118,7 +119,7 @@ const dummyMadrasahs = [
     totalStudents: '৬০০',
     totalStaff: '২৫',
     communicatorName: 'মাওলানা আব্দুল হাই',
-    communicatorMobile: '০১৭২২৩৩৪৪৫৫৬',
+    communicatorMobile: '০১৭২২৩৩৪৪৫৬৭',
     muhtamimName: 'মাওলানা আব্দুল হাই',
     muhtamimNID: '১৯৭৯৮৭৬৫৪৩২১'
   },
@@ -514,7 +515,12 @@ export default function AllMadrasahPage() {
                       className="object-contain"
                     />
                   </div>
-                  <span className="font-semibold">{madrasah.nameInBangla}</span>
+                  <Link 
+                    href={`/dashboard/madrasah/${madrasah.id}`}
+                    className="font-medium text-gray-900 hover:text-[#52b788] transition-colors block"
+                  >
+                    {madrasah.nameInBangla}
+                  </Link>
                 </td>
                 <td className="px-4 py-4 text-sm text-gray-600">{madrasah.address}</td>
                 <td className="px-4 py-4 text-sm text-gray-600">{madrasah.type}</td>

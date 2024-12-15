@@ -15,7 +15,8 @@ import {
   MdSavedSearch,
   MdPeople,
   MdLibraryBooks,
-  MdList
+  MdList,
+  MdLocationOn
 } from 'react-icons/md';
 
 export default function Sidebar() {
@@ -37,6 +38,15 @@ export default function Sidebar() {
           href: '/dashboard/madrasah/all-madrasah', 
           icon: MdSavedSearch
         },
+      ]
+    },
+    { 
+      name: 'জোন', 
+      href: '#', 
+      icon: MdLocationOn,
+      submenu: [
+        { name: 'নতুন জোন যুক্ত করুন', href: '/dashboard/zone/add-zone', icon: MdAdd },
+        { name: 'সকল জোন', href: '/dashboard/zone/all-zones', icon: MdList }
       ]
     },
     { 

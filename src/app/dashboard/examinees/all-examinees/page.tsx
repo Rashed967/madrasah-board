@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
-import { Edit2, Trash2, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog } from "@/components/ui/dialog";
-import { MdSearch, MdFilterList } from 'react-icons/md';
+import { MdSearch, MdFilterList, MdPerson, MdEdit, MdDelete } from 'react-icons/md';
 import { X } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -587,30 +588,43 @@ export default function AllExamineesPage() {
         <Table className="w-full">
           <TableHeader className="bg-[#52B788] text-white rounded-t-lg">
             <TableRow>
-              <TableHead className="p-4">ছবি</TableHead>
-              <TableHead className="p-4">নাম</TableHead>
+              <TableHead className="p-4">পরীক্ষার্থী</TableHead>
+              {/* <TableHead className="p-4">নাম</TableHead> */}
               <TableHead className="p-4">রেজিস্ট্রেশন নাম্বার</TableHead>
               <TableHead className="p-4">মারহালা</TableHead>
               <TableHead className="p-4">মাদরাসা</TableHead>
               <TableHead className="p-4">জাতীয় পরিচয় পত্র</TableHead>
-              <TableHead className="p-4 ">ক্রিয়া</TableHead>
+              <TableHead className="p-4 "></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedExaminees.map((examinee) => (
               <TableRow key={examinee.id}>
                 <TableCell className="p-4">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200">
-                    <Image 
-                      src={examinee.photo} 
-                      alt={examinee.name} 
-                      width={48} 
-                      height={48} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <Link 
+                    href={`/dashboard/examinees/${examinee.id}`}
+                    className="flex items-center gap-3 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    {examinee.photo ? (
+                      <Image
+                        src={examinee.photo}
+                        alt={examinee.name}
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-[#52b788]/10 flex items-center justify-center">
+                        <span className="text-[#52b788] font-medium">
+                          {examinee.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <span className="font-medium text-[#52b788] hover:underline">
+                      {examinee.name}
+                    </span>
+                  </Link>
                 </TableCell>
-                <TableCell className="p-4">{examinee.name}</TableCell>
                 <TableCell className="p-4">{examinee.registrationNumber}</TableCell>
                 <TableCell className="p-4">{examinee.marhala}</TableCell>
                 <TableCell className="p-4">{examinee.madrasah}</TableCell>
@@ -618,28 +632,26 @@ export default function AllExamineesPage() {
                 <TableCell className="p-4 text-right">
                   <div className="flex  items-center space-x-8">
                     <div className="flex items-center space-x-1 group">
-                      <span 
-                        className="text-sm text-blue-600 cursor-pointer mr-1 group-hover:underline group-hover:text-blue-800 transition-colors duration-200" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
                         onClick={() => handleEditClick(examinee)}
                       >
+                        <MdEdit className="w-4 h-4 mr-2" />
                         সম্পাদনা করুন
-                      </span>
-                      <Edit2 
-                        className="h-4 w-4 text-blue-500 group-hover:text-blue-700 cursor-pointer transition-colors duration-200" 
-                        onClick={() => handleEditClick(examinee)}
-                      />
+                      </Button>
                     </div>
                     <div className="flex items-center space-x-1 group">
-                      <span 
-                        className="text-sm text-red-600 cursor-pointer mr-1 group-hover:underline group-hover:text-red-800 transition-colors duration-200" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
                         onClick={() => handleDeleteConfirmation(examinee)}
                       >
+                        <MdDelete className="w-4 h-4 mr-2" />
                         মুছে ফেলুন
-                      </span>
-                      <Trash2 
-                        className="h-4 w-4 text-red-500 group-hover:text-red-700 cursor-pointer transition-colors duration-200" 
-                        onClick={() => handleDeleteConfirmation(examinee)}
-                      />
+                      </Button>
                     </div>
                   </div>
                 </TableCell>
