@@ -135,27 +135,30 @@ export default function MadrasahRegistrationApplications() {
                 <td className="px-4 py-4 text-sm text-gray-600">{application.type}</td>
                 <td className="px-4 py-4 text-sm text-gray-600">{application.highestClass}</td>
                 <td className="px-4 py-4 text-sm text-gray-600">{application.muhtamimName}</td>
-                <td className="px-4 py-4 text-sm text-gray-600 flex space-x-2">
+                <td className="px-4 py-4 text-sm text-gray-600 flex space-x-4">
                   <button 
-                    className="text-[#52b788] hover:bg-[#52b788]/10 p-2 rounded-full"
+                    className="text-blue-400 hover:underline hover:text-blue-500 transition-colors duration-200 flex items-center space-x-1 group"
                     onClick={() => setSelectedApplication(application)}
                     title="বিস্তারিত তথ্য"
                   >
-                    <MdInfo className="text-lg" />
+                    <MdInfo className="text-lg group-hover:text-blue-300" />
+                    <span className="text-base">বিস্তারিত</span>
                   </button>
                   <button 
-                    className="bg-[#52b788] text-white p-2 rounded-full hover:bg-[#52b788]/90"
+                    className="text-[#52b788] hover:underline hover:text-[#52b788]/90 transition-colors duration-200 flex items-center space-x-1 group"
                     onClick={() => handleApproveApplication(application)}
                     title="অনুমোদন করুন"
                   >
-                    <MdCheck className="text-lg" />
+                    <MdCheck className="text-lg group-hover:text-[#52b788]/90" />
+                    <span className="text-base">অনুমোদন</span>
                   </button>
                   <button 
-                    className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                    className="text-red-600 hover:underline hover:text-red-800 transition-colors duration-200 flex items-center space-x-1 group"
                     onClick={() => handleRejectApplication(application)}
                     title="বাতিল করুন"
                   >
-                    <MdClose className="text-lg" />
+                    <MdClose className="text-lg group-hover:text-red-800" />
+                    <span className="text-base">বাতিল</span>
                   </button>
                 </td>
               </tr>

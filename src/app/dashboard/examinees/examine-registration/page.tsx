@@ -101,6 +101,16 @@ export default function ExamineRegistrationPage() {
 
   return (
     <div className="container mx-auto p-4 mt-16 relative">
+      {/* Standalone Centered Heading */}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">
+          পরীক্ষার্থী নিবন্ধন ফরম
+        </h1>
+        <p className="text-gray-500 mt-2">
+          অনুগ্রহ করে নিম্নলিখিত তথ্যগুলি সঠিকভাবে পূরণ করুন
+        </p>
+      </div>
+
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -138,12 +148,7 @@ export default function ExamineRegistrationPage() {
       )}
 
       <Card className="bg-white shadow-md rounded-lg max-w-4xl mx-auto">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-2xl font-bold text-gray-800 text-center">
-            পরীক্ষার্থী নিবন্ধন ফরম
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4">
+        <CardContent className="p-10">
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Exam Selection */}
