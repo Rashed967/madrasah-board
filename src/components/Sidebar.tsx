@@ -44,7 +44,7 @@ export default function Sidebar() {
       href: '/examinees', 
       icon: MdAssignment,
       submenu: [
-        { name: 'নতুন পরীক্ষার্থী যুক্ত করুন', href: '/dashboard/examinees/add-examinee', icon: MdAdd },
+        { name: 'নতুন পরীক্ষার্থী যুক্ত করুন', href: '/dashboard/examinees/examine-registration', icon: MdAdd },
         { name: 'সকল পরীক্ষার্থী', href: '/dashboard/examinees/all-examinees', icon: MdSavedSearch },
       ]
     },
