@@ -11,31 +11,98 @@ import {
   MdAssignment,
   MdNotifications,
   MdSettings,
-  MdAdd
+  MdAdd,
+  MdSavedSearch,
+  MdPeople,
+  MdLibraryBooks,
+  MdList
 } from 'react-icons/md';
-
-const menuItems = [
-  { name: 'ড্যাশবোর্ড', href: '/dashboard', icon: MdDashboard },
-  { 
-    name: 'মাদরাসা', 
-    href: '/madrasah', 
-    icon: MdSchool,
-    submenu: [
-      { name: 'মাদরাসা নিবন্ধন', href: '/dashboard/madrasah/register-madrasah', icon: MdAdd }
-    ]
-  },
-  { name: 'মুমতাহিন', href: '/muhtamim', icon: MdPerson },
-  { name: 'মারকায', href: '/markaz', icon: MdLocationCity },
-  { name: 'পরীক্ষার্থী', href: '/examinees', icon: MdAssignment },
-  { name: 'নোটিফিকেশন', href: '/notifications', icon: MdNotifications },
-  { name: 'সেটিংস', href: '/settings', icon: MdSettings },
-];
 
 export default function Sidebar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const pathname = usePathname();
+
+  const menuItems = [
+    { name: 'ড্যাশবোর্ড', href: '/dashboard', icon: MdDashboard },
+    { 
+      name: 'মাদরাসা', 
+      href: '/madrasah', 
+      icon: MdSchool,
+      submenu: [
+        { name: 'মাদরাসা নিবন্ধন', href: '/dashboard/madrasah/register-madrasah', icon: MdAdd },
+        { 
+          name: 'সকল মাদরাসা', 
+          href: '/dashboard/madrasah/all-madrasah', 
+          icon: MdSavedSearch
+        },
+      ]
+    },
+    { 
+      name: 'পরীক্ষার্থী', 
+      href: '/examinees', 
+      icon: MdAssignment,
+      submenu: [
+        { name: 'নতুন পরীক্ষার্থী যুক্ত করুন', href: '/dashboard/examinees/add-examinee', icon: MdAdd },
+        { name: 'সকল পরীক্ষার্থী', href: '/dashboard/examinees/all-examinees', icon: MdSavedSearch },
+      ]
+    },
+    // { 
+    //   name: 'মাদরাসা',
+    //   href: '/madrasah', 
+    //   icon: MdSchool,
+    //   submenu: [
+    //     { name: 'মাদরাসা নিবন্ধন', href: '/dashboard/madrasah/register-madrasah', icon: MdAdd },
+    //     { 
+    //       name: 'সকল মাদরাসা', 
+    //       href: '/dashboard/madrasah/all-madrasah', 
+    //       icon: MdSavedSearch
+    //     },
+    //   ]
+    // },
+    { 
+      name: 'নিবন্ধন আবেদন', 
+      href: '#', 
+      icon: MdNotifications,
+      submenu: [
+        { 
+          name: 'মাদরাসা নিবন্ধন আবেদন', 
+          href: '/dashboard/madrasah/registration-applications', 
+          icon: MdSchool
+        },
+        { 
+          name: 'মুমতাহিন নিবন্ধন আবেদন', 
+          href: '/dashboard/mumtahin/registration-applications', 
+          icon: MdPeople
+        }
+      ]
+    },
+    { 
+      name: 'মারহালা', 
+      href: '#', 
+      icon: MdLibraryBooks,
+      submenu: [
+        {
+          name: 'নতুন মারহালা যুক্ত করুন',
+          href: '/dashboard/marhala/add-marhala',
+          icon: MdAdd
+        },
+        {
+          name: 'সকল মারহালা',
+          href: '/dashboard/marhala/all-marhala',
+          icon: MdList
+        }
+      ]
+    },
+    { name: 'মুমতাহিন', href: '/muhtamim', icon: MdPerson },
+    { name: 'মারকায', href: '/markaz', icon: MdLocationCity },
+    { name: 'পরীক্ষার্থী', href: '/examinees', icon: MdAssignment },
+    { name: 'নোটিফিকেশন', href: '/notifications', icon: MdNotifications },
+    { name: 'সেটিংস', href: '/settings', icon: MdSettings },
+  ];
+
+  const pendingMadrasahs = []; // replace with actual data
 
   const handleMenuClick = (href: string, hasSubmenu: boolean) => {
     if (!hasSubmenu) {
@@ -116,6 +183,7 @@ export default function Sidebar() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     )}
+
                   </div>
                   {hasSubmenu && expandedMenu === item.name && (
                     <div className="ml-3 mt-1 space-y-1">
