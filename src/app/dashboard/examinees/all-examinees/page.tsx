@@ -209,8 +209,8 @@ export default function AllExamineesPage() {
         onConfirm={confirmDelete}
         title="আপনি কি নিশ্চিত?"
         description="এই পরীক্ষার্থীর তথ্য permanently মুছে ফেলা হবে। এই ক্রিয়াটি পূর্বাবস্থায় ফিরিয়ে আনা যাবে না।"
-        confirmButtonText="মুছে ফেলুন"
-        cancelButtonText="বাতিল"
+        confirmText="মুছে ফেলুন"
+        cancelText="বাতিল"
       />
     </div>
   );
