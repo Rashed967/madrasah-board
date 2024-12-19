@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
+import { setAccessToken } from '@/services/authService';
+import { post } from '@/services/apiService';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,26 +26,14 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/v1/user/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-token': process.env.NEXT_PUBLIC_API_TOKEN as string,
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await post('/user/login', { username, password });
       
-      const data = await response.json();
-     
-
-      if (response.ok) {
-        // Store the token in localStorage
-        localStorage.setItem('token', data.token);
+      if (response.status === 200 && response.data) {
+        setAccessToken(response.data.tokens.accessToken);
         toast.success('সফলভাবে লগইন হয়েছে');
         router.push('/dashboard');
       } else {
-        toast.error(data.message || 'ইউজারনেম অথবা পাসওয়ার্ড ভুল');
+        toast.error(response.data?.message || 'ইউজারনেম অথবা পাসওয়ার্ড ভুল');
       }
     } catch (error) {
       toast.error('সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন');
