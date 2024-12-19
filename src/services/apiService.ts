@@ -2,10 +2,21 @@ import { getAuthHeader } from './authService';
 
 interface ApiResponse<T = any> {
   data?: T;
-  error?: string;
+  error?: ApiError;
   status: number;
   success?: boolean;
   message?: string;
+}
+
+interface ApiError {
+  message: string;
+  status: number;
+}
+
+interface RequestInit extends globalThis.RequestInit {
+  method: string;
+  headers?: { [key: string]: string };
+  body?: string;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_MAIN_URL;
@@ -13,7 +24,7 @@ const apiToken = process.env.NEXT_PUBLIC_API_TOKEN;
 
 const request = async <T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = { method: 'GET' }
 ): Promise<ApiResponse<T>> => {
   try {
     const url = `${baseUrl}${endpoint}`;
@@ -24,24 +35,64 @@ const request = async <T>(
       ...options.headers,
     };
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     const response = await fetch(url, {
       ...options,
-      credentials: 'include', // This is important for cookies
+      credentials: 'include',
       headers,
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Handle unauthorized access
+        window.location.href = '/login';
+        return {
+          error: { message: 'Unauthorized access', status: 401 },
+          status: 401,
+          success: false,
+        };
+      }
+
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        error: { message: errorData.message || 'Server error occurred', status: response.status },
+        status: response.status,
+        success: false,
+      };
+    }
 
     const data = await response.json();
 
     return {
-      data: data.data || data, // Handle both {data: [...]} and direct data formats
+      data: data.data || data,
       status: response.status,
-      success: data.success,
+      success: data.success ?? true,
       message: data.message,
     };
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        return {
+          error: { message: 'Request timeout', status: 408 },
+          status: 408,
+          success: false,
+        };
+      }
+      return {
+        error: { message: error.message, status: 500 },
+        status: 500,
+        success: false,
+      };
+    }
     return {
-      error: error instanceof Error ? error.message : 'An error occurred',
+      error: { message: 'An unknown error occurred', status: 500 },
       status: 500,
+      success: false,
     };
   }
 };

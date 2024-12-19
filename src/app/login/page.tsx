@@ -4,8 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
-import { setAccessToken } from '@/services/authService';
+import { setTokens } from '@/services/authService';
 import { post } from '@/services/apiService';
+
+interface LoginResponse {
+  tokens: {
+    accessToken: string;
+    refreshToken?: string;
+  };
+  message?: string;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,10 +34,13 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await post('/user/login', { username, password });
+      const response = await post<LoginResponse>('/user/login', { username, password });
       
       if (response.status === 200 && response.data) {
-        setAccessToken(response.data.tokens.accessToken);
+        setTokens({
+          accessToken: response.data.tokens.accessToken,
+          refreshToken: response.data.tokens.refreshToken
+        });
         toast.success('সফলভাবে লগইন হয়েছে');
         router.push('/dashboard');
       } else {

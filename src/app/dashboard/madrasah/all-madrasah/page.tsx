@@ -7,7 +7,7 @@ import { FaSchool, FaMapMarkerAlt, FaUserGraduate } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import { get } from '@/services/apiService';
-import { getAccessToken } from '@/services/authService';
+import { getTokens } from '@/services/authService';
 import { useRouter } from 'next/navigation';
 
 export default function AllMadrasahPage() {
@@ -32,13 +32,13 @@ export default function AllMadrasahPage() {
       try {
         setIsLoading(true);
         
-        const token = getAccessToken();
-        if (!token) {
+        const { accessToken } = getTokens();
+        if (!accessToken) {
           router.push('/login');
           return;
         }
 
-        const response = await get('/madrasah/view-madrasah');
+        const response = await get<any[]>('/madrasah/view-madrasah');
         
         if (response.success && response.data) {
           setMadrasahs(response.data);
@@ -46,7 +46,7 @@ export default function AllMadrasahPage() {
           toast.error(response.message || 'মাদ্রাসা তথ্য লোড করতে সমস্যা হয়েছে');
         }
       } catch (error) {
-        toast.error('সার্ভারে সমস্যা হয়েছে');
+        setError('সার্ভারে সমস্যা হয়েছে');
         console.error('Error fetching madrasahs:', error);
       } finally {
         setIsLoading(false);
@@ -77,15 +77,21 @@ export default function AllMadrasahPage() {
     [madrasahs]
   );
 
-  // Filtered Madrasahs
+  // Optimized filtering logic with memoization
   const filteredMadrasahs = useMemo(() => {
+    const searchLower = searchQuery.toLowerCase();
     return madrasahs.filter(madrasah => {
-      const matchesDivision = !selectedDivision || madrasah.location?.division === selectedDivision;
-      const matchesDistrict = !selectedDistrict || madrasah.location?.distric === selectedDistrict;
-      const matchesType = !selectedType || madrasah.yearlyInformtion?.madrasahType === selectedType;
+      if (!madrasah) return false;
+      
+      const matchesDivision = !selectedDivision || 
+        madrasah.location?.division === selectedDivision;
+      const matchesDistrict = !selectedDistrict || 
+        madrasah.location?.distric === selectedDistrict;
+      const matchesType = !selectedType || 
+        madrasah.yearlyInformtion?.madrasahType === selectedType;
       const matchesSearch = !searchQuery || 
-        madrasah.madrasahNames?.nameInBangla?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        madrasah.madrasahUniqueID?.toString().includes(searchQuery);
+        madrasah.madrasahNames?.nameInBangla?.toLowerCase().includes(searchLower) ||
+        madrasah.madrasahUniqueID?.toString().includes(searchLower);
       
       return matchesDivision && matchesDistrict && matchesType && matchesSearch;
     });
@@ -97,6 +103,30 @@ export default function AllMadrasahPage() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Handle loading and error states
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <ClipLoader color="#4F46E5" size={50} />
+        <p className="ml-4 text-lg text-gray-600">লোড হচ্ছে...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600 text-lg">সমস্যা হয়েছে: {error}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+        >
+          আবার চেষ্টা করুন
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 mt-10 w-11/12 mx-auto">
@@ -185,9 +215,9 @@ export default function AllMadrasahPage() {
       {/* Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="min-w-full">
-          {isLoading ? (
+          {paginatedMadrasahs.length === 0 ? (
             <div className="flex justify-center items-center p-8">
-              <ClipLoader color="#52b788" size={40} />
+              <p className="text-lg text-gray-600">কোন মাদরাসা পাওয়া যায়নি</p>
             </div>
           ) : (
             <>
