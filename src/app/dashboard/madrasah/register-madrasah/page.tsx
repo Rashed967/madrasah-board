@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
 import { Dialog } from '@headlessui/react';
 import toast from 'react-hot-toast';
-import { divisions, districts, upazilas, policeStations } from '@/app/dashboard/madrasah/register-madrasah/locationData'; // Corrected import path
+import { divisions, districts, upazilas, policeStations } from '@/app/dashboard/madrasah/register-madrasah/locationData';
+import { zones } from '@/app/dashboard/madrasah/register-madrasah/zoneData';
 
 export default function RegisterMadrasah() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function RegisterMadrasah() {
     communicatorName: '',
     communicatorContactNo: '',
     contact2: '',
-    zone: '',
+    zone: zones[0], // Default to first zone
     email: '',
     nameInArabic: '',
     nameInBangla: '',
@@ -26,10 +27,10 @@ export default function RegisterMadrasah() {
     totalStudent: '',
     totalTeacherAndStaff: '',
     madrasahType: '',
-    muhtamimName: '',
-    muhtamimNID: '',
-    muhtamimMobile: '',
-    muhtamimEducation: '',
+    muhtamimName: '', // Optional
+    muhtamimNID: '', // Optional
+    muhtamimMobile: '', // Optional
+    muhtamimEducation: '', // Optional
     muhtamimPhoto: null as File | null,
     year: '',
     distric: '',
@@ -41,15 +42,15 @@ export default function RegisterMadrasah() {
     courierOption: '',
     logo: null as File | null,
     upazila: '',
-    shikkhaSocheebName: '',
-    shikkhaSocheebNID: '',
-    shikkhaSocheebMobile: '',
-    shikkhaSocheebEducation: '',
+    shikkhaSocheebName: '', // Optional
+    shikkhaSocheebNID: '', // Optional
+    shikkhaSocheebMobile: '', // Optional
+    shikkhaSocheebEducation: '', // Optional
     shikkhaSocheebPhoto: null as File | null,
-    shovapotiName: '',
-    shovapotiNID: '',
-    shovapotiMobile: '',
-    shovapotiPosition: '',
+    shovapotiName: '', // Optional
+    shovapotiNID: '', // Optional
+    shovapotiMobile: '', // Optional
+    shovapotiPosition: 'সভাপতি', // Default value
     shovapotiPhoto: null as File | null,
   });
 
@@ -89,7 +90,8 @@ export default function RegisterMadrasah() {
       division: 'বিভাগ',
       distric: 'জেলা',
       village: 'গ্রাম/মহল্লা',
-      upazila: 'উপজেলা'
+      upazila: 'উপজেলা',
+      zone: 'জোন'
     };
 
     const missingFields = Object.entries(requiredFields)
@@ -411,13 +413,18 @@ export default function RegisterMadrasah() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">জোন</label>
-                <input
-                  type="text"
-                  placeholder="জোন নম্বর লিখুন"
+                <select
                   value={formData.zone}
                   onChange={(e) => handleChange('zone', e.target.value)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                />
+                >
+                  <option value="">জোন নির্বাচন করুন</option>
+                  {zones.map((zone, index) => (
+                    <option key={index} value={zone}>
+                      {zone}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">চিঠি প্রেরনের মাধ্যম</label>
@@ -604,24 +611,16 @@ export default function RegisterMadrasah() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">পদবী</label>
-                {/* <input
-                  type="text"
-                  placeholder="পদবী লিখুন"
+                <select
                   value={formData.shovapotiPosition}
                   onChange={(e) => handleChange('shovapotiPosition', e.target.value)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                /> */}
-
-<select
-                  value={formData.madrasahType}
-                  onChange={(e) => handleChange('madrasahType', e.target.value)}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                 >
                   <option value="">পদবী নির্বাচন করুন</option>
-                  <option value="BOY">সভাপতি</option>
-                  <option value="GIRL">মুতাওয়াল্লি</option>
+                  <option value="সভাপতি">সভাপতি</option>
+                  <option value="মুতাওয়াল্লি">মুতাওয়াল্লি</option>
+                  <option value="সেক্রেটারী">সেক্রেটারী</option>
                 </select>
-                
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">ছবি</label>
