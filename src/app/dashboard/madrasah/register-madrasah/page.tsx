@@ -647,9 +647,9 @@ export default function RegisterMadrasah() {
 
           {/* Logo Upload */}
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-900">মাদরাসার লোগো আপলোড</h2>
+            <h2 className="text-xl font-semibold text-gray-900">মাদরাসা ইলহাকের ছবি আপলোড</h2>
             <div>
-              <label className="block text-sm font-medium text-gray-700">মাদরাসার লোগো</label>
+              <label className="block text-sm font-medium text-gray-700">ছবি আপলোড</label>
               <div className="space-y-2">
                 <input
                   type="file"

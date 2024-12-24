@@ -78,7 +78,8 @@ const AddressCard = ({ code, muhtamimName, madrasahName, address, mobile }) => (
         <Text>থানা: {address.policeStation}</Text>
         <Text>জেলা: {address.district}</Text>
       </View>
-      <Text style={styles.text}>মোবাইল: {mobile}</Text>
+      <Text style={styles.text}>মোবাইল-১: {mobile}</Text>
+      <Text style={styles.text}>মোবাইল-২: {mobile}</Text>
     </View>
   </View>
 );
@@ -154,7 +155,10 @@ const AddressCardsPrint = ({ madrasahs }) => {
             <span style={{ fontSize: '11pt' }}>থানা: {madrasah.policeStation}</span>
             <span style={{ fontSize: '11pt' }}>জেলা: {madrasah.district}</span>
           </div>
-          <div style={{ fontSize: '11pt' }}>মোবাইল: {madrasah.mobile}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', margin: '2mm 0'}}>
+            <span style={{ fontSize: '10pt',}}>মোবাইল-১: {madrasah.mobile}</span>
+            <span style={{ fontSize: '10pt' }}>মোবাইল-২: {madrasah.mobile}</span>
+          </div>
         </div>
       ))}
     </div>

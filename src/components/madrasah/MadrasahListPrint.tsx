@@ -72,6 +72,12 @@ const MadrasahListPrint: React.FC<MadrasahListPrintProps> = ({ madrasahs }) => {
               padding: '2mm 3mm',
               textAlign: 'left',
               backgroundColor: '#fff'
+            }}>মুহতামিম</th>
+            <th style={{ 
+              border: '1px solid #000', 
+              padding: '2mm 3mm',
+              textAlign: 'left',
+              backgroundColor: '#fff'
             }}>সংক্ষিপ্ত ঠিকানা</th>
             <th style={{ 
               border: '1px solid #000', 
@@ -98,6 +104,10 @@ const MadrasahListPrint: React.FC<MadrasahListPrintProps> = ({ madrasahs }) => {
                 border: '1px solid #000', 
                 padding: '2mm 3mm'
               }}>{madrasah.name}</td>
+              <td style={{ 
+                border: '1px solid #000', 
+                padding: '2mm 3mm'
+              }}>{madrasah.muhtamimName}</td>
               <td style={{ 
                 border: '1px solid #000', 
                 padding: '2mm 3mm'

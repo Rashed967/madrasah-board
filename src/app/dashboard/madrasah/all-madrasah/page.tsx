@@ -125,7 +125,7 @@ export default function AllMadrasah() {
       {
         "id": 1,
         "code": "354193",
-        "name": "আল মারকাযুল ইসলামী",
+        "name": "আল মারকাযুল ইসলামী ",
         "village": "হোয়াইক্যং",
         "policeStation": "টেকনাফ",
         "district": "রাজশাহী",
