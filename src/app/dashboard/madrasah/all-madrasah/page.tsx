@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -93,6 +95,8 @@ export default function AllMadrasah() {
   const [showPrintComponent, setShowPrintComponent] = useState(false);
   const [showListPrint, setShowListPrint] = useState(false);
 
+  const router = useRouter();
+
   const handlePrintAddressCards = () => {
     setShowPrintComponent(true);
   };
@@ -107,11 +111,6 @@ export default function AllMadrasah() {
 
   const handleCloseListPrint = () => {
     setShowListPrint(false);
-  };
-
-  const handleEdit = (id: number) => {
-    // Implement edit functionality
-    toast.success('Edit clicked for ID: ' + id);
   };
 
   const handleDelete = (id: number) => {
@@ -475,7 +474,14 @@ export default function AllMadrasah() {
                   {paginatedMadrasahs.map((madrasah) => (
                     <tr key={madrasah.id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="px-6 py-4">{madrasah.code}</td>
-                      <td className="px-6 py-4">{madrasah.name}</td>
+                      <td className="px-6 py-4">
+                        <Link 
+                          href={`/dashboard/madrasah/${madrasah.id}`}
+                          className="text-[#52b788] hover:text-[#52b788]/80 hover:underline"
+                        >
+                          {madrasah.name}
+                        </Link>
+                      </td>
                       <td className="px-6 py-4">
                         {[
                           madrasah.village,
@@ -505,12 +511,14 @@ export default function AllMadrasah() {
                             className="w-40 bg-white shadow-lg border border-gray-100 rounded-md p-1"
                             sideOffset={5}
                           >
-                            <DropdownMenuItem
-                              onClick={() => handleEdit(madrasah.id)}
-                              className="flex items-center px-3 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 rounded-md cursor-pointer transition-colors"
-                            >
-                              <MdEdit className="h-4 w-4 mr-2" />
-                              <span>সম্পাদনা</span>
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href={`/dashboard/madrasah/${madrasah.id}/edit`}
+                                className="flex items-center px-3 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 rounded-md cursor-pointer transition-colors"
+                              >
+                                <MdEdit className="h-4 w-4 mr-2" />
+                                <span>সম্পাদনা</span>
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleDelete(madrasah.id)}

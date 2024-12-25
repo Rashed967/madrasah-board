@@ -1,79 +1,188 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { MdLocationOn, MdPhone, MdEmail, MdPeople, MdSchool, MdCalendarToday, MdPerson, MdBook, MdStar, MdDomain } from 'react-icons/md';
 
-// Demo data for a madrasah
-const madrasahData = {
-  name: 'জামিয়া আরাবিয়া ইসলামিয়া',
-  establishedYear: '১৩৮৫ হিজরি',
-  location: 'মিরপুর-১, ঢাকা-১২১৬',
-  phone: '+৮৮০১৭১২৩৪৫৬৭৮',
-  email: 'info@jamia-arabia.edu.bd',
-  website: 'www.jamia-arabia.edu.bd',
-  principalName: 'মাওলানা আব্দুল্লাহ আল-মাদানী',
-  totalStudents: '১২০০+',
-  totalTeachers: '৫০+',
-  type: 'কওমি মাদরাসা',
-  departments: [
-    'হিফজুল কুরআন',
-    'তাজবীদ ও কিরাআত',
-    'হাদীস',
-    'ফিকহ',
-    'আরবী সাহিত্য',
-    'ইসলামী দর্শন'
-  ],
-  courses: [
-    { name: 'তাহফিজুল কুরআন', duration: '৩-৫ বছর', students: '৩০০+' },
-    { name: 'ইবতিদাইয়্যাহ', duration: '৫ বছর', students: '২৫০+' },
-    { name: 'মুতাওয়াস্সিতাহ', duration: '৩ বছর', students: '২০০+' },
-    { name: 'সানাবিয়্যাহ', duration: '২ বছর', students: '১৫০+' },
-    { name: 'ফাজিল', duration: '২ বছর', students: '১০০+' },
-    { name: 'কামিল', duration: '২ বছর', students: '৫০+' }
-  ],
-  facilities: [
-    { name: 'আধুনিক লাইব্রেরি', details: '১০,০০০+ বই সহ' },
-    { name: 'কম্পিউটার ল্যাব', details: '২০টি কম্পিউটার' },
-    { name: 'মসজিদ', details: '৫০০ মুসল্লির ধারণক্ষমতা' },
-    { name: 'ছাত্রাবাস', details: '২০০ শিক্ষার্থীর জন্য' },
-    { name: 'খেলার মাঠ', details: '৫ একর' },
-    { name: 'ক্যাফেটেরিয়া', details: '১০০ আসন' }
-  ],
-  achievements: [
-    { title: 'জাতীয় পর্যায়ে সেরা মাদরাসা পুরস্কার ২০২২', year: '২০২২' },
-    { title: 'সর্বোচ্চ বোর্ড পরীক্ষার ফলাফল', year: '২০২১' },
-    { title: 'আন্তর্জাতিক কুরআন প্রতিযোগিতায় চ্যাম্পিয়ন', year: '২০২০' }
-  ],
-  description: 'জামিয়া আরাবিয়া ইসলামিয়া একটি ঐতিহ্যবাহী ইসলামি শিক্ষা প্রতিষ্ঠান। এখানে ধর্মীয় শিক্ষার পাশাপাশি আধুনিক শিক্ষারও ব্যবস্থা রয়েছে। প্রতিষ্ঠানটি দীর্ঘদিন ধরে উচ্চমানের ইসলামি শিক্ষা প্রদান করে আসছে।'
-};
+interface MadrasahData {
+  ilhakIamge: string;
+  _id: string;
+  madrasahNames: {
+    bengaliName: string;
+    arabicName: string;
+    englishName: string;
+  };
+  bio: string;
+  code: string;
+  email: string;
+  contactNo1: string;
+  contactNo2: string;
+  address: {
+    _id: string;
+    division: string;
+    district: string;
+    subDistrict: string;
+    policeStation: string;
+    village: string;
+    holdingNumber: string;
+    zone: string;
+  };
+  muhtamim: {
+    _id: string;
+    name: string;
+    contactNo: string;
+    nidNumber: string;
+    highestEducationalQualification: string;
+    imageUrl: string;
+    code: string;
+  };
+  chairman_mutawalli: {
+    _id: string;
+    name: string;
+    contactNo: string;
+    nidNumber: string;
+    designation: string;
+    imageUrl: string;
+    code: string;
+  };
+  educational_secretory: {
+    _id: string;
+    name: string;
+    contactNo: string;
+    nidNumber: string;
+    highestEducationalQualification: string;
+    imageUrl: string;
+    code: string;
+  };
+  madrasah_information: {
+    _id: string;
+    highestMarhala: string;
+    madrasahType: string;
+    totalStudents: number;
+    totalTeacherAndStuff: number;
+    isDeleted: boolean;
+  };
+  status: string;
+}
 
-export default function MadrasahDetailsPage() {
+export default function MadrasahDetailsPage({ params }: { params: { id: string } }) {
+  const [madrasahData, setMadrasahData] = useState<MadrasahData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // TODO: Replace with actual API call
+    // For now using mock data
+    const mockData: MadrasahData = {
+      ilhakIamge: "image link here",
+      _id: params.id,
+      madrasahNames: {
+        bengaliName: "আল-আমিন মাদ্রাসা",
+        arabicName: "مدرسة الأمين",
+        englishName: "Al-Amin Madrasah"
+      },
+      bio: "১৯৮৫ সালে প্রতিষ্ঠিত এই মাদরাসাটি বাংলাদেশের অন্যতম প্রাচীন শিক্ষা প্রতিষ্ঠান। এখানে কওমি ও আলিয়া মাদরাসার পাঠদান করা হয়। প্রতি বছর শতাধিক ছাত্র এখান থেকে পাস করে বিভিন্ন প্রতিষ্ঠানে কর্মরত আছে।",
+      code: "100039",
+      email: "abdurrahmanrashed967@gmail.com",
+      contactNo1: "+8801712345678",
+      contactNo2: "+8801898765432",
+      address: {
+        _id: "676bd6afd8e6a3bcd446c975",
+        division: "Dhaka",
+        district: "Dhaka",
+        subDistrict: "Gulshan",
+        policeStation: "Gulshan Police Station",
+        village: "Vatara",
+        holdingNumber: "123/4",
+        zone: "6767f0b3dff3c630fbbb8e81"
+      },
+      muhtamim: {
+        _id: "676bd6b0d8e6a3bcd446c979",
+        name: "Abdul Karim",
+        contactNo: "+8801712345678",
+        nidNumber: "132544565455655316545",
+        highestEducationalQualification: "Masters in Islamic Studies",
+        imageUrl: "https://i.ibb.co/7yNhYGG/profile-placeholder.jpg",
+        code: "MM0023"
+      },
+      chairman_mutawalli: {
+        _id: "676bd6b0d8e6a3bcd446c97d",
+        name: "Fatema Begum",
+        contactNo: "+8801998765432",
+        nidNumber: "132545544565544316545",
+        designation: "সভাপতি",
+        imageUrl: "https://i.ibb.co/7yNhYGG/profile-placeholder.jpg",
+        code: "CM-0013"
+      },
+      educational_secretory: {
+        _id: "676bd6b0d8e6a3bcd446c981",
+        name: "Fatema Begum",
+        contactNo: "+8801998765432",
+        nidNumber: "1325456545545445316545",
+        highestEducationalQualification: "Dawrah-e-Hadith",
+        imageUrl: "https://i.ibb.co/7yNhYGG/profile-placeholder.jpg",
+        code: "ES0013"
+      },
+      madrasah_information: {
+        _id: "676bd6b0d8e6a3bcd446c983",
+        highestMarhala: "জালালাইন",
+        madrasahType: "বালক",
+        totalStudents: 400,
+        totalTeacherAndStuff: 25,
+        isDeleted: false
+      },
+      status: "active"
+    };
+
+    setMadrasahData(mockData);
+    setLoading(false);
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#52b788]"></div>
+      </div>
+    );
+  }
+
+  if (!madrasahData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen ">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-gray-900">মাদ্রাসা খুঁজে পাওয়া যায়নি</h2>
+          <p className="mt-2 text-gray-600">দুঃখিত, আপনার অনুরোধকৃত মাদ্রাসাটি খুঁজে পাওয়া যায়নি।</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto mt-10 p-4 space-y-6">
+    <div className=" mx-6 mt-16 mb-8 px-8 space-y-4">
       {/* Header Section */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="h-48 bg-gradient-to-r from-[#52b788] to-[#52b788]/70 relative">
+        <div className="h-40 bg-gradient-to-r from-[#52b788] to-[#52b788]/70 relative">
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4">
-            <h1 className="text-4xl font-bold mb-2">{madrasahData.name}</h1>
-            <span className="inline-block px-4 py-1 rounded-full bg-white/20 text-sm">
-              {madrasahData.type}
-            </span>
+            <h1 className="text-4xl font-bold mb-2">{madrasahData.madrasahNames.bengaliName}</h1>
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-lg">{madrasahData.madrasahNames.arabicName}</span>
+              <span className="text-lg">{madrasahData.madrasahNames.englishName}</span>
+            </div>
           </div>
         </div>
-        <div className="p-6">
-          <p className="text-gray-600 text-center max-w-3xl mx-auto">{madrasahData.description}</p>
+        <div className="p-4 text-center">
+          <p className="text-gray-600 max-w-2xl mx-auto">{madrasahData.bio}</p>
         </div>
       </div>
 
       {/* Quick Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-white rounded-xl shadow-sm p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#52b788]/10 flex items-center justify-center">
-              <MdCalendarToday className="w-6 h-6 text-[#52b788]" />
+              <MdSchool className="w-6 h-6 text-[#52b788]" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">প্রতিষ্ঠাকাল</p>
-              <p className="font-medium">{madrasahData.establishedYear}</p>
+              <p className="text-sm text-gray-500">মাদ্রাসা কোড</p>
+              <p className="font-medium">{madrasahData.code}</p>
             </div>
           </div>
         </div>
@@ -84,7 +193,7 @@ export default function MadrasahDetailsPage() {
             </div>
             <div>
               <p className="text-sm text-gray-500">মোট শিক্ষার্থী</p>
-              <p className="font-medium">{madrasahData.totalStudents}</p>
+              <p className="font-medium">{madrasahData.madrasah_information.totalStudents}</p>
             </div>
           </div>
         </div>
@@ -94,8 +203,8 @@ export default function MadrasahDetailsPage() {
               <MdPerson className="w-6 h-6 text-[#52b788]" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">মোট শিক্ষক</p>
-              <p className="font-medium">{madrasahData.totalTeachers}</p>
+              <p className="text-sm text-gray-500">শিক্ষক ও কর্মচারী</p>
+              <p className="font-medium">{madrasahData.madrasah_information.totalTeacherAndStuff}</p>
             </div>
           </div>
         </div>
@@ -105,15 +214,15 @@ export default function MadrasahDetailsPage() {
               <MdDomain className="w-6 h-6 text-[#52b788]" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">বিভাগ সংখ্যা</p>
-              <p className="font-medium">{madrasahData.departments.length}</p>
+              <p className="text-sm text-gray-500">মাদ্রাসার ধরন</p>
+              <p className="font-medium">{madrasahData.madrasah_information.madrasahType}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Contact Information */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-xl shadow-sm p-5">
         <h2 className="text-xl font-semibold mb-6">যোগাযোগের তথ্য</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="flex items-center gap-4">
@@ -122,7 +231,9 @@ export default function MadrasahDetailsPage() {
             </div>
             <div>
               <p className="text-sm text-gray-500">ঠিকানা</p>
-              <p className="font-medium">{madrasahData.location}</p>
+              <p className="font-medium">
+                {`${madrasahData.address.holdingNumber}, ${madrasahData.address.village}, ${madrasahData.address.subDistrict}, ${madrasahData.address.district}`}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -131,7 +242,12 @@ export default function MadrasahDetailsPage() {
             </div>
             <div>
               <p className="text-sm text-gray-500">ফোন</p>
-              <p className="font-medium">{madrasahData.phone}</p>
+              <div>
+                <p className="font-medium">{madrasahData.contactNo1}</p>
+                {madrasahData.contactNo2 && (
+                  <p className="font-medium">{madrasahData.contactNo2}</p>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -146,54 +262,50 @@ export default function MadrasahDetailsPage() {
         </div>
       </div>
 
-      {/* Courses Section */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-xl font-semibold mb-6">কোর্স সমূহ</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {madrasahData.courses.map((course, index) => (
-            <div key={index} className="p-4 rounded-lg border border-[#52b788]/20 bg-[#52b788]/5">
-              <h3 className="font-medium text-[#52b788] mb-2">{course.name}</h3>
-              <div className="space-y-1">
-                <p className="text-sm text-gray-600">মেয়াদ: {course.duration}</p>
-                <p className="text-sm text-gray-600">শিক্ষার্থী: {course.students}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Facilities and Achievements */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Administration Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* Muhtamim */}
         <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold mb-6">সুযোগ-সুবিধা</h2>
+          <h2 className="text-xl font-semibold mb-6">মহতামিম</h2>
           <div className="space-y-4">
-            {madrasahData.facilities.map((facility, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-[#52b788]/5">
-                <div className="w-10 h-10 rounded-full bg-[#52b788]/10 flex items-center justify-center">
-                  <MdStar className="w-5 h-5 text-[#52b788]" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">{facility.name}</h3>
-                  <p className="text-sm text-gray-600">{facility.details}</p>
-                </div>
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
+                <img src={madrasahData.muhtamim.imageUrl} alt="Muhtamim" className="w-full h-full object-cover" />
               </div>
-            ))}
+              <h3 className="font-medium text-lg">{madrasahData.muhtamim.name}</h3>
+              <p className="text-sm text-gray-600">{madrasahData.muhtamim.highestEducationalQualification}</p>
+              <p className="text-sm text-gray-600">{madrasahData.muhtamim.contactNo}</p>
+            </div>
           </div>
         </div>
+
+        {/* Chairman/Mutawalli */}
         <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold mb-6">অর্জন সমূহ</h2>
+          <h2 className="text-xl font-semibold mb-6">সভাপতি/মুতাওয়াল্লি</h2>
           <div className="space-y-4">
-            {madrasahData.achievements.map((achievement, index) => (
-              <div key={index} className="flex items-start gap-4 p-4 rounded-lg border border-[#52b788]/20">
-                <div className="w-10 h-10 rounded-full bg-[#52b788]/10 flex items-center justify-center flex-shrink-0">
-                  <MdStar className="w-5 h-5 text-[#52b788]" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">{achievement.title}</h3>
-                  <p className="text-sm text-[#52b788] mt-1">{achievement.year}</p>
-                </div>
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
+                <img src={madrasahData.chairman_mutawalli.imageUrl} alt="Chairman" className="w-full h-full object-cover" />
               </div>
-            ))}
+              <h3 className="font-medium text-lg">{madrasahData.chairman_mutawalli.name}</h3>
+              <p className="text-sm text-gray-600">{madrasahData.chairman_mutawalli.designation}</p>
+              <p className="text-sm text-gray-600">{madrasahData.chairman_mutawalli.contactNo}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Educational Secretary */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-semibold mb-6">শিক্ষা সচিব</h2>
+          <div className="space-y-4">
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
+                <img src={madrasahData.educational_secretory.imageUrl} alt="Educational Secretary" className="w-full h-full object-cover" />
+              </div>
+              <h3 className="font-medium text-lg">{madrasahData.educational_secretory.name}</h3>
+              <p className="text-sm text-gray-600">{madrasahData.educational_secretory.highestEducationalQualification}</p>
+              <p className="text-sm text-gray-600">{madrasahData.educational_secretory.contactNo}</p>
+            </div>
           </div>
         </div>
       </div>

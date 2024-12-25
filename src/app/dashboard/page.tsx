@@ -71,11 +71,23 @@ export default function DashboardPage() {
           <p className="text-3xl font-bold text-[#52b788]">১২</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">মোট শিক্ষার্থী</h2>
-          <p className="text-3xl font-bold text-[#52b788]">২৫০০</p>
+          <h2 className="text-lg font-semibold mb-2">মোট বালক মাদ্রাসা</h2>
+          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">মোট শিক্ষক</h2>
+          <h2 className="text-lg font-semibold mb-2">মোট বালিকা মাদ্রাসা</h2>
+          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-2">মোট কেন্দ্র</h2>
+          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-2">মোট নেগরান</h2>
+          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-2">মোট মুমতাহিন</h2>
           <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
         </div>
       </div>
