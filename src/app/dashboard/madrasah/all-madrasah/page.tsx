@@ -24,7 +24,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { MdEdit, MdDelete, MdSearch, MdPrint, MdClose } from 'react-icons/md';
 import { BsThreeDots } from 'react-icons/bs';
 import toast from 'react-hot-toast';
-import { divisions, districts, upazilas, policeStations } from '@/app/dashboard/madrasah/register-madrasah/locationData';
+import { divisions, districts, subDistricts, policeStations } from '@/app/dashboard/madrasah/register-madrasah/locationData';
 import AddressCardsPrint from '@/components/madrasah/AddressCardsPrint';
 import MadrasahListPrint from '@/components/madrasah/MadrasahListPrint';
 
