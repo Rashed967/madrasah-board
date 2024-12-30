@@ -1,11 +1,15 @@
 import { getAuthHeader } from './authService';
 
-interface ApiResponse<T = any> {
-  data?: T;
-  error?: ApiError;
-  status: number;
-  success?: boolean;
-  message?: string;
+export interface ApiResponse<T = any> {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: T;
+  meta?: {
+    total: number;
+    page: number;
+    limit: number;
+  };
 }
 
 interface ApiError {
@@ -30,7 +34,7 @@ const request = async <T>(
     const url = `${baseUrl}${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
-      'x-api-token': apiToken as string,
+      'X-API-Token': apiToken || '',
       ...getAuthHeader(),
       ...options.headers,
     };
@@ -52,47 +56,59 @@ const request = async <T>(
         // Handle unauthorized access
         window.location.href = '/login';
         return {
-          error: { message: 'Unauthorized access', status: 401 },
-          status: 401,
           success: false,
+          statusCode: 401,
+          message: 'Unauthorized access',
+          data: null,
         };
       }
 
       const errorData = await response.json().catch(() => ({}));
-      return {
-        error: { message: errorData.message || 'Server error occurred', status: response.status },
+      console.log('API Error Response:', {
         status: response.status,
+        statusText: response.statusText,
+        data: errorData
+      });
+      return {
         success: false,
+        statusCode: response.status,
+        message: errorData.message || 'Server error occurred',
+        data: errorData.data || null,
       };
     }
 
     const data = await response.json();
+    console.log('API Response Data:', data);
 
     return {
-      data: data.data || data,
-      status: response.status,
       success: data.success ?? true,
+      statusCode: response.status,
       message: data.message,
+      data: data.data || data,
+      meta: data.meta
     };
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
         return {
-          error: { message: 'Request timeout', status: 408 },
-          status: 408,
           success: false,
+          statusCode: 408,
+          message: 'Request timeout',
+          data: null,
         };
       }
       return {
-        error: { message: error.message, status: 500 },
-        status: 500,
         success: false,
+        statusCode: 500,
+        message: error.message,
+        data: null,
       };
     }
     return {
-      error: { message: 'An unknown error occurred', status: 500 },
-      status: 500,
       success: false,
+      statusCode: 500,
+      message: 'An unknown error occurred',
+      data: null,
     };
   }
 };

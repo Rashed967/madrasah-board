@@ -107,7 +107,6 @@ export default function Sidebar() {
     },
     { name: 'মুমতাহিন', href: '/muhtamim', icon: MdPerson },
     { name: 'মারকায', href: '/markaz', icon: MdLocationCity },
-    { name: 'পরীক্ষার্থী', href: '/examinees', icon: MdAssignment },
     { name: 'নোটিফিকেশন', href: '/notifications', icon: MdNotifications },
     { name: 'সেটিংস', href: '/settings', icon: MdSettings },
   ];

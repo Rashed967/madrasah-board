@@ -11,7 +11,7 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen bg-[#EDEDE9] flex items-center justify-center">
       <div className="text-center">
         Redirecting to login...
       </div>

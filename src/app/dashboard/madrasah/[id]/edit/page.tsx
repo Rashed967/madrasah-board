@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { MdCloudUpload } from "react-icons/md";
 import Image from "next/image";
+import { marhalaTypes, madrasahTypes } from "@/constants/madrasahConstants";
 import {
   Select,
   SelectContent,
@@ -81,22 +82,6 @@ interface MadrasahData {
     isDeleted: boolean;
   };
 }
-
-const marhalaTypes = [
-  { value: "", label: "মারহালা নির্বাচন করুন" },
-  { value: "ইফতা", label: "ইফতা" },
-  { value: "তাকমীল", label: "তাকমীল/দাওরায়ে হাদীস" },
-  { value: "ফযীলত", label: "ফযীলত (স্নাতক)" },
-  { value: "সানাবিয়্যাহ_উলইয়া", label: "সানাবিয়্যাহ উলইয়া" },
-  { value: "কাফিয়া", label: "কাফিয়া (১০ শ্রেনী)" },
-  { value: "মুতাওয়াসসিতাহ", label: "মুতাওয়াসসিতাহ (৮ম শ্রেনী)" },
-  { value: "ইবতেদাইয়্যাহ", label: "ইবতেদাইয়্যাহ (৫ম শ্রেনী)" }
-];
-
-const madrasahTypes = [
-  { value: "বালক", label: "বালক" },
-  { value: "বালিকা", label: "বালিকা" },
-];
 
 const divisions = [
   "ঢাকা",

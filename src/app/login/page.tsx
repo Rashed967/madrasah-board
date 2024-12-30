@@ -4,15 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
-import { setTokens } from '@/services/authService';
+import { setTokens, getDashboardRoute } from '@/services/authService';
 import { post } from '@/services/apiService';
+import Image from 'next/image';
 
-interface LoginResponse {
-  tokens: {
-    accessToken: string;
-    refreshToken?: string;
-  };
-  message?: string;
+interface LoginData {
+  accessToken: string;
+  user: {
+    _id: string;
+    username: string;
+    role: string;
+    madrasah: string | null;
+    isDeleted: boolean;
+    lastPasswordChangeTime: string;
+    createdAt: string;
+    updatedAt: string;
+  }
 }
 
 export default function LoginPage() {
@@ -34,17 +41,23 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await post<LoginResponse>('/user/login', { username, password });
+      const response = await post<LoginData>('/users/login', { username, password });
       
-      if (response.status === 200 && response.data) {
+      if (response.success) {
+        // Set both localStorage and cookie tokens
         setTokens({
-          accessToken: response.data.tokens.accessToken,
-          refreshToken: response.data.tokens.refreshToken
+          accessToken: response.data.accessToken,
+          user: response.data.user
         });
+        
         toast.success('সফলভাবে লগইন হয়েছে');
-        router.push('/dashboard');
+        
+        // Get appropriate dashboard route and redirect
+        const dashboardRoute = getDashboardRoute();
+        router.push(dashboardRoute);
+        router.refresh(); // Force a refresh to update the navigation state
       } else {
-        toast.error(response.data?.message || 'ইউজারনেম অথবা পাসওয়ার্ড ভুল');
+        toast.error(response.message || 'ইউজারনেম অথবা পাসওয়ার্ড ভুল');
       }
     } catch (error) {
       toast.error('সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন');
@@ -57,6 +70,15 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Toaster position="top-right" />
+        <div>
+          <Image
+            src="/logo.jpg"
+            alt="Logo"
+            width={100}
+            height={100}
+            className="mx-auto roudned-full"
+          />
+        </div>
         <div>
           <h1 className="mt-6 text-center text-2xl font-extrabold text-gray-900">
             লগইন করুন

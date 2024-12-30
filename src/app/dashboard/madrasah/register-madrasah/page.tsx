@@ -3,19 +3,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
-import { Dialog } from '@headlessui/react';
 import toast from 'react-hot-toast';
-import BasicInfoForm from './components/MadrasahNameAndBio';
-import ContactInfoForm from './components/ContactInfoForm';
-import LocationForm from './components/LocationForm';
-import StaffInfoForm from './components/MutawalliInfo';
-import PhotoUpload from './components/PhotoUpload';
+import { registerMadrasah } from '@/services/madrasahService';
 import MadrasahNameAndBio from './components/MadrasahNameAndBio';
+import ContactInfo from './components/ContactInfo';
 import MadrasahBasicInfo from './components/MadrasahBasicInfo';
+import LocationForm from './components/LocationForm';
 import MuhtamimInfo from './components/MuhtamimInfo';
 import EducationSecretory from './components/EducationSecretory';
 import MutawalliInfo from './components/MutawalliInfo';
-
+import ImageUpload from './components/ImageUpload';
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
+import {SuccessDialog} from '@/components/ui/success-dialog';
 
 /**
  * RegisterMadrasah Component
@@ -27,6 +26,7 @@ export default function RegisterMadrasah() {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     communicatorName: '',
     contactNo1: '',
@@ -45,17 +45,14 @@ export default function RegisterMadrasah() {
     muhtamimNID: '',
     muhtamimMobile: '',
     muhtamimEducation: '',
-    year: '',
     district: '',
     subDistrict: '',
     division: '',
     holdingNumber: '',
     policeStation: '',
-    postOffice: '',
     village: '',
-    courierOption: '',
-    madrasahIlhakimage: null as File | null,
-    upazila: '',
+    courierAddress: '',
+    madrasahIlhakimage: '',
     shikkhaSocheebName: '',
     shikkhaSocheebNID: '',
     shikkhaSocheebMobile: '',
@@ -67,7 +64,7 @@ export default function RegisterMadrasah() {
   
   });
 
-  const handleChange = (field: string, value: string | File | null) => {
+  const handleChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -75,143 +72,208 @@ export default function RegisterMadrasah() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
 
-    console.log(formData);
-    
-    // Validate required fields
+    e.preventDefault();
+    console.log('Form submitted with data:', formData);
+
+    // Required fields validation
     const requiredFields = {
-      nameInBangla: 'মাদরাসার বাংলা নাম',
+      // Contact Info (All required)
       communicatorName: 'যোগাযোগকারীর নাম',
-      contactNo1: 'মোবাইল-১',
-      contactNo2: 'মোবাইল-২',
+      contactNo1: 'মোবাইল নম্বর',
+      contactNo2: 'বিকল্প মোবাইল নম্বর',
+      email: 'ইমেইল',
+      
+      // Basic Info
+      highestMarhala: 'সর্বোচ্চ মারহালা',
+      madrasahType: 'মাদ্রাসার ধরণ',
+      
+      // Location Info
+      zone: 'জোন',
+      courierAddress: 'চিঠি প্রেরণের মাধ্যম',
       division: 'বিভাগ',
       district: 'জেলা',
       subDistrict: 'উপজেলা',
-      village: 'গ্রাম/মহল্লা',
-      zone: 'জোন'
+      policeStation: 'থানা',
+      village: 'গ্রাম',
+      
+      // Madrasah Names (All required)
+      nameInBangla: 'বাংলা নাম',
+      nameInArabic: 'আরবি নাম',
+      
+      // Required Image
+      madrasahIlhakimage: 'মাদরাসা ইলহাকের ছবি'
     };
 
-    const missingFields = Object.entries(requiredFields)
-      .filter(([key]) => !formData[key])
-      .map(([_, label]) => label);
+    const errors: Record<string, string> = {};
+    Object.entries(requiredFields).forEach(([field, label]) => {
+      if (!formData[field]) {
+        errors[field] = `${label} আবশ্যক`;
+      }
+    });
 
-    if (missingFields.length > 0) {
-      toast.error(`অনুগ্রহ করে নিম্নলিখিত তথ্য পূরণ করুন:\n${missingFields.join('\n')}`);
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      toast.error('সকল প্রয়োজনীয় তথ্য পূরণ করুন');
       return;
     }
 
-    // Validate file sizes
-    const validateFileSize = (file: File | null, fieldName: string): boolean => {
-      if (file && file.size > 300 * 1024) {
-        toast.error(`${fieldName} সাইজ ৩০০ কেবি এর বেশি হতে পারবে না`);
-        return false;
-      }
-      return true;
-    };
-
-    const fileValidations = [
-      { file: formData.madrasahIlhakimage, name: 'মাদরাসার ইলহাক ছবির' }
-    ];
-
-    for (const { file, name } of fileValidations) {
-      if (!validateFileSize(file, name)) return;
-    }
-
+    setValidationErrors({});
     setIsLoading(true);
-  
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/madrasah/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-token': process.env.NEXT_PUBLIC_API_TOKEN as string,
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      const data = await response.json();
-      setSuccessMessage(data.message);
 
-      if (response.ok) {
+    try {
+      // Filter out empty fields but include optional fields even if empty
+      const filteredData = {
+        ...formData,
+        // Include optional fields with empty values
+        muhtamimName: formData.muhtamimName || '',
+        muhtamimNID: formData.muhtamimNID || '',
+        muhtamimMobile: formData.muhtamimMobile || '',
+        muhtamimEducation: formData.muhtamimEducation || '',
+        shikkhaSocheebName: formData.shikkhaSocheebName || '',
+        shikkhaSocheebNID: formData.shikkhaSocheebNID || '',
+        shikkhaSocheebMobile: formData.shikkhaSocheebMobile || '',
+        shikkhaSocheebEducation: formData.shikkhaSocheebEducation || '',
+        mutawalliName: formData.mutawalliName || '',
+        mutawalliDesignation: formData.mutawalliDesignation || '',
+        mutawalliNID: formData.mutawalliNID || '',
+        mutawalliMobile: formData.mutawalliMobile || ''
+      };
+
+      console.log('Filtered data:', filteredData);
+      const response = await registerMadrasah(filteredData);
+      console.log('Registration response:', response);
+      
+      if (response.success) {
+        setSuccessMessage(response.message || 'মাদরাসা নিবন্ধন সফলভাবে সম্পন্ন হয়েছে');
         setShowSuccessModal(true);
-        // Auto close modal after 3 seconds
-        setTimeout(() => {
-          setShowSuccessModal(false);
-          router.push('/dashboard/madrasah/register-madrasah');
-        }, 3000);
+        // Reset form data
+        setFormData({
+          communicatorName: '',
+          contactNo1: '',
+          contactNo2: '',
+          zone: '',
+          email: '',
+          nameInArabic: '',
+          nameInBangla: '',
+          nameInEnglish: '',
+          description: '',
+          highestMarhala: '',
+          totalStudent: '',
+          totalTeacherAndStaff: '',
+          madrasahType: '',
+          muhtamimName: '',
+          muhtamimNID: '',
+          muhtamimMobile: '',
+          muhtamimEducation: '',
+          district: '',
+          subDistrict: '',
+          division: '',
+          holdingNumber: '',
+          policeStation: '',
+          village: '',
+          courierAddress: '',
+          madrasahIlhakimage: '',
+          shikkhaSocheebName: '',
+          shikkhaSocheebNID: '',
+          shikkhaSocheebMobile: '',
+          shikkhaSocheebEducation: '',
+          mutawalliName: '',
+          mutawalliDesignation: '',
+          mutawalliNID: '',
+          mutawalliMobile: ''
+        });
       } else {
-        toast.error(data.message || 'কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন');
+        toast.error(response.message || 'কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন');
       }
     } catch (error) {
-      console.error('Form submission error:', error);
-      toast.error('সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন');
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="p-4 mt-12">
-      <div className="w-full md:w-[85%] mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">মাদরাসা নিবন্ধন</h1>
-          <p className="mt-2 text-sm text-gray-600">নতুন মাদরাসা নিবন্ধনের জন্য তথ্য পূরণ করুন</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-lg shadow">
-          <MadrasahNameAndBio formData={formData} handleChange={handleChange} />
-          <ContactInfoForm formData={formData} handleChange={handleChange} />
-          <MadrasahBasicInfo formData={formData} handleChange={handleChange} />
-          <LocationForm formData={formData} handleChange={handleChange} />
-          <MuhtamimInfo formData={formData} handleChange={handleChange} />
-          <EducationSecretory formData={formData} handleChange={handleChange} />
-          <MutawalliInfo formData={formData} handleChange={handleChange} />
-          
-          <div className="space-y-4">
-            <PhotoUpload
-              label="মাদরাসা ইলহাকের ছবি আপলোড"
-              value={formData.madrasahIlhakimage}
-              onChange={handleChange}
-              fieldName="madrasahIlhakimage"
-            />
-          </div>
-
-          {/* Submit Button */}
-          <div className="mt-8 flex justify-center">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-green-600 to-green-700 px-8 py-3 text-base font-medium text-white shadow-sm hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[600px]"
-            >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <ClipLoader size={20} color="#ffffff" />
-                  <span>প্রক্রিয়াজাত হচ্ছে...</span>
-                </div>
-              ) : (
-                'জমা দিন'
-              )}
-            </button>
-          </div>
-        </form>
+    <div className="p-6 mx-16 my-16">
+      <div className="mb-6 px-6 text-center">
+        <h1 className="text-3xl font-semibold text-gray-800">মাদরাসা নিবন্ধন</h1>
+        <p className="text-base text-gray-600 mt-1">নতুন মাদরাসা নিবন্ধনের জন্য তথ্য পূরণ করুন</p>
       </div>
 
-      {/* Success Modal */}
-      <Dialog
-        open={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
-      >
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-            <Dialog.Title className="text-lg font-medium text-green-600 mb-4">
-              সফল হয়েছে!
-            </Dialog.Title>
-            <p className="text-gray-700">{successMessage}</p>
-          </Dialog.Panel>
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white/80 rounded-lg shadow-md p-12">
+        <MadrasahNameAndBio 
+          formData={formData} 
+          handleChange={handleChange} 
+          errors={validationErrors}
+        />
+        <ContactInfo
+          formData={formData}
+          handleChange={handleChange}
+          errors={validationErrors}
+        />
+        <MadrasahBasicInfo 
+          formData={formData} 
+          handleChange={handleChange} 
+          errors={validationErrors}
+        />
+        <LocationForm 
+          formData={formData} 
+          handleChange={handleChange} 
+          errors={validationErrors}
+        />
+        <MuhtamimInfo 
+          formData={formData} 
+          handleChange={handleChange} 
+          errors={validationErrors}
+        />
+        <EducationSecretory 
+          formData={formData} 
+          handleChange={handleChange} 
+          errors={validationErrors}
+        />
+        <MutawalliInfo 
+          formData={formData} 
+          handleChange={handleChange} 
+          errors={validationErrors}
+        />
+
+        <ImageUpload 
+          label="মাদরাসা ইলহাকের ছবি" 
+          value={formData.madrasahIlhakimage} 
+          onChange={handleChange} 
+          fieldName="madrasahIlhakimage"
+          onImageUpload={(url) => handleChange('madrasahIlhakimage', url)}
+          error={validationErrors.madrasahIlhakimage}
+        />
+
+        <div className="flex justify-end mt-8">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="inline-flex items-center px-6 py-3 bg-[#45B39D] hover:bg-[#3B9C85] text-white font-medium rounded-md shadow-sm transition-colors duration-200 gap-2"
+          >
+            <PaperAirplaneIcon className="h-5 w-5" />
+            {isLoading ? (
+              <span className="flex items-center">
+                <ClipLoader size={20} color="white" className="mr-2" />
+                প্রক্রিয়াকরণ হচ্ছে...
+              </span>
+            ) : (
+              'নিবন্ধন করুন'
+            )}
+          </button>
         </div>
-      </Dialog>
+      </form>
+
+      <SuccessDialog
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message={successMessage}
+      />
     </div>
   );
 }

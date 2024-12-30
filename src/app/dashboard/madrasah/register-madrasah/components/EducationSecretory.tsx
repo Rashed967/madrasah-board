@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import PhotoUpload from './PhotoUpload';
+
 
 interface EducationSecretoryProps {
   formData: {
@@ -11,6 +11,7 @@ interface EducationSecretoryProps {
     shikkhaSocheebEducation: string;
   };
   handleChange: (field: string, value: string | File | null) => void;
+  errors?: Record<string, string>;
 }
 
 /**
@@ -18,7 +19,7 @@ interface EducationSecretoryProps {
  * Handles the staff information section of the madrasah registration form
  * Including Muhtamim, Shikkha Socheeb, and Shovapoti details
  */
-const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handleChange }) => {
+const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handleChange, errors }) => {
   return (
     <div className="space-y-8">
 

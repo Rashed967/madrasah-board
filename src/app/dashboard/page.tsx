@@ -67,29 +67,28 @@ export default function DashboardPage() {
           <p className="text-3xl font-bold text-[#52b788]">১২৫</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">নতুন মাদরাসা</h2>
-          <p className="text-3xl font-bold text-[#52b788]">১২</p>
+          <h2 className="text-lg font-semibold mb-2">মোট বালক মাদরাসা</h2>
+          <p className="text-3xl font-bold text-[#52b788]">১৩৩৫</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">মোট বালক মাদ্রাসা</h2>
-          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">মোট বালিকা মাদ্রাসা</h2>
-          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
+          <h2 className="text-lg font-semibold mb-2">মোট বালিকা মাদরাসা</h2>
+          <p className="text-3xl font-bold text-[#52b788]">৪৫৫</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-2">মোট কেন্দ্র</h2>
-          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
+          <p className="text-3xl font-bold text-[#52b788]">৪৫৫</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">মোট নেগরান</h2>
-          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
-        </div>
+
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-2">মোট মুমতাহিন</h2>
           <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
         </div>
+
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-2">মোট নেগরান</h2>
+          <p className="text-3xl font-bold text-[#52b788]">৭৫</p>
+        </div>
+
       </div>
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="h-[300px]">

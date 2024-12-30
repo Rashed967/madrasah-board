@@ -4,17 +4,13 @@ import React from 'react';
 
 interface MadrasahBasicInfoProps {
   formData: {
-    // nameInBangla: string;
-    // nameInArabic: string;
-    // nameInEnglish: string;
-    // description: string;
     highestMarhala: string;
     totalStudent: string;
     totalTeacherAndStaff: string;
     madrasahType: string;
-    year: string;
   };
   handleChange: (field: string, value: string) => void;
+  errors?: Record<string, string>;
 }
 
 /**
@@ -22,7 +18,7 @@ interface MadrasahBasicInfoProps {
  * Handles the basic information section of the madrasah registration form
  * Including madrasah names, description, and general statistics
  */
-const MadrasahBasicInfo: React.FC<MadrasahBasicInfoProps> = ({ formData, handleChange }) => {
+const MadrasahBasicInfo: React.FC<MadrasahBasicInfoProps> = ({ formData, handleChange, errors = {} }) => {
   return (
     <div className="space-y-6">
 
@@ -35,7 +31,7 @@ const MadrasahBasicInfo: React.FC<MadrasahBasicInfoProps> = ({ formData, handleC
             <select
               value={formData.highestMarhala}
               onChange={(e) => handleChange('highestMarhala', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.highestMarhala ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             >
               <option value="">মারহালা নির্বাচন করুন</option>
               <option value="ইফতা">ইফতা</option>
@@ -46,18 +42,24 @@ const MadrasahBasicInfo: React.FC<MadrasahBasicInfoProps> = ({ formData, handleC
               <option value="মুতাওয়াসসিতাহ (৮ম শ্রেনী)">মুতাওয়াসসিতাহ (৮ম শ্রেনী)</option>
               <option value="ইবতেদাইয়্যাহ (৫ম শ্রেনী)">ইবতেদাইয়্যাহ (৫ম শ্রেনী)</option>
             </select>
+            {errors.highestMarhala && (
+              <p className="mt-1 text-sm text-red-500">{errors.highestMarhala}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">মাদরাসার ধরণ</label>
             <select
               value={formData.madrasahType}
               onChange={(e) => handleChange('madrasahType', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.madrasahType ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             >
               <option value="">মাদরাসার ধরণ নির্বাচন করুন</option>
-              <option value="BOY">বালক</option>
-              <option value="GIRL">বালিকা</option>
+              <option value="বালক">বালক</option>
+              <option value="বালিকা">বালিকা</option>
             </select>
+            {errors.madrasahType && (
+              <p className="mt-1 text-sm text-red-500">{errors.madrasahType}</p>
+            )}
           </div>
   
           <div>
@@ -67,8 +69,11 @@ const MadrasahBasicInfo: React.FC<MadrasahBasicInfoProps> = ({ formData, handleC
               placeholder="মোট শিক্ষার্থী সংখ্যা লিখুন"
               value={formData.totalStudent}
               onChange={(e) => handleChange('totalStudent', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.totalStudent ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
+            {errors.totalStudent && (
+              <p className="mt-1 text-sm text-red-500">{errors.totalStudent}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">মোট শিক্ষক/শিক্ষিকা</label>
@@ -77,8 +82,11 @@ const MadrasahBasicInfo: React.FC<MadrasahBasicInfoProps> = ({ formData, handleC
               placeholder="মোট শিক্ষক/শিক্ষিকা সংখ্যা"
               value={formData.totalTeacherAndStaff}
               onChange={(e) => handleChange('totalTeacherAndStaff', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.totalTeacherAndStaff ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
+            {errors.totalTeacherAndStaff && (
+              <p className="mt-1 text-sm text-red-500">{errors.totalTeacherAndStaff}</p>
+            )}
           </div>
         </div>
       </div>

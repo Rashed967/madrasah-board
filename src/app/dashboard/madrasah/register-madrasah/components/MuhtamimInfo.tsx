@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import PhotoUpload from './PhotoUpload';
+
 
 interface MuhtamimInfoProps {
   formData: {
@@ -11,6 +11,7 @@ interface MuhtamimInfoProps {
     muhtamimEducation: string;
   };
   handleChange: (field: string, value: string | File | null) => void;
+  errors?: Record<string, string>;
 }
 
 /**
@@ -18,7 +19,7 @@ interface MuhtamimInfoProps {
  * Handles the staff information section of the madrasah registration form
  * Including Muhtamim, Shikkha Socheeb, and Shovapoti details
  */
-const MuhtamimInfo: React.FC<MuhtamimInfoProps> = ({ formData, handleChange }) => {
+const MuhtamimInfo: React.FC<MuhtamimInfoProps> = ({ formData, handleChange, errors = {} }) => {
   return (
     <div className="space-y-8">
       {/* Muhtamim Information */}
@@ -32,8 +33,11 @@ const MuhtamimInfo: React.FC<MuhtamimInfoProps> = ({ formData, handleChange }) =
               placeholder="মুহতামিমের নাম লিখুন"
               value={formData.muhtamimName}
               onChange={(e) => handleChange('muhtamimName', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.muhtamimName ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
+            {errors.muhtamimName && (
+              <p className="mt-1 text-sm text-red-500">{errors.muhtamimName}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">জাতীয় পরিচয়পত্র নম্বর</label>
@@ -42,8 +46,11 @@ const MuhtamimInfo: React.FC<MuhtamimInfoProps> = ({ formData, handleChange }) =
               placeholder="জাতীয় পরিচয়পত্র নম্বর লিখুন"
               value={formData.muhtamimNID}
               onChange={(e) => handleChange('muhtamimNID', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.muhtamimNID ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
+            {errors.muhtamimNID && (
+              <p className="mt-1 text-sm text-red-500">{errors.muhtamimNID}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">মোবাইল নম্বর</label>
@@ -52,8 +59,11 @@ const MuhtamimInfo: React.FC<MuhtamimInfoProps> = ({ formData, handleChange }) =
               placeholder="মোবাইল নম্বর লিখুন"
               value={formData.muhtamimMobile}
               onChange={(e) => handleChange('muhtamimMobile', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.muhtamimMobile ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
+            {errors.muhtamimMobile && (
+              <p className="mt-1 text-sm text-red-500">{errors.muhtamimMobile}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">শিক্ষাগত যোগ্যতা</label>
@@ -62,15 +72,14 @@ const MuhtamimInfo: React.FC<MuhtamimInfoProps> = ({ formData, handleChange }) =
               placeholder="শিক্ষাগত যোগ্যতা লিখুন"
               value={formData.muhtamimEducation}
               onChange={(e) => handleChange('muhtamimEducation', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className={`mt-1 block w-full rounded-md border ${errors.muhtamimEducation ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
+            {errors.muhtamimEducation && (
+              <p className="mt-1 text-sm text-red-500">{errors.muhtamimEducation}</p>
+            )}
           </div>
-
-
-          </div>
-
+        </div>
       </div>
-
     </div>
   );
 };
