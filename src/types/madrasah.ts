@@ -1,4 +1,4 @@
-import { ApiResponse, ListApiResponse } from './common';
+import { ApiResponse } from '@/services/apiService';
 
 export interface MadrasahNames {
   bengaliName: string;
@@ -72,4 +72,4 @@ export interface MadrasahData extends BaseMadrasah {
 }
 
 export type MadrasahApiResponse = ApiResponse<Madrasah>;
-export type MadrasahListApiResponse = ListApiResponse<Madrasah>;
+export type MadrasahListApiResponse = ApiResponse<Madrasah[]>;

@@ -16,11 +16,11 @@ export interface ApiErrorResponse {
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
-export interface ListApiSuccessResponse<T> {
+export interface ApiListSuccessResponse<T> {
   success: true;
   message: string;
   data: T[];
   meta: ApiMeta;
 }
 
-export type ListApiResponse<T> = ListApiSuccessResponse<T> | ApiErrorResponse;
+export type ApiListResponse<T> = ApiListSuccessResponse<T> | ApiErrorResponse;
