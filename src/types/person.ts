@@ -6,7 +6,7 @@ export interface BasePersonInfo {
 }
 
 export interface EducationalPersonInfo extends BasePersonInfo {
-  highestEducationQualification: string;
+  highestEducationalQualification: string;
 }
 
 export interface ChairmanMutawalli extends BasePersonInfo {

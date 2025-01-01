@@ -1,17 +1,8 @@
 import { post, get, patch } from './apiService';
-import { Madrasah, MadrasahData } from '@/types/madrasah';
-import { MadrasahBasicInfoUpdate } from '@/types/madrasahUpdate';
+import { Madrasah } from '@/types/madrasah';
 import { ApiResponse } from './apiService';
 import { getCurrentUser } from './authService';
-import {
-  transformMadrasahNames,
-  transformAddress,
-  transformMadrasahInfo,
-  transformMuhtamim,
-  transformChairmanMutawalli,
-  transformEducationalSecretary,
-  removeEmptyFields
-} from '@/utils/transformers';
+import { transformMadrasahFormToAPI } from '@/transforms';
 
 const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
 
@@ -31,24 +22,7 @@ export async function registerMadrasah(formData: any): Promise<ApiResponse<Madra
     };
   }
 
-  const contactInfo = removeEmptyFields({
-    communicatorName: formData.communicatorName || '',
-    email: formData.email || '',
-    contactNo1: formData.contactNo1 || '',
-    contactNo2: formData.contactNo2 || ''
-  });
-
-  const registrationData = {
-    ...transformMadrasahNames(formData),
-    ...transformAddress(formData),
-    ...transformMadrasahInfo(formData),
-    ...transformMuhtamim(formData),
-    ...transformChairmanMutawalli(formData),
-    ...transformEducationalSecretary(formData),
-    ...contactInfo,
-    description: formData.description || '',
-  };
-
+  const registrationData = transformMadrasahFormToAPI(formData);
   console.log('🚀 ~ file: madrasahService.ts:50 ~ registerMadrasah ~ registrationData:', registrationData);
 
   try {
@@ -92,7 +66,7 @@ export const getMadrasahById = async (id: string): Promise<ApiResponse<Madrasah>
   }
 };
 
-export const createMadrasah = async (data: MadrasahBasicInfoUpdate): Promise<ApiResponse<Madrasah>> => {
+export const createMadrasah = async (data: any): Promise<ApiResponse<Madrasah>> => {
   try {
     const response = await post<Madrasah>('/madrasah', data);
     return response;
@@ -108,7 +82,7 @@ export const createMadrasah = async (data: MadrasahBasicInfoUpdate): Promise<Api
 
 export const updateMadrasahBasicInfo = async (
   id: string,
-  data: MadrasahBasicInfoUpdate
+  data: any
 ): Promise<ApiResponse<Madrasah>> => {
   try {
     const response = await patch<Madrasah>(`/madrasah/${id}/basic-info`, data);

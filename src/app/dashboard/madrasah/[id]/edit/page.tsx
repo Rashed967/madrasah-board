@@ -225,7 +225,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       name: "",
       nidNumber: "",
       contactNo: "",
-      highestEducationQualification: ""
+      highestEducationalQualification: ""
     },
     chairman_mutawalli: {
       name: "",
@@ -237,7 +237,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       name: "",
       nidNumber: "",
       contactNo: "",
-      highestEducationQualification: ""
+      highestEducationalQualification: ""
     }
   });
 
@@ -282,7 +282,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
             name: data.muhtamim?.name || "",
             nidNumber: data.muhtamim?.nidNumber || "",
             contactNo: data.muhtamim?.contactNo || "",
-            highestEducationQualification: data.muhtamim?.highestEducationQualification || "",
+            highestEducationalQualification: data.muhtamim?.highestEducationalQualification || "",
 
           },
           chairman_mutawalli: {
@@ -295,7 +295,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
             name: data.educational_secretory?.name || "",
             nidNumber: data.educational_secretory?.nidNumber || "",
             contactNo: data.educational_secretory?.contactNo || "",
-            highestEducationQualification: data.educational_secretory?.highestEducationQualification || ""
+            highestEducationalQualification: data.educational_secretory?.highestEducationalQualification || ""
           }
         };
         setMadrasahData(formattedData);
@@ -608,7 +608,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
         <InputField
           label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
           name="muhtamim.highestEducationQualification"
-          value={madrasahData.muhtamim.highestEducationQualification}
+          value={madrasahData.muhtamim.highestEducationalQualification}
           onChange={(e) => setMadrasahData({
             ...madrasahData,
             muhtamim: {
@@ -721,7 +721,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
         <InputField
           label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
           name="educational_secretory.highestEducationQualification"
-          value={madrasahData.educational_secretory.highestEducationQualification}
+          value={madrasahData.educational_secretory.highestEducationalQualification}
           onChange={(e) => setMadrasahData({
             ...madrasahData,
             educational_secretory: {

@@ -7,6 +7,7 @@ export interface MadrasahNames {
 }
 
 export interface MadrasahAddress {
+  _id?: string;
   division: string;
   district: string;
   subDistrict: string;
@@ -30,7 +31,7 @@ export interface EducationalPersonInfo {
   name: string;
   nidNumber: string;
   contactNo: string;
-  highestEducationQualification: string;
+  highestEducationalQualification: string;
 }
 
 export interface ChairmanMutawalli {

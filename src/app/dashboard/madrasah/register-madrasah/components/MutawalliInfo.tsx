@@ -50,6 +50,7 @@ const MutawalliInfo: React.FC<MutawalliInfoProps> = ({ formData, handleChange, e
             onChange={(e) => handleChange('mutawalliDesignation', e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
           >
+            <option key="default" value="">পদবী নির্বাচন করুন</option>
             {mutawalliDesignations.map((designation) => (
               <option key={designation} value={designation}>
                 {designation}
