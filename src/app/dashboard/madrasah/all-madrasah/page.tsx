@@ -64,7 +64,6 @@ export default function AllMadrasah() {
     setSelectedDistrict("all");
     setSelectedSubDistrict("all");
     setSelectedPoliceStation("all");
-    fetchMadrasahs();
   }, [selectedDivision]);
 
   // Update subdistricts when district changes
@@ -77,7 +76,6 @@ export default function AllMadrasah() {
     }
     setSelectedSubDistrict("all");
     setSelectedPoliceStation("all");
-    fetchMadrasahs();
   }, [selectedDistrict]);
 
   // Update police stations when subdistrict changes
@@ -89,13 +87,12 @@ export default function AllMadrasah() {
       setAvailablePoliceStations([]);
     }
     setSelectedPoliceStation("all");
-    fetchMadrasahs();
   }, [selectedDistrict, selectedSubDistrict]);
 
-  // Fetch madrasahs when police station or madrasah type changes
+  // Single effect for fetching madrasahs when any filter changes
   useEffect(() => {
     fetchMadrasahs();
-  }, [selectedPoliceStation, selectedMadrasahType]);
+  }, [selectedDivision, selectedDistrict, selectedSubDistrict, selectedPoliceStation, selectedMadrasahType]);
 
   // Fetch madrasahs when search query changes (with debounce)
   useEffect(() => {
