@@ -1,22 +1,48 @@
 import { useState } from 'react';
-import { MadrasahData } from '@/types/madrasah';
+import { IMadrasah } from '@/types/global/madrasah.types';
 
 interface UseMadrasahFormReturn {
-  data: MadrasahData;
+  madrasahData: Partial<IMadrasah>;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  setData: React.Dispatch<React.SetStateAction<MadrasahData>>;
+  setMadrasahData: React.Dispatch<React.SetStateAction<Partial<IMadrasah>>>;
 }
 
-export const useMadrasahForm = (initialData: MadrasahData): UseMadrasahFormReturn => {
-  const [data, setData] = useState<MadrasahData>(initialData);
+export const useMadrasahForm = (initialData?: Partial<IMadrasah>): UseMadrasahFormReturn => {
+  const [madrasahData, setMadrasahData] = useState<Partial<IMadrasah>>(initialData || {
+    madrasahNames: {
+      bengaliName: '',
+      arabicName: '',
+      englishName: ''
+    },
+    email: '',
+    contactNo1: '',
+    contactNo2: '',
+    description: '',
+    address: {
+      division: '',
+      district: '',
+      subDistrict: '',
+      policeStation: '',
+      village: '',
+      holdingNumber: '',
+      zone: '',
+      courierAddress: ''
+    },
+    madrasah_information: {
+      highestMarhala: '',
+      totalStudents: 0,
+      totalTeacherAndStuff: 0,
+      madrasahType: ''
+    }
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setData((prev: MadrasahData) => {
-        const parentKey = parent as keyof MadrasahData;
+      setMadrasahData((prev: Partial<IMadrasah>) => {
+        const parentKey = parent as keyof Partial<IMadrasah>;
         const currentParent = prev[parentKey];
         
         if (currentParent && typeof currentParent === 'object' && !Array.isArray(currentParent)) {
@@ -26,18 +52,18 @@ export const useMadrasahForm = (initialData: MadrasahData): UseMadrasahFormRetur
               ...currentParent,
               [child]: value
             }
-          } as MadrasahData;
+          } as Partial<IMadrasah>;
         }
         return prev;
       });
     } else {
-      const key = name as keyof MadrasahData;
-      setData((prev: MadrasahData) => ({
+      const key = name as keyof Partial<IMadrasah>;
+      setMadrasahData((prev: Partial<IMadrasah>) => ({
         ...prev,
         [key]: value
-      } as MadrasahData));
+      } as Partial<IMadrasah>));
     }
   };
 
-  return { data, handleChange, setData };
+  return { madrasahData, handleChange, setMadrasahData };
 };

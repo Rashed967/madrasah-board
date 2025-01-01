@@ -1,75 +1,21 @@
 import { ApiResponse } from '@/services/apiService';
+import {
+  IMadrasah,
+  IMadrasahNames,
+  IMadrasahAddress,
+  IMadrasahInformation,
+  IEducationalPersonInfo,
+  IChairmanMutawalli
+} from './global/madrasah.types';
 
-export interface MadrasahNames {
-  bengaliName: string;
-  arabicName: string;
-  englishName: string;
-}
+// Re-export types from global
+export type {
+  IMadrasah as Madrasah,
+  IMadrasahNames as MadrasahNames,
+  IMadrasahAddress as MadrasahAddress,
+  IMadrasahInformation as MadrasahInformation,
+  IEducationalPersonInfo as EducationalPersonInfo,
+  IChairmanMutawalli as ChairmanMutawalli
+};
 
-export interface MadrasahAddress {
-  _id?: string;
-  division: string;
-  district: string;
-  subDistrict: string;
-  policeStation: string;
-  village: string;
-  holdingNumber: string;
-  zone: string;
-  courierAddress: string;
-}
-
-export interface MadrasahInformation {
-  _id?: string;
-  highestMarhala: string;
-  totalStudents: number;
-  totalTeacherAndStuff: number;
-  madrasahType: string;
-}
-
-export interface EducationalPersonInfo {
-  _id?: string;
-  name: string;
-  nidNumber: string;
-  contactNo: string;
-  highestEducationalQualification: string;
-}
-
-export interface ChairmanMutawalli {
-  _id?: string;
-  name: string;
-  nidNumber: string;
-  contactNo: string;
-  designation: string;
-}
-
-export interface BaseMadrasah {
-  _id?: string;
-  madrasahNames: MadrasahNames;
-  code: string;
-  email: string;
-  description: string;
-  communicatorName: string;
-  contactNo1: string;
-  contactNo2: string;
-  address: MadrasahAddress;
-  madrasah_information: MadrasahInformation;
-  ilhakImage?: string;
-  muhtamim?: EducationalPersonInfo;
-  chairman_mutawalli?: ChairmanMutawalli;
-  educational_secretory?: EducationalPersonInfo;
-}
-
-export interface Madrasah extends BaseMadrasah {
-  muhtamim: EducationalPersonInfo;
-  chairman_mutawalli: ChairmanMutawalli;
-  educational_secretory: EducationalPersonInfo;
-}
-
-export interface MadrasahData extends BaseMadrasah {
-  muhtamim: EducationalPersonInfo;
-  chairman_mutawalli: ChairmanMutawalli;
-  educational_secretory: EducationalPersonInfo;
-}
-
-export type MadrasahApiResponse = ApiResponse<Madrasah>;
-export type MadrasahListApiResponse = ApiResponse<Madrasah[]>;
+export type MadrasahApiResponse = ApiResponse<IMadrasah>;

@@ -1,23 +1,21 @@
-export interface BasePersonInfo {
-  _id?: string;
-  name: string;
-  nidNumber: string;
-  contactNo: string;
-}
+import {
+  IBasePersonInfo,
+  IEducationalPersonInfo,
+  IChairmanMutawalli
+} from './global/madrasah.types';
 
-export interface EducationalPersonInfo extends BasePersonInfo {
-  highestEducationalQualification: string;
-}
-
-export interface ChairmanMutawalli extends BasePersonInfo {
-  designation: string;
-}
-
-// Type guards
-export const isEducationalPerson = (person: BasePersonInfo): person is EducationalPersonInfo => {
-  return 'highestEducationQualification' in person;
+// Re-export types from global
+export type {
+  IBasePersonInfo as BasePersonInfo,
+  IEducationalPersonInfo as EducationalPersonInfo,
+  IChairmanMutawalli as ChairmanMutawalli
 };
 
-export const isChairmanMutawalli = (person: BasePersonInfo): person is ChairmanMutawalli => {
+// Type guards
+export const isEducationalPerson = (person: IBasePersonInfo): person is IEducationalPersonInfo => {
+  return 'highestEducationalQualification' in person;
+};
+
+export const isChairmanMutawalli = (person: IBasePersonInfo): person is IChairmanMutawalli => {
   return 'designation' in person;
 };

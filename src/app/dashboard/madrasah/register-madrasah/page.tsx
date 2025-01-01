@@ -98,8 +98,8 @@ export default function RegisterMadrasah() {
       village: 'গ্রাম',
       
       // Madrasah Names (All required)
-      nameInBangla: 'বাংলা নাম',
-      nameInArabic: 'আরবি নাম',
+      bengaliName: 'বাংলা নাম',
+      arabicName: 'আরবি নাম',
       
     };
 
@@ -152,9 +152,9 @@ export default function RegisterMadrasah() {
           contactNo2: '',
           zone: '',
           email: '',
-          nameInArabic: '',
-          nameInBangla: '',
-          nameInEnglish: '',
+          bengaliName: '',
+          arabicName: '',
+          englishName: '',
           description: '',
           highestMarhala: '',
           totalStudent: '',

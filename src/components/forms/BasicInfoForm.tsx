@@ -1,11 +1,10 @@
-import { MadrasahData } from '@/types/madrasah';
+import { IMadrasah } from '@/types/global/madrasah.types';
 import { ChangeEvent, FormEvent } from 'react';
 import { InputField } from './InputField';
 
-
-interface BasicInfoFormProps {
-  data: MadrasahData;
-  onChange: (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => void;
+interface Props {
+  madrasahData: Partial<IMadrasah>;
+  setMadrasahData: (data: Partial<IMadrasah>) => void;
 }
 
 // <InputField
@@ -16,9 +15,13 @@ interface BasicInfoFormProps {
 // />
 
 
-export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
+export default function BasicInfoForm({ madrasahData, setMadrasahData }: Props) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+  };
+
+  const onChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    setMadrasahData({ ...madrasahData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -30,7 +33,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         <InputField
           label="মাদ্রাসার নাম (বাংলায়)"
           name="madrasahNames.bengaliName"
-          value={data.madrasahNames.bengaliName}
+          value={madrasahData.madrasahNames?.bengaliName}
           onChange={onChange}
         />
       </div>
@@ -40,7 +43,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         <InputField
           label="মাদ্রাসার নাম (আরবি)"
           name="madrasahNames.arabicName"
-          value={data.madrasahNames.arabicName}
+          value={madrasahData.madrasahNames?.arabicName}
           onChange={onChange}
         />
       </div>
@@ -50,7 +53,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         <InputField
           label="মাদ্রাসার নাম (ইংরেজি)"
           name="madrasahNames.englishName"
-          value={data.madrasahNames.englishName}
+          value={madrasahData.madrasahNames?.englishName}
           onChange={onChange}
         />
       </div>
@@ -60,7 +63,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         <InputField
           label="যোগাযোগকারীর নাম"
           name="communicatorName"
-          value={data.communicatorName}
+          value={madrasahData.communicatorName}
           onChange={onChange}
         />
       </div>
@@ -70,7 +73,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         <InputField
           label="ইমেইল"
           name="email"
-          value={data.email}
+          value={madrasahData.email}
           onChange={onChange}
         />
       </div>
@@ -79,7 +82,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         <InputField
           label="যোগাযোগ নম্বর ১"
           name="contactNo1"
-          value={data.contactNo1}
+          value={madrasahData.contactNo1}
           onChange={onChange}
         />
       </div>
@@ -89,7 +92,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         <InputField
           label="যোগাযোগ নম্বর ২"
           name="contactNo2"
-          value={data.contactNo2}
+          value={madrasahData.contactNo2}
           onChange={onChange}
         />
       </div>
@@ -100,7 +103,7 @@ export default function BasicInfoForm({ data, onChange }: BasicInfoFormProps) {
         </label>
         <textarea
           name="description"
-          value={data.description}
+          value={madrasahData.description}
           onChange={onChange}
           className="mt-1 block w-full rounded-md border border-[#52B788] shadow-sm focus:border-[#52B788] ring-1 focus:ring-[#52B788] sm:text-sm h-20 px-3 py-2"
           placeholder="বিবরণ লিখুন"

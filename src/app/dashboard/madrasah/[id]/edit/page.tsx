@@ -14,7 +14,7 @@ import {
 import toast from "react-hot-toast";
 import { updateMadrasahBasicInfo, getMadrasahById } from '@/services/madrasahService';
 import { MadrasahBasicInfoUpdate } from '@/types/madrasahUpdate';
-import type { MadrasahData } from '@/types/madrasah';
+import type { Madrasah } from '@/types/madrasah';
 import BasicInfoForm from "@/components/forms/BasicInfoForm";
 import { useRouter } from 'next/navigation';
 import {
@@ -244,68 +244,78 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
   const router = useRouter();
 
   useEffect(() => {
-    const loadMadrasahData = async () => {
+    const loadMadrasahData = async (id: string) => {
       try {
-        const { data } = await getMadrasahById(params.id);
-        
-        const formattedData = {
-          _id: data._id,
-          madrasahNames: {
-            bengaliName: data.madrasahNames.bengaliName,
-            arabicName: data.madrasahNames.arabicName,
-            englishName: data.madrasahNames.englishName
-          },
-          code: data.code,
-          email: data.email,
-          description: data.description,
-          communicatorName: data.communicatorName,
-          contactNo1: data.contactNo1,
-          contactNo2: data.contactNo2,
-          ilhakImage: data.ilhakImage || "",
-          address: {
-            division: data.address.division,
-            district: data.address.district,
-            subDistrict: data.address.subDistrict,
-            policeStation: data.address.policeStation,
-            village: data.address.village,
-            holdingNumber: data.address.holdingNumber,
-            zone: data.address.zone,
-            courierAddress: data.address.courierAddress
-          },
-          madrasah_information: {
-            highestMarhala: data.madrasah_information.highestMarhala,
-            totalStudents: data.madrasah_information.totalStudents,
-            totalTeacherAndStuff: data.madrasah_information.totalTeacherAndStuff,
-            madrasahType: data.madrasah_information.madrasahType
-          },
-          muhtamim: {
-            name: data.muhtamim?.name || "",
-            nidNumber: data.muhtamim?.nidNumber || "",
-            contactNo: data.muhtamim?.contactNo || "",
-            highestEducationalQualification: data.muhtamim?.highestEducationalQualification || "",
+        const response = await getMadrasahById(id);
+        if (response.success && response.data) {
+          const data = response.data;
+          const formattedData = {
+            // Basic Info
+            madrasahNames: {
+              bengaliName: data.madrasahNames?.bengaliName || '',
+              arabicName: data.madrasahNames?.arabicName || '',
+              englishName: data.madrasahNames?.englishName || '',
+            },
+            // Contact Info
+            communicatorName: data.communicatorName || '',
+            email: data.email || '',
+            contactNo1: data.contactNo1 || '',
+            contactNo2: data.contactNo2 || '',
+            description: data.description || '',
+            
+            // Address
+            address: typeof data.address === 'string' ? {} : {
+              division: data.address?.division || '',
+              district: data.address?.district || '',
+              subDistrict: data.address?.subDistrict || '',
+              policeStation: data.address?.policeStation || '',
+              village: data.address?.village || '',
+              holdingNumber: data.address?.holdingNumber || '',
+              zone: data.address?.zone || '',
+              courierAddress: data.address?.courierAddress || '',
+            },
 
-          },
-          chairman_mutawalli: {
-            name: data.chairman_mutawalli?.name || "",
-            nidNumber: data.chairman_mutawalli?.nidNumber || "",
-            contactNo: data.chairman_mutawalli?.contactNo || "",
-            designation: data.chairman_mutawalli?.designation || ""
-          },
-          educational_secretory: {
-            name: data.educational_secretory?.name || "",
-            nidNumber: data.educational_secretory?.nidNumber || "",
-            contactNo: data.educational_secretory?.contactNo || "",
-            highestEducationalQualification: data.educational_secretory?.highestEducationalQualification || ""
-          }
-        };
-        setMadrasahData(formattedData);
+            // Madrasah Information
+            madrasah_information: typeof data.madrasah_information === 'string' ? {} : {
+              highestMarhala: data.madrasah_information?.highestMarhala || '',
+              totalStudents: data.madrasah_information?.totalStudents || 0,
+              totalTeacherAndStuff: data.madrasah_information?.totalTeacherAndStuff || 0,
+              madrasahType: data.madrasah_information?.madrasahType || '',
+            },
+
+            // Muhtamim
+            muhtamim: typeof data.muhtamim === 'string' ? {} : {
+              name: data.muhtamim?.name || '',
+              nidNumber: data.muhtamim?.nidNumber || '',
+              contactNo: data.muhtamim?.contactNo || '',
+              highestEducationalQualification: data.muhtamim?.highestEducationalQualification || '',
+            },
+
+            // Chairman/Mutawalli
+            chairman_mutawalli: typeof data.chairman_mutawalli === 'string' ? {} : {
+              name: data.chairman_mutawalli?.name || '',
+              nidNumber: data.chairman_mutawalli?.nidNumber || '',
+              contactNo: data.chairman_mutawalli?.contactNo || '',
+              designation: data.chairman_mutawalli?.designation || '',
+            },
+
+            // Educational Secretary
+            educational_secretory: typeof data.educational_secretory === 'string' ? {} : {
+              name: data.educational_secretory?.name || '',
+              nidNumber: data.educational_secretory?.nidNumber || '',
+              contactNo: data.educational_secretory?.contactNo || '',
+              highestEducationalQualification: data.educational_secretory?.highestEducationalQualification || '',
+            }
+          };
+          setMadrasahData(formattedData);
+        }
       } catch (error) {
         console.error('Error loading madrasah data:', error);
         toast.error('মাদ্রাসার তথ্য লোড করা সম্ভব হয়নি');
       }
     };
 
-    loadMadrasahData();
+    loadMadrasahData(params.id);
   }, [params.id]);
 
   const [activeTab, setActiveTab] = useState("basic");

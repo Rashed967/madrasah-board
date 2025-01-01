@@ -174,6 +174,16 @@ export default function AllMadrasah() {
     setShowPrintPreview(true);
   }, [madrasahs]);
 
+  const getAddressField = (address: Madrasah['address'] | string, field: keyof Madrasah['address']): string => {
+    if (typeof address === 'string') return '';
+    return address[field] || '';
+  };
+
+  const getMadrasahInfoField = (info: Madrasah['madrasah_information'] | string, field: keyof Madrasah['madrasah_information']): string | number => {
+    if (typeof info === 'string') return '';
+    return info[field] || '';
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -360,7 +370,12 @@ export default function AllMadrasah() {
             </div>
           </div>
 
-          <MadrasahTable madrasahs={madrasahs} onDelete={handleDelete} />
+          <MadrasahTable 
+            madrasahs={madrasahs} 
+            onDelete={handleDelete} 
+            getAddressField={getAddressField}
+            getMadrasahInfoField={getMadrasahInfoField}
+          />
 
           <Pagination
             currentPage={currentPage}
