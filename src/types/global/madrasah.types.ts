@@ -85,9 +85,9 @@ export interface IMadrasah {
 // Form data interface for client-side
 export interface IMadrasahFormData {
     // Madrasah Names
-    bengaliName: string;
-    arabicName: string;
-    englishName?: string;
+    nameInBangla: string;
+    nameInArabic: string;
+    nameInEnglish?: string;
 
     // Contact Info
     communicatorName?: string;

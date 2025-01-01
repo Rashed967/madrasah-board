@@ -13,7 +13,6 @@ import { StatusDialog } from '@/components/ui/status-dialog';
 export default function AllZones() {
   const [zones, setZones] = useState<Zone[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [editingZone, setEditingZone] = useState<Zone | null>(null);
@@ -33,8 +32,6 @@ export default function AllZones() {
     title: '',
     message: ''
   });
-
-  const zonesPerPage = 5;
 
   useEffect(() => {
     loadZones();
@@ -71,22 +68,6 @@ export default function AllZones() {
       return matchesSearch && matchesZoneFilter;
     });
   }, [zones, searchQuery, selectedZone]);
-
-  // Pagination
-  const paginatedZones = useMemo(() => {
-    const startIndex = (currentPage - 1) * zonesPerPage;
-    return filteredZones.slice(startIndex, startIndex + zonesPerPage);
-  }, [filteredZones, currentPage]);
-
-  const totalPages = Math.ceil(filteredZones.length / zonesPerPage);
-
-  const handlePreviousPage = () => {
-    setCurrentPage(prev => Math.max(1, prev - 1));
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(totalPages, prev + 1));
-  };
 
   // Modals
   const handleShowDetails = (zone: Zone) => {
@@ -174,7 +155,7 @@ export default function AllZones() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {paginatedZones.map((zone) => (
+            {filteredZones.map((zone) => (
               <tr key={zone._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{zone.name}</div>
@@ -218,26 +199,10 @@ export default function AllZones() {
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* Total count */}
       <div className="mt-4 flex justify-between items-center">
         <div className="text-sm text-gray-700">
-          মোট {filteredZones.length}টি জোনের মধ্যে {(currentPage - 1) * zonesPerPage + 1} - {Math.min(currentPage * zonesPerPage, filteredZones.length)} দেখাচ্ছে
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handlePreviousPage}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
-          >
-            পূর্ববর্তী
-          </button>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded-md hover:bg-gray-100 disabled:opacity-50"
-          >
-            পরবর্তী
-          </button>
+          মোট {filteredZones.length}টি জোন দেখাচ্ছে
         </div>
       </div>
 

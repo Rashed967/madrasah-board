@@ -85,7 +85,7 @@ export const updateMadrasahBasicInfo = async (
   data: any
 ): Promise<ApiResponse<Madrasah>> => {
   try {
-    const response = await patch<Madrasah>(`/madrasah/${id}/basic-info`, data);
+    const response = await patch<Madrasah>(`/madrasah/${id}`, data);
     return response;
   } catch (error: any) {
     return {

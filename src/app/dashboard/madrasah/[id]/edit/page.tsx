@@ -191,7 +191,7 @@ const ImageUpload = ({ label, imageUrl, onImageChange, previewUrl = null }) => {
 
 export default function EditMadrasahPage({ params }: { params: { id: string } }) {
   const { id } = params;
-  const { data: madrasahData, handleChange, setData: setMadrasahData } = useMadrasahForm({
+  const { madrasahData, setMadrasahData } = useMadrasahForm({
     _id: "",
     madrasahNames: {
       bengaliName: "",
@@ -241,82 +241,48 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
     }
   });
 
+  const [initialAddress, setInitialAddress] = useState(null);
+
   const router = useRouter();
 
   useEffect(() => {
-    const loadMadrasahData = async (id: string) => {
+    const fetchMadrasahData = async () => {
       try {
         const response = await getMadrasahById(id);
-        if (response.success && response.data) {
-          const data = response.data;
-          const formattedData = {
-            // Basic Info
-            madrasahNames: {
-              bengaliName: data.madrasahNames?.bengaliName || '',
-              arabicName: data.madrasahNames?.arabicName || '',
-              englishName: data.madrasahNames?.englishName || '',
-            },
-            // Contact Info
-            communicatorName: data.communicatorName || '',
-            email: data.email || '',
-            contactNo1: data.contactNo1 || '',
-            contactNo2: data.contactNo2 || '',
-            description: data.description || '',
-            
-            // Address
-            address: typeof data.address === 'string' ? {} : {
-              division: data.address?.division || '',
-              district: data.address?.district || '',
-              subDistrict: data.address?.subDistrict || '',
-              policeStation: data.address?.policeStation || '',
-              village: data.address?.village || '',
-              holdingNumber: data.address?.holdingNumber || '',
-              zone: data.address?.zone || '',
-              courierAddress: data.address?.courierAddress || '',
-            },
-
-            // Madrasah Information
-            madrasah_information: typeof data.madrasah_information === 'string' ? {} : {
-              highestMarhala: data.madrasah_information?.highestMarhala || '',
-              totalStudents: data.madrasah_information?.totalStudents || 0,
-              totalTeacherAndStuff: data.madrasah_information?.totalTeacherAndStuff || 0,
-              madrasahType: data.madrasah_information?.madrasahType || '',
-            },
-
-            // Muhtamim
-            muhtamim: typeof data.muhtamim === 'string' ? {} : {
-              name: data.muhtamim?.name || '',
-              nidNumber: data.muhtamim?.nidNumber || '',
-              contactNo: data.muhtamim?.contactNo || '',
-              highestEducationalQualification: data.muhtamim?.highestEducationalQualification || '',
-            },
-
-            // Chairman/Mutawalli
-            chairman_mutawalli: typeof data.chairman_mutawalli === 'string' ? {} : {
-              name: data.chairman_mutawalli?.name || '',
-              nidNumber: data.chairman_mutawalli?.nidNumber || '',
-              contactNo: data.chairman_mutawalli?.contactNo || '',
-              designation: data.chairman_mutawalli?.designation || '',
-            },
-
-            // Educational Secretary
-            educational_secretory: typeof data.educational_secretory === 'string' ? {} : {
-              name: data.educational_secretory?.name || '',
-              nidNumber: data.educational_secretory?.nidNumber || '',
-              contactNo: data.educational_secretory?.contactNo || '',
-              highestEducationalQualification: data.educational_secretory?.highestEducationalQualification || '',
-            }
-          };
-          setMadrasahData(formattedData);
+        if (response.success) {
+          setMadrasahData(response.data);
+          setInitialAddress(response.data.address);
+          console.log('Fetched madrasah data:', response.data);
         }
       } catch (error) {
-        console.error('Error loading madrasah data:', error);
-        toast.error('মাদ্রাসার তথ্য লোড করা সম্ভব হয়নি');
+        console.error('Error fetching madrasah data:', error);
       }
     };
 
-    loadMadrasahData(params.id);
-  }, [params.id]);
+    if (id) {
+      fetchMadrasahData();
+    }
+  }, [id]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setMadrasahData(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value
+        }
+      }));
+    } else {
+      setMadrasahData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
 
   const [activeTab, setActiveTab] = useState("basic");
   const [isLoading, setIsLoading] = useState(false);
@@ -349,7 +315,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
         communicatorName: madrasahData.communicatorName,
         contactNo1: madrasahData.contactNo1,
         contactNo2: madrasahData.contactNo2,
-        ilhakImage: madrasahData.ilhakImage
+        ilhakImage: madrasahData.ilhakImage || ''
       };
 
       const response = await updateMadrasahBasicInfo(params.id, updateData);
@@ -375,13 +341,12 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
     }
   };
 
-  const handleAddressSubmit = async (e: React.MouseEvent) => {
+  const handleAddressUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Current madrasahData:', madrasahData);
     setIsLoading(true);
 
     try {
-      if (!madrasahData.address._id) {
+      if (!madrasahData.address?._id) {
         setStatusDialog({
           isOpen: true,
           title: 'ত্রুটি',
@@ -397,11 +362,11 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       const fields = ['division', 'district', 'subDistrict', 'policeStation', 'village', 'holdingNumber', 'zone'];
       
       fields.forEach(field => {
-        const value = madrasahData.address[field];
-        const initialValue = madrasahData.address[field];
-        console.log(`Checking field ${field}:`, { current: value, initial: initialValue });
-        if (value && value !== initialValue) {
-          addressData[field] = value;
+        const currentValue = madrasahData.address[field];
+        const initialValue = initialAddress?.[field];
+        console.log(`Checking field ${field}:`, { current: currentValue, initial: initialValue });
+        if (currentValue && currentValue !== initialValue) {
+          addressData[field] = currentValue;
         }
       });
 
@@ -424,14 +389,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       console.log('Server response:', response);
       
       if (response.success) {
-        setMadrasahData({
-          ...madrasahData,
-          address: {
-            ...madrasahData.address,
-            ...addressData
-          }
-        });
-        
+        setInitialAddress(madrasahData.address); // Update initial address after successful save
         setStatusDialog({
           isOpen: true,
           title: 'সফল',
@@ -472,7 +430,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
 
   const renderBasicInformation = () => (
     <form onSubmit={handleBasicInfoUpdate}>
-      <BasicInfoForm data={madrasahData} onChange={handleChange} />
+      <BasicInfoForm madrasahData={madrasahData} onChange={handleChange} />
       <div className="mt-8 flex justify-end">
         <button
           type="submit"
@@ -504,7 +462,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
         />
         <div className="mt-6 flex justify-end">
           <button
-            onClick={handleAddressSubmit}
+            onClick={handleAddressUpdate}
             disabled={isLoading}
             className="px-4 py-2 bg-[#52b788] text-white rounded-md hover:bg-[#52b788]/90 transition-colors duration-200 disabled:opacity-50"
           >

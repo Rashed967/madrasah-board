@@ -98,8 +98,8 @@ export default function RegisterMadrasah() {
       village: 'গ্রাম',
       
       // Madrasah Names (All required)
-      bengaliName: 'বাংলা নাম',
-      arabicName: 'আরবি নাম',
+      nameInBangla: 'বাংলা নাম',
+      nameInArabic: 'আরবি নাম',
       
     };
 
@@ -116,6 +116,7 @@ export default function RegisterMadrasah() {
       return;
     }
 
+    console.log('Validation errors:');
     setValidationErrors({});
     setIsLoading(true);
 

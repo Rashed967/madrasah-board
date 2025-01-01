@@ -41,6 +41,6 @@ export async function createZone(data: CreateZoneData): Promise<ApiResponse<Zone
 }
 
 export async function getAllZones(): Promise<ApiResponse<Zone[]>> {
-  const response = await get<Zone[]>('/zones');
+  const response = await get<Zone[]>('/zones?limit=1000'); // Set a high limit to get all zones
   return response;
 }

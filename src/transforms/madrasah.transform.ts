@@ -10,9 +10,9 @@ export const transformMadrasahFormToAPI = (formData: Partial<MadrasahFormData>):
   const result: Partial<MadrasahAPIData> = {
     // Madrasah Names
     madrasahNames: removeEmptyFields({
-      bengaliName: formData.bengaliName || '',
-      arabicName: formData.arabicName || '',
-      englishName: formData.englishName || ''
+      bengaliName: formData.nameInBangla || '',
+      arabicName: formData.nameInArabic || '',
+      englishName: formData.nameInEnglish || ''
     }),
 
     // Contact Info
