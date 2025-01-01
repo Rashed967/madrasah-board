@@ -77,7 +77,7 @@ export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Pro
 
 export const getMadrasahById = async (id: string): Promise<ApiResponse<Madrasah>> => {
   try {
-    const response = await get<ApiResponse<Madrasah>>(`/madrasah/${id}`);
+    const response = await get<Madrasah>(`/madrasah/${id}`);
     return response;
   } catch (error: any) {
     return {
