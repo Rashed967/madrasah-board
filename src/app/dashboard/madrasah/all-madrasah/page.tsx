@@ -54,54 +54,6 @@ export default function AllMadrasah() {
   const [availableSubDistricts, setAvailableSubDistricts] = useState<string[]>([]);
   const [availablePoliceStations, setAvailablePoliceStations] = useState<string[]>([]);
 
-  // Update districts when division changes
-  useEffect(() => {
-    if (selectedDivision && selectedDivision !== "all") {
-      setAvailableDistricts(Object.keys(divisions[selectedDivision]));
-    } else {
-      setAvailableDistricts([]);
-    }
-    setSelectedDistrict("all");
-    setSelectedSubDistrict("all");
-    setSelectedPoliceStation("all");
-  }, [selectedDivision]);
-
-  // Update subdistricts when district changes
-  useEffect(() => {
-    if (selectedDistrict && selectedDistrict !== "all") {
-      const availableSubDistrictsArray = getSubDistricts(selectedDistrict);
-      setAvailableSubDistricts(availableSubDistrictsArray);
-    } else {
-      setAvailableSubDistricts([]);
-    }
-    setSelectedSubDistrict("all");
-    setSelectedPoliceStation("all");
-  }, [selectedDistrict]);
-
-  // Update police stations when subdistrict changes
-  useEffect(() => {
-    if (selectedDistrict && selectedSubDistrict && selectedSubDistrict !== "all") {
-      const availablePoliceStationsArray = getPoliceStations(selectedDistrict, selectedSubDistrict);
-      setAvailablePoliceStations(availablePoliceStationsArray);
-    } else {
-      setAvailablePoliceStations([]);
-    }
-    setSelectedPoliceStation("all");
-  }, [selectedDistrict, selectedSubDistrict]);
-
-  // Single effect for fetching madrasahs when any filter changes
-  useEffect(() => {
-    fetchMadrasahs();
-  }, [selectedDivision, selectedDistrict, selectedSubDistrict, selectedPoliceStation, selectedMadrasahType]);
-
-  // Fetch madrasahs when search query changes (with debounce)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchMadrasahs();
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
   const fetchMadrasahs = useCallback(async () => {
     try {
       setLoading(true);
@@ -150,31 +102,53 @@ export default function AllMadrasah() {
         );
       }
 
-      // Calculate pagination
-      const totalItems = filteredMadrasahs.length;
-      setTotalPages(Math.ceil(totalItems / ITEMS_PER_PAGE));
-
-      // Get current page items
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const endIndex = startIndex + ITEMS_PER_PAGE;
-      const currentItems = filteredMadrasahs.slice(startIndex, endIndex);
-
-      setMadrasahs(currentItems);
+      setMadrasahs(filteredMadrasahs);
+      setTotalPages(Math.ceil(filteredMadrasahs.length / ITEMS_PER_PAGE));
     } catch (err) {
-      setError("মাদরাসার তথ্য লোড করতে সমস্যা হয়েছে");
-      console.error(err);
+      setError('Failed to fetch madrasahs');
+      console.error('Error fetching madrasahs:', err);
     } finally {
       setLoading(false);
     }
-  }, [
-    currentPage,
-    selectedDivision,
-    selectedDistrict,
-    selectedSubDistrict,
-    selectedPoliceStation,
-    selectedMadrasahType,
-    searchQuery,
-  ]);
+  }, [selectedDivision, selectedDistrict, selectedSubDistrict, selectedPoliceStation, selectedMadrasahType, searchQuery]);
+
+  // Initial fetch on mount
+  useEffect(() => {
+    fetchMadrasahs();
+  }, [fetchMadrasahs]);
+
+  // Update districts when division changes
+  useEffect(() => {
+    if (selectedDivision && selectedDivision !== "all") {
+      setAvailableDistricts(Object.keys(divisions[selectedDivision]));
+      setSelectedDistrict("all");
+      setSelectedSubDistrict("all");
+      setSelectedPoliceStation("all");
+    } else {
+      setAvailableDistricts([]);
+    }
+  }, [selectedDivision]);
+
+  // Update subdistricts when district changes
+  useEffect(() => {
+    if (selectedDistrict && selectedDistrict !== "all") {
+      setAvailableSubDistricts(getSubDistricts(selectedDistrict));
+      setSelectedSubDistrict("all");
+      setSelectedPoliceStation("all");
+    } else {
+      setAvailableSubDistricts([]);
+    }
+  }, [selectedDistrict]);
+
+  // Update police stations when subdistrict changes
+  useEffect(() => {
+    if (selectedDistrict && selectedSubDistrict && selectedSubDistrict !== "all") {
+      setAvailablePoliceStations(getPoliceStations(selectedDistrict, selectedSubDistrict));
+      setSelectedPoliceStation("all");
+    } else {
+      setAvailablePoliceStations([]);
+    }
+  }, [selectedDistrict, selectedSubDistrict]);
 
   const handleDelete = async (id: string) => {
     if (window.confirm("আপনি কি নিশ্চিত যে আপনি এই মাদরাসাটি মুছে ফেলতে চান?")) {
@@ -198,10 +172,6 @@ export default function AllMadrasah() {
     setPrintContent(generatePrintContent(madrasahs, type));
     setShowPrintPreview(true);
   }, [madrasahs]);
-
-  useEffect(() => {
-    fetchMadrasahs();
-  }, [fetchMadrasahs]);
 
   if (loading) {
     return <LoadingSpinner />;
