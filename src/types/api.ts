@@ -1,15 +1,26 @@
-import { Madrasah } from './madrasah';
 import { ApiMeta } from './common';
 
-export interface ApiResponse<T> {
-  success: boolean;
+export interface ApiSuccessResponse<T> {
+  success: true;
   message: string;
   data: T;
   meta?: ApiMeta;
 }
 
-export interface MadrasahApiResponse extends ApiResponse<Madrasah> {}
+export interface ApiErrorResponse {
+  success: false;
+  message: string;
+  data: null;
+  meta?: ApiMeta;
+}
 
-export interface MadrasahListApiResponse extends ApiResponse<Madrasah[]> {
+export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+export interface ListApiSuccessResponse<T> {
+  success: true;
+  message: string;
+  data: T[];
   meta: ApiMeta;
 }
+
+export type ListApiResponse<T> = ListApiSuccessResponse<T> | ApiErrorResponse;

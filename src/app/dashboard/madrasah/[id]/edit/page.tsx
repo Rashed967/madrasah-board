@@ -28,6 +28,7 @@ import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { updateMadrasahAddress } from '@/services/addressService';
 import { AddressForm } from '@/components/forms/AddressForm';
 import { MadrasahAddress } from '@/types/address';
+import { useMadrasahForm } from '@/hooks/useMadrasahForm';
 
 interface TabProps {
   label: string;
@@ -189,28 +190,13 @@ const ImageUpload = ({ label, imageUrl, onImageChange, previewUrl = null }) => {
 };
 
 export default function EditMadrasahPage({ params }: { params: { id: string } }) {
-  const [activeTab, setActiveTab] = useState("basic");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [statusDialog, setStatusDialog] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: 'success' | 'error' | 'info';
-  }>({
-    isOpen: false,
-    title: '',
-    message: '',
-    type: 'info'
-  });
-
-  // Initial state with all required fields
-  const [madrasahData, setMadrasahData] = useState<MadrasahData>({
+  const { id } = params;
+  const { data: madrasahData, handleChange, setData: setMadrasahData } = useMadrasahForm({
     _id: "",
     madrasahNames: {
       bengaliName: "",
       arabicName: "",
-      englishName: "" // Make sure englishName is provided
+      englishName: "" 
     },
     code: "",
     email: "",
@@ -265,10 +251,9 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
   useEffect(() => {
     const loadMadrasahData = async () => {
       try {
-        setIsLoading(true);
         const { data } = await getMadrasahById(params.id);
         
-        const formattedData: MadrasahData = {
+        const formattedData = {
           _id: data._id,
           madrasahNames: {
             bengaliName: data.madrasahNames.bengaliName,
@@ -327,39 +312,33 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       } catch (error) {
         console.error('Error loading madrasah data:', error);
         toast.error('মাদ্রাসার তথ্য লোড করা সম্ভব হয়নি');
-      } finally {
-        setIsLoading(false);
       }
     };
 
     loadMadrasahData();
   }, [params.id]);
 
-  const handleMadrasahDataChange = (data: Partial<MadrasahData>) => {
-    setMadrasahData(prevData => ({
-      ...prevData,
-      ...data,
-      muhtamim: data.muhtamim ? {
-        ...prevData.muhtamim,
-        ...data.muhtamim,
-      } : prevData.muhtamim,
-      chairman_mutawalli: data.chairman_mutawalli ? {
-        ...prevData.chairman_mutawalli,
-        ...data.chairman_mutawalli,
-      } : prevData.chairman_mutawalli,
-      educational_secretory: data.educational_secretory ? {
-        ...prevData.educational_secretory,
-        ...data.educational_secretory,
-      } : prevData.educational_secretory
-    }));
-  };
+  const [activeTab, setActiveTab] = useState("basic");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusDialog, setStatusDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'success' | 'error' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info'
+  });
 
   const handleBasicInfoUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
       
-      const updateData: MadrasahBasicInfoUpdate = {
+      const updateData = {
         madrasahNames: {
           bengaliName: madrasahData.madrasahNames.bengaliName,
           arabicName: madrasahData.madrasahNames.arabicName,
@@ -396,35 +375,6 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
     }
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
-    
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setMadrasahData((prev: MadrasahData) => {
-        const parentKey = parent as keyof MadrasahData;
-        const currentParent = prev[parentKey];
-        
-        if (currentParent && typeof currentParent === 'object' && !Array.isArray(currentParent)) {
-          return {
-            ...prev,
-            [parentKey]: {
-              ...currentParent,
-              [child]: value
-            }
-          } as MadrasahData;
-        }
-        return prev;
-      });
-    } else {
-      const key = name as keyof MadrasahData;
-      setMadrasahData((prev: MadrasahData) => ({
-        ...prev,
-        [key]: value
-      } as MadrasahData));
-    }
-  };
-
   const handleAddressSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     console.log('Current madrasahData:', madrasahData);
@@ -443,7 +393,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       }
 
       // Get changed address fields
-      const addressData: Partial<MadrasahAddress> = {};
+      const addressData = {};
       const fields = ['division', 'district', 'subDistrict', 'policeStation', 'village', 'holdingNumber', 'zone'];
       
       fields.forEach(field => {
@@ -474,7 +424,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       console.log('Server response:', response);
       
       if (response.success) {
-        handleMadrasahDataChange({
+        setMadrasahData({
           ...madrasahData,
           address: {
             ...madrasahData.address,
@@ -510,7 +460,8 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
   };
 
   const handleImageChange = (section: string, imageFile: File, previewUrl: string) => {
-    handleMadrasahDataChange({
+    setMadrasahData({
+      ...madrasahData,
       [section]: {
         ...madrasahData[section],
         image: URL.createObjectURL(imageFile),
@@ -521,7 +472,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
 
   const renderBasicInformation = () => (
     <form onSubmit={handleBasicInfoUpdate}>
-      <BasicInfoForm data={madrasahData} onChange={(e) => handleMadrasahDataChange(e)} />
+      <BasicInfoForm data={madrasahData} onChange={handleChange} />
       <div className="mt-8 flex justify-end">
         <button
           type="submit"
@@ -542,7 +493,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           onChange={(e) => {
             const { name, value } = e.target;
             const fieldName = name.split('.')[1]; // Extract field name from "address.fieldName"
-            handleMadrasahDataChange({
+            setMadrasahData({
               ...madrasahData,
               address: {
                 ...madrasahData.address,
@@ -572,7 +523,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="সর্বোচ্চ মারহালা"
           name="madrasah_information.highestMarhala"
           value={madrasahData.madrasah_information.highestMarhala}
-          onChange={(name, value) => handleMadrasahDataChange({
+          onChange={(name, value) => setMadrasahData({
             ...madrasahData,
             madrasah_information: {
               ...madrasahData.madrasah_information,
@@ -585,7 +536,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="মাদ্রাসার ধরণ"
           name="madrasah_information.madrasahType"
           value={madrasahData.madrasah_information.madrasahType}
-          onChange={(name, value) => handleMadrasahDataChange({
+          onChange={(name, value) => setMadrasahData({
             ...madrasahData,
             madrasah_information: {
               ...madrasahData.madrasah_information,
@@ -599,7 +550,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           name="madrasah_information.totalStudents"
           type="number"
           value={madrasahData.madrasah_information.totalStudents}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             madrasah_information: {
               ...madrasahData.madrasah_information,
@@ -612,7 +563,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           name="madrasah_information.totalTeacherAndStuff"
           type="number"
           value={madrasahData.madrasah_information.totalTeacherAndStuff}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             madrasah_information: {
               ...madrasahData.madrasah_information,
@@ -632,7 +583,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="নাম"
           name="muhtamim.name"
           value={madrasahData.muhtamim.name}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             muhtamim: {
               ...madrasahData.muhtamim,
@@ -644,7 +595,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="যোগাযোগ নম্বর"
           name="muhtamim.contactNo"
           value={madrasahData.muhtamim.contactNo}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             muhtamim: {
               ...madrasahData.muhtamim,
@@ -656,7 +607,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="এনআইডি নম্বর"
           name="muhtamim.nidNumber"
           value={madrasahData.muhtamim.nidNumber}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             muhtamim: {
               ...madrasahData.muhtamim,
@@ -668,7 +619,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
           name="muhtamim.highestEducationQualification"
           value={madrasahData.muhtamim.highestEducationQualification}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             muhtamim: {
               ...madrasahData.muhtamim,
@@ -688,7 +639,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="নাম"
           name="chairman_mutawalli.name"
           value={madrasahData.chairman_mutawalli.name}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             chairman_mutawalli: {
               ...madrasahData.chairman_mutawalli,
@@ -700,7 +651,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="যোগাযোগ নম্বর"
           name="chairman_mutawalli.contactNo"
           value={madrasahData.chairman_mutawalli.contactNo}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             chairman_mutawalli: {
               ...madrasahData.chairman_mutawalli,
@@ -712,7 +663,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="এনআইডি নম্বর"
           name="chairman_mutawalli.nidNumber"
           value={madrasahData.chairman_mutawalli.nidNumber}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             chairman_mutawalli: {
               ...madrasahData.chairman_mutawalli,
@@ -724,7 +675,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="পদবি"
           name="chairman_mutawalli.designation"
           value={madrasahData.chairman_mutawalli.designation}
-          onChange={(name, value) => handleMadrasahDataChange({
+          onChange={(name, value) => setMadrasahData({
             ...madrasahData,
             chairman_mutawalli: {
               ...madrasahData.chairman_mutawalli,
@@ -745,7 +696,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="নাম"
           name="educational_secretory.name"
           value={madrasahData.educational_secretory.name}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             educational_secretory: {
               ...madrasahData.educational_secretory,
@@ -757,7 +708,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="যোগাযোগ নম্বর"
           name="educational_secretory.contactNo"
           value={madrasahData.educational_secretory.contactNo}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             educational_secretory: {
               ...madrasahData.educational_secretory,
@@ -769,7 +720,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="এনআইডি নম্বর"
           name="educational_secretory.nidNumber"
           value={madrasahData.educational_secretory.nidNumber}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             educational_secretory: {
               ...madrasahData.educational_secretory,
@@ -781,7 +732,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
           name="educational_secretory.highestEducationQualification"
           value={madrasahData.educational_secretory.highestEducationQualification}
-          onChange={(e) => handleMadrasahDataChange({
+          onChange={(e) => setMadrasahData({
             ...madrasahData,
             educational_secretory: {
               ...madrasahData.educational_secretory,
