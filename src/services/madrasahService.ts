@@ -61,23 +61,9 @@ export async function registerMadrasah(formData: any): Promise<ApiResponse<Madra
   }
 }
 
-export const getMadrasahList = async (page = 1, limit = 10): Promise<ApiResponse<Madrasah[]>> => {
-  try {
-    const response = await get<ApiResponse<Madrasah[]>>(`/madrasah?page=${page}&limit=${limit}`);
-    return response;
-  } catch (error: any) {
-    return {
-      success: false,
-      statusCode: error?.response?.status || 500,
-      message: error?.response?.data?.message || 'মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে',
-      data: null as any
-    };
-  }
-};
-
 export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Promise<ApiResponse<Madrasah[]>> => {
   try {
-    const response = await get<ApiResponse<Madrasah[]>>(`/madrasah?page=${page}&limit=${limit}`);
+    const response = await get<Madrasah[]>(`/madrasah?page=${page}&limit=${limit}`);
     return response;
   } catch (error: any) {
     return {
