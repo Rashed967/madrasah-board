@@ -39,7 +39,7 @@ export async function registerMadrasah(formData: any): Promise<ApiResponse<Madra
     ...transformEducationalSecretary(formData),
   };
 
-  if (!registrationData.contactNo1) {
+  if (!registrationData.contactNo) {
     return {
       success: false,
       statusCode: 400,
