@@ -11,14 +11,21 @@ interface DialogProps {
   children?: React.ReactNode;
   onSubmit?: () => void;
   submitText?: string;
+  className?: string;
+}
+
+interface DialogChildProps {
+  children: React.ReactNode;
+  className?: string;
 }
 
 export function Dialog({
-  isOpen, 
-  onClose, 
-  title, 
+  isOpen,
+  onClose,
+  title,
   description,
   children,
+  className,
   onSubmit,
   submitText = "সংরক্ষণ করুন"
 }: DialogProps) {
@@ -26,7 +33,7 @@ export function Dialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4 relative">
+      <div className={cn("bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4 relative", className)}>
         {/* Close Button */}
         <button 
           onClick={onClose} 
@@ -74,22 +81,22 @@ export function Dialog({
   );
 }
 
-export function DialogHeader({ children }: { children: React.ReactNode }) {
-  return <div className="space-y-1.5">{children}</div>;
+export function DialogHeader({ children, className }: DialogChildProps) {
+  return <div className={cn("space-y-1.5", className)}>{children}</div>;
 }
 
-export function DialogTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-lg font-semibold">{children}</h2>;
+export function DialogTitle({ children, className }: DialogChildProps) {
+  return <h2 className={cn("text-lg font-semibold", className)}>{children}</h2>;
 }
 
-export function DialogDescription({ children }: { children: React.ReactNode }) {
-  return <p className="text-sm text-gray-500">{children}</p>;
+export function DialogDescription({ children, className }: DialogChildProps) {
+  return <p className={cn("text-sm text-gray-500", className)}>{children}</p>;
 }
 
-export function DialogContent({ children }: { children: React.ReactNode }) {
-  return <div className="py-4">{children}</div>;
+export function DialogContent({ children, className }: DialogChildProps) {
+  return <div className={cn("py-4", className)}>{children}</div>;
 }
 
-export function DialogFooter({ children }: { children: React.ReactNode }) {
-  return <div className="flex justify-end space-x-2">{children}</div>;
+export function DialogFooter({ children, className }: DialogChildProps) {
+  return <div className={cn("flex justify-end space-x-2", className)}>{children}</div>;
 }

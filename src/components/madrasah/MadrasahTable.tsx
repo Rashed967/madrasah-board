@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-import { type Madrasah } from '@/services/madrasahService';
+import type { MadrasahData } from '@/types/madrasah';
 import { marhalaTypes } from '@/constants/madrasahConstants';
 
 interface MadrasahTableProps {
-  madrasahs: Madrasah[];
+  madrasahs: MadrasahData[];
   onDelete: (id: string) => void;
 }
 

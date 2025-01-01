@@ -1,3 +1,5 @@
+import { ApiResponse } from './common';
+
 export interface MadrasahNames {
   bengaliName: string;
   arabicName: string;
@@ -5,6 +7,7 @@ export interface MadrasahNames {
 }
 
 export interface MadrasahAddress {
+  _id: string;
   division: string;
   district: string;
   subDistrict: string;
@@ -16,46 +19,90 @@ export interface MadrasahAddress {
 }
 
 export interface MadrasahInformation {
+  _id: string;
   highestMarhala: string;
   totalStudents: number;
   totalTeacherAndStuff: number;
   madrasahType: string;
 }
 
-export interface PersonInfo {
+export interface EducationalPersonInfo {
+  _id?: string;
   name: string;
-  contactNo: string;
   nidNumber: string;
+  contactNo: string;
+  highestEducationQualification: string;
 }
 
-export interface EducationalPersonInfo extends PersonInfo {
-  highestEducationalQualification: string;
-}
-
-export interface ChairmanMutawalli extends PersonInfo {
+export interface ChairmanMutawalli {
+  _id?: string;
+  name: string;
+  nidNumber: string;
+  contactNo: string;
   designation: string;
 }
 
-export interface MadrasahRegistrationData {
+export interface BaseMadrasah {
+  _id: string;
   madrasahNames: MadrasahNames;
+  code: string;
   email: string;
+  description: string;
   communicatorName: string;
   contactNo1: string;
   contactNo2: string;
-  description: string;
   address: MadrasahAddress;
   madrasah_information: MadrasahInformation;
+  ilhakImage?: string;
+  muhtamim?: EducationalPersonInfo;
+  chairman_mutawalli?: ChairmanMutawalli;
+  educational_secretory?: EducationalPersonInfo;
+}
+
+export interface Madrasah extends BaseMadrasah {
   muhtamim: EducationalPersonInfo;
   chairman_mutawalli: ChairmanMutawalli;
   educational_secretory: EducationalPersonInfo;
-  ilhakImage: string;
 }
 
-export interface MadrasahRegistrationResponse {
+export interface MadrasahData extends BaseMadrasah {
+  muhtamim: EducationalPersonInfo;
+  chairman_mutawalli: ChairmanMutawalli;
+  educational_secretory: EducationalPersonInfo;
+}
+
+export interface MadrasahBasicInfoUpdate {
+  madrasahNames: {
+    bengaliName?: string;
+    arabicName?: string;
+    englishName?: string;
+  };
+  description?: string;
+  email?: string;
+  communicatorName?: string;
+  contactNo1?: string;
+  contactNo2?: string;
+  ilhakImage?: string;
+}
+
+export interface MadrasahApiResponse {
   success: boolean;
   message: string;
-  data?: {
-    madrasah: MadrasahRegistrationData;
+  data: any;
+  meta?: {
+    total: number;
+    page: number;
+    limit: number;
   };
-  madrasah: MadrasahRegistrationData;
+}
+
+export interface MadrasahListApiResponse {
+  success: boolean;
+  message: string;
+  data: Madrasah[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
 }

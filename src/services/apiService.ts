@@ -134,6 +134,29 @@ export const put = <T>(endpoint: string, body: any): Promise<ApiResponse<T>> => 
   });
 };
 
+// PATCH request
+export const patch = async <T>(endpoint: string, body: any): Promise<ApiResponse<T>> => {
+  console.log('🚀 PATCH Request:', {
+    url: `${baseUrl}${endpoint}`,
+    body,
+  });
+
+  try {
+    const response = await request<T>(endpoint, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    console.log('🔥 PATCH Response:', response);
+    return response;
+  } catch (error) {
+    console.error('❌ PATCH Error:', error);
+    throw error;
+  }
+};
+
 // DELETE request
 export const del = <T>(endpoint: string): Promise<ApiResponse<T>> => {
   return request<T>(endpoint, { method: 'DELETE' });

@@ -23,6 +23,10 @@ const USER_DATA_KEY = 'user_data';
 
 // Store tokens and user data
 export const setTokens = (authData: AuthData) => {
+  // Store in cookie
+  document.cookie = `access_token=${authData.accessToken}; path=/; max-age=86400; secure; samesite=strict`;
+  
+  // Also store in localStorage for client-side access
   localStorage.setItem(ACCESS_TOKEN_KEY, authData.accessToken);
   localStorage.setItem(USER_DATA_KEY, JSON.stringify(authData.user));
 };
@@ -35,6 +39,10 @@ export const getTokens = (): Partial<AuthData> => ({
 
 // Remove all tokens and user data
 export const clearTokens = () => {
+  // Clear cookie
+  document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  
+  // Clear localStorage
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_DATA_KEY);

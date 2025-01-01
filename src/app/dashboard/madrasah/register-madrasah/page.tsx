@@ -101,8 +101,6 @@ export default function RegisterMadrasah() {
       nameInBangla: 'বাংলা নাম',
       nameInArabic: 'আরবি নাম',
       
-      // Required Image
-      madrasahIlhakimage: 'মাদরাসা ইলহাকের ছবি'
     };
 
     const errors: Record<string, string> = {};

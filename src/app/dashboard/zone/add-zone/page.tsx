@@ -65,12 +65,24 @@ export default function AddZone() {
         allDistricts: selectedDistricts
       });
 
-      setStatusDialog({
-        isOpen: true,
-        type: 'success',
-        title: 'সফল!',
-        message: 'জোন সফলভাবে তৈরি করা হয়েছে'
-      });
+  
+      // ‍ুshow dialog based on response
+      if (response.success) {
+        setStatusDialog({
+          isOpen: true,
+          type: 'success',
+          title: 'সফলভাবে তৈরি হয়েছে',
+          message: 'জোন তৈরি করা হয়েছে'
+        });
+      } else {
+        setStatusDialog({
+          isOpen: true,
+          type: 'error',
+          title: 'ত্রুটি!',
+          message: response.message || 'জোন তৈরি করতে সমস্যা হয়েছে'
+        });
+      }
+    
 
       // Clear form
       setZoneName('');
