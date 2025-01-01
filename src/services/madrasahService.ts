@@ -45,7 +45,8 @@ export async function registerMadrasah(formData: any): Promise<ApiResponse<Madra
     ...transformMuhtamim(formData),
     ...transformChairmanMutawalli(formData),
     ...transformEducationalSecretary(formData),
-    ...contactInfo
+    ...contactInfo,
+    description: formData.description || '',
   };
 
   console.log('🚀 ~ file: madrasahService.ts:50 ~ registerMadrasah ~ registrationData:', registrationData);
