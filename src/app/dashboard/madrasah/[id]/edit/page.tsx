@@ -206,7 +206,6 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
     contactNo2: "",
     ilhakImage: "",
     address: {
-      _id: "",
       division: "",
       district: "",
       subDistrict: "",
@@ -217,28 +216,24 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
       courierAddress: ""
     },
     madrasah_information: {
-      _id: "",
       highestMarhala: "",
       totalStudents: 0,
       totalTeacherAndStuff: 0,
       madrasahType: ""
     },
     muhtamim: {
-      _id: "",
       name: "",
       nidNumber: "",
       contactNo: "",
       highestEducationQualification: ""
     },
     chairman_mutawalli: {
-      _id: "",
       name: "",
       nidNumber: "",
       contactNo: "",
       designation: ""
     },
     educational_secretory: {
-      _id: "",
       name: "",
       nidNumber: "",
       contactNo: "",
@@ -268,7 +263,6 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           contactNo2: data.contactNo2,
           ilhakImage: data.ilhakImage || "",
           address: {
-            _id: data.address._id,
             division: data.address.division,
             district: data.address.district,
             subDistrict: data.address.subDistrict,
@@ -279,14 +273,12 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
             courierAddress: data.address.courierAddress
           },
           madrasah_information: {
-            _id: data.madrasah_information._id,
             highestMarhala: data.madrasah_information.highestMarhala,
             totalStudents: data.madrasah_information.totalStudents,
             totalTeacherAndStuff: data.madrasah_information.totalTeacherAndStuff,
             madrasahType: data.madrasah_information.madrasahType
           },
           muhtamim: {
-            _id: data.muhtamim?._id || "",
             name: data.muhtamim?.name || "",
             nidNumber: data.muhtamim?.nidNumber || "",
             contactNo: data.muhtamim?.contactNo || "",
@@ -294,14 +286,12 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
 
           },
           chairman_mutawalli: {
-            _id: data.chairman_mutawalli?._id || "",
             name: data.chairman_mutawalli?.name || "",
             nidNumber: data.chairman_mutawalli?.nidNumber || "",
             contactNo: data.chairman_mutawalli?.contactNo || "",
             designation: data.chairman_mutawalli?.designation || ""
           },
           educational_secretory: {
-            _id: data.educational_secretory?._id || "",
             name: data.educational_secretory?.name || "",
             nidNumber: data.educational_secretory?.nidNumber || "",
             contactNo: data.educational_secretory?.contactNo || "",

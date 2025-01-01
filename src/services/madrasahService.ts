@@ -9,7 +9,8 @@ import {
   transformMadrasahInfo,
   transformMuhtamim,
   transformChairmanMutawalli,
-  transformEducationalSecretary
+  transformEducationalSecretary,
+  removeEmptyFields
 } from '@/utils/transformers';
 
 const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
@@ -30,6 +31,13 @@ export async function registerMadrasah(formData: any): Promise<ApiResponse<Madra
     };
   }
 
+  const contactInfo = removeEmptyFields({
+    communicatorName: formData.communicatorName || '',
+    email: formData.email || '',
+    contactNo1: formData.contactNo1 || '',
+    contactNo2: formData.contactNo2 || ''
+  });
+
   const registrationData = {
     ...transformMadrasahNames(formData),
     ...transformAddress(formData),
@@ -37,16 +45,10 @@ export async function registerMadrasah(formData: any): Promise<ApiResponse<Madra
     ...transformMuhtamim(formData),
     ...transformChairmanMutawalli(formData),
     ...transformEducationalSecretary(formData),
+    ...contactInfo
   };
 
-  if (!registrationData.contactNo) {
-    return {
-      success: false,
-      statusCode: 400,
-      message: 'মোবাইল নাম্বার প্রদান করুন',
-      data: null as any
-    };
-  }
+  console.log('🚀 ~ file: madrasahService.ts:50 ~ registerMadrasah ~ registrationData:', registrationData);
 
   try {
     const response = await post<Madrasah>('/madrasah/create-by-admin', registrationData);
