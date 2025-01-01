@@ -1,25 +1,20 @@
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
 export interface ApiMeta {
   total: number;
   page: number;
   limit: number;
 }
 
-export interface ServerResponse {
+export interface BaseApiResponse {
   success: boolean;
-  statusCode: number;
   message: string;
+}
+
+export interface ApiResponse<T> extends BaseApiResponse {
+  data: T;
   meta?: ApiMeta;
 }
 
-export interface ListResponse<T> {
-  success: boolean;
-  message: string;
+export interface ListApiResponse<T> extends BaseApiResponse {
   data: T[];
   meta: ApiMeta;
 }

@@ -1,4 +1,4 @@
-import { ApiResponse } from './common';
+import { ApiResponse, ListApiResponse } from './common';
 
 export interface MadrasahNames {
   bengaliName: string;
@@ -71,38 +71,5 @@ export interface MadrasahData extends BaseMadrasah {
   educational_secretory: EducationalPersonInfo;
 }
 
-export interface MadrasahBasicInfoUpdate {
-  madrasahNames: {
-    bengaliName?: string;
-    arabicName?: string;
-    englishName?: string;
-  };
-  description?: string;
-  email?: string;
-  communicatorName?: string;
-  contactNo1?: string;
-  contactNo2?: string;
-  ilhakImage?: string;
-}
-
-export interface MadrasahApiResponse {
-  success: boolean;
-  message: string;
-  data: any;
-  meta?: {
-    total: number;
-    page: number;
-    limit: number;
-  };
-}
-
-export interface MadrasahListApiResponse {
-  success: boolean;
-  message: string;
-  data: Madrasah[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
-}
+export type MadrasahApiResponse = ApiResponse<Madrasah>;
+export type MadrasahListApiResponse = ListApiResponse<Madrasah>;

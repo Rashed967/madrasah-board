@@ -396,29 +396,32 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
     
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      const parentKey = parent as keyof MadrasahData;
-      const currentParent = madrasahData[parentKey];
-      
-      if (currentParent && typeof currentParent === 'object' && !(currentParent instanceof Array)) {
-        setMadrasahData(prev => ({
-          ...prev,
-          [parent]: {
-            ...currentParent,
-            [child]: value
-          }
-        }));
-      }
+      setMadrasahData((prev: MadrasahData) => {
+        const parentKey = parent as keyof MadrasahData;
+        const currentParent = prev[parentKey];
+        
+        if (currentParent && typeof currentParent === 'object' && !Array.isArray(currentParent)) {
+          return {
+            ...prev,
+            [parentKey]: {
+              ...currentParent,
+              [child]: value
+            }
+          } as MadrasahData;
+        }
+        return prev;
+      });
     } else {
       const key = name as keyof MadrasahData;
-      setMadrasahData(prev => ({
+      setMadrasahData((prev: MadrasahData) => ({
         ...prev,
         [key]: value
-      }));
+      } as MadrasahData));
     }
   };
 

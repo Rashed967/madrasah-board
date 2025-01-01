@@ -1,6 +1,6 @@
 import { post, get, patch } from './apiService';
-import { ApiResponse, ListResponse } from '@/types/common';
-import { Madrasah, MadrasahBasicInfoUpdate, MadrasahData, MadrasahApiResponse, MadrasahListApiResponse, MadrasahAddress } from '@/types/madrasah';
+import { Madrasah, MadrasahData, MadrasahApiResponse, MadrasahListApiResponse } from '@/types/madrasah';
+import { MadrasahBasicInfoUpdate } from '@/types/madrasahUpdate';
 import { getCurrentUser } from './authService';
 import {
   transformMadrasahNames,
@@ -12,8 +12,6 @@ import {
 } from '@/utils/transformers';
 
 const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
-
-export interface MadrasahListResponse extends ListResponse<Madrasah> {}
 
 export async function registerMadrasah(formData: any): Promise<MadrasahApiResponse> {
   const user = getCurrentUser();
@@ -84,13 +82,7 @@ export async function registerMadrasah(formData: any): Promise<MadrasahApiRespon
 
 export const getMadrasahList = async (page = 1, limit = 10): Promise<MadrasahListApiResponse> => {
   try {
-    const response = await get<MadrasahListApiResponse>(`/madrasah?page=${page}&limit=${limit}`);
-    return {
-      success: response.success,
-      message: response.message,
-      data: response.data.data,
-      meta: response.data.meta
-    };
+    return await get<MadrasahListApiResponse>(`/madrasah?page=${page}&limit=${limit}`);
   } catch (error) {
     throw error;
   }
@@ -107,8 +99,7 @@ export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Pro
 
 export const getMadrasahById = async (id: string): Promise<MadrasahApiResponse> => {
   try {
-    const response = await get<MadrasahApiResponse>(`/madrasah/${id}`);
-    return response;
+    return await get<MadrasahApiResponse>(`/madrasah/${id}`);
   } catch (error) {
     throw error;
   }
@@ -125,14 +116,13 @@ export const createMadrasah = async (data: MadrasahBasicInfoUpdate): Promise<Mad
 
 export const updateMadrasahBasicInfo = async (id: string, data: MadrasahBasicInfoUpdate): Promise<MadrasahApiResponse> => {
   try {
-    const response = await patch<MadrasahApiResponse>(`/madrasah/${id}/basic-info`, data);
-    return response;
+    return await patch<MadrasahApiResponse>(`/madrasah/${id}/basic-info`, data);
   } catch (error) {
     throw error;
   }
 };
 
-export const updateMadrasahAddress = async (id: string, data: MadrasahAddress): Promise<MadrasahApiResponse> => {
+export const updateMadrasahAddress = async (id: string, data: any): Promise<MadrasahApiResponse> => {
   try {
     const response = await patch<MadrasahApiResponse>(`/madrasah/${id}/address`, data);
     return response;
