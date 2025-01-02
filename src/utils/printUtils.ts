@@ -1,6 +1,7 @@
-import { Madrasah } from "@/services/madrasahService";
+import { IMadrasah } from "@/features/madrasah/interfaces";
 
-export function generatePrintContent(madrasahs: Madrasah[], type: 'list' | 'addresses') {
+
+export function generatePrintContent(madrasahs: IMadrasah[], type: 'list' | 'addresses') {
   if (type === 'list') {
     return generateMadrasahListContent(madrasahs);
   } else {
@@ -9,7 +10,7 @@ export function generatePrintContent(madrasahs: Madrasah[], type: 'list' | 'addr
 }
 
 // this generateMadrasahListContent just perfect, don't touch it until i tell you
-function generateMadrasahListContent(madrasahs: Madrasah[]) {
+function generateMadrasahListContent(madrasahs: IMadrasah[]) {
   // Helper function to handle null/undefined values
   const getValue = (value: string | null | undefined) => value || '-';
 
@@ -54,7 +55,7 @@ function generateMadrasahListContent(madrasahs: Madrasah[]) {
   `;
 }
 
-function generateAddressesContent(madrasahs: Madrasah[]) {
+function generateAddressesContent(madrasahs: IMadrasah[]) {
   // Helper function to handle null/undefined values
   const getValue = (value: string | null | undefined) => value || '-';
 
@@ -87,7 +88,7 @@ function generateAddressesContent(madrasahs: Madrasah[]) {
 }
 
 // Legacy functions for backward compatibility
-export function printMadrasahList(madrasahs: Madrasah[]) {
+export function printMadrasahList(madrasahs: IMadrasah[]) {
   const printWindow = window.open('', '_blank');
   if (!printWindow) return;
   
@@ -106,7 +107,7 @@ export function printMadrasahList(madrasahs: Madrasah[]) {
   printWindow.document.close();
 }
 
-export function printAddresses(madrasahs: Madrasah[]) {
+export function printAddresses(madrasahs: IMadrasah[]) {
   const printWindow = window.open('', '_blank');
   if (!printWindow) return;
   

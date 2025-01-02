@@ -2,10 +2,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { divisions, districts, upazilas, policeStations } from '@/data/locations';
-import { MadrasahAddress } from "@/types/address";
+import { IMadrasahAddress } from "@/features/madrasah/interfaces";
+
+
 
 interface AddressFormProps {
-  address: MadrasahAddress;
+  address: IMadrasahAddress;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 

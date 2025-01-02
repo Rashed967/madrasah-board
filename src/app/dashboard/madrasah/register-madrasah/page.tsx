@@ -15,6 +15,9 @@ import MutawalliInfo from './components/MutawalliInfo';
 import ImageUpload from './components/ImageUpload';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import {SuccessDialog} from '@/components/ui/success-dialog';
+import { IMadrasah, TCourierAddress, TMadrasahType, TMutawalliDesignation } from '@/features/madrasah/interfaces';
+import { madrasahSchema } from '@/features/schemas/madrasah.schema.for.public';
+import { madrasahSchemaForAdmin } from '@/features/schemas/madrasah.schema.for.admin';
 
 /**
  * RegisterMadrasah Component
@@ -27,161 +30,109 @@ export default function RegisterMadrasah() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const [formData, setFormData] = useState({
+  // & {muhtamim: Omit<IMadrasah['muhtamim'], 'code'>}
+  
+  const initialFormState: Omit<IMadrasah, '_id' | 'user' | 'madrasahResult' | 'createdAt' | 'updatedAt' | 'status' | 'code' >   = {
+    madrasahNames: {
+      bengaliName: '',
+      englishName: '',
+      arabicName: ''
+    },
+    description: '',
+    email: '',
     communicatorName: '',
     contactNo1: '',
     contactNo2: '',
-    zone: '',
-    email: '',
-    nameInArabic: '',
-    nameInBangla: '',
-    nameInEnglish: '',
-    description: '',
-    highestMarhala: '',
-    totalStudent: '',
-    totalTeacherAndStaff: '',
-    madrasahType: '',
-    muhtamimName: '',
-    muhtamimNID: '',
-    muhtamimMobile: '',
-    muhtamimEducation: '',
-    district: '',
-    subDistrict: '',
-    division: '',
-    holdingNumber: '',
-    policeStation: '',
-    village: '',
-    courierAddress: '',
-    madrasahIlhakimage: '',
-    shikkhaSocheebName: '',
-    shikkhaSocheebNID: '',
-    shikkhaSocheebMobile: '',
-    shikkhaSocheebEducation: '',
-    mutawalliName: '',
-    mutawalliDesignation: '',
-    mutawalliNID: '',
-    mutawalliMobile: ''
-  
-  });
+    address: {
+      division: '',
+      district: '',
+      subDistrict: '',
+      policeStation: '',
+      village: '',
+      holdingNumber: '',
+      zone: '',
+      courierAddress: '' as TCourierAddress
+    },
+    madrasah_information: {
+      highestMarhala: '',
+      totalStudents: 0,
+      totalTeacherAndStuff: 0,
+      madrasahType: '' as TMadrasahType
+    },
+    muhtamim: {
+      name: '',
+      contactNo: '',
+      nidNumber: '',
+      highestEducationalQualification: '',
+      code: ''
+    },
+    chairman_mutawalli: {
+      name: '',
+      contactNo: '',
+      nidNumber: '',
+      designation: '' as TMutawalliDesignation,
+      code: '' as TMutawalliDesignation
+    },
+    educational_secretory: {
+      name: '',
+      contactNo: '',
+      nidNumber: '',
+      highestEducationalQualification: '',
+      code: ''
+    },
+    ilhakImage: '',
+  };
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const [formData, setFormData] = useState<Omit<IMadrasah, '_id' | 'user' | 'madrasahResult' | 'createdAt' | 'updatedAt' | 'status' | 'code' > >(initialFormState);
+
+  const handleChange = (field: string, value: string | number) => {
+    setFormData((prev) => {
+      const newState = { ...prev };
+      const fieldPath = field.split('.');
+      let current: any = newState;
+      
+      // Navigate to the nested object
+      for (let i = 0; i < fieldPath.length - 1; i++) {
+        current = current[fieldPath[i]];
+      }
+      
+      // Set the value
+      current[fieldPath[fieldPath.length - 1]] = value;
+      return newState;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
-    console.log('Form submitted with data:', formData);
-
-    // Required fields validation
-    const requiredFields = {
-      // Contact Info (All required)
-      communicatorName: 'যোগাযোগকারীর নাম',
-      contactNo1: 'মোবাইল নম্বর',
-      contactNo2: 'বিকল্প মোবাইল নম্বর',
-      email: 'ইমেইল',
-      
-      // Basic Info
-      highestMarhala: 'সর্বোচ্চ মারহালা',
-      madrasahType: 'মাদ্রাসার ধরণ',
-      
-      // Location Info
-      zone: 'জোন',
-      courierAddress: 'চিঠি প্রেরণের মাধ্যম',
-      division: 'বিভাগ',
-      district: 'জেলা',
-      subDistrict: 'উপজেলা',
-      policeStation: 'থানা',
-      village: 'গ্রাম',
-      
-      // Madrasah Names (All required)
-      nameInBangla: 'বাংলা নাম',
-      nameInArabic: 'আরবি নাম',
-      
-    };
-
-    const errors: Record<string, string> = {};
-    Object.entries(requiredFields).forEach(([field, label]) => {
-      if (!formData[field]) {
-        errors[field] = `${label} আবশ্যক`;
-      }
-    });
-
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      toast.error('সকল প্রয়োজনীয় তথ্য পূরণ করুন');
-      return;
-    }
-
-    console.log('Validation errors:');
-    setValidationErrors({});
-    setIsLoading(true);
-
+    
+    
     try {
-      // Filter out empty fields but include optional fields even if empty
-      const filteredData = {
-        ...formData,
-        // Include optional fields with empty values
-        muhtamimName: formData.muhtamimName || '',
-        muhtamimNID: formData.muhtamimNID || '',
-        muhtamimMobile: formData.muhtamimMobile || '',
-        muhtamimEducation: formData.muhtamimEducation || '',
-        shikkhaSocheebName: formData.shikkhaSocheebName || '',
-        shikkhaSocheebNID: formData.shikkhaSocheebNID || '',
-        shikkhaSocheebMobile: formData.shikkhaSocheebMobile || '',
-        shikkhaSocheebEducation: formData.shikkhaSocheebEducation || '',
-        mutawalliName: formData.mutawalliName || '',
-        mutawalliDesignation: formData.mutawalliDesignation || '',
-        mutawalliNID: formData.mutawalliNID || '',
-        mutawalliMobile: formData.mutawalliMobile || ''
-      };
+      // Validate form data with Zod
+      const validationResult = madrasahSchemaForAdmin.safeParse(formData);
+      console.log(validationResult);
+      if (!validationResult.success) {
+        const errors: Record<string, string> = {};
+        validationResult.error.issues.forEach((issue) => {
+          const path = issue.path.join('.');
+          errors[path] = issue.message;
+        });
+        
+        setValidationErrors(errors);
+        toast.error('সকল প্রয়োজনীয় তথ্য সঠিকভাবে পূরণ করুন');
+        return;
+      }
 
-      console.log('Filtered data:', filteredData);
-      const response = await registerMadrasah(filteredData);
+      setValidationErrors({});
+      setIsLoading(true);
+
+      const response = await registerMadrasah(validationResult.data);
       console.log('Registration response:', response);
       
       if (response.success) {
         setSuccessMessage(response.message || 'মাদরাসা নিবন্ধন সফলভাবে সম্পন্ন হয়েছে');
         setShowSuccessModal(true);
         // Reset form data
-        setFormData({
-          communicatorName: '',
-          contactNo1: '',
-          contactNo2: '',
-          zone: '',
-          email: '',
-          bengaliName: '',
-          arabicName: '',
-          englishName: '',
-          description: '',
-          highestMarhala: '',
-          totalStudent: '',
-          totalTeacherAndStaff: '',
-          madrasahType: '',
-          muhtamimName: '',
-          muhtamimNID: '',
-          muhtamimMobile: '',
-          muhtamimEducation: '',
-          district: '',
-          subDistrict: '',
-          division: '',
-          holdingNumber: '',
-          policeStation: '',
-          village: '',
-          courierAddress: '',
-          madrasahIlhakimage: '',
-          shikkhaSocheebName: '',
-          shikkhaSocheebNID: '',
-          shikkhaSocheebMobile: '',
-          shikkhaSocheebEducation: '',
-          mutawalliName: '',
-          mutawalliDesignation: '',
-          mutawalliNID: '',
-          mutawalliMobile: ''
-        });
+        setFormData(initialFormState);
       } else {
         toast.error(response.message || 'কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন');
       }
@@ -204,9 +155,9 @@ export default function RegisterMadrasah() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white/80 rounded-lg shadow-md p-12">
-        <MadrasahNameAndBio 
-          formData={formData} 
-          handleChange={handleChange} 
+        <MadrasahNameAndBio
+          formData={formData}
+          handleChange={handleChange}
           errors={validationErrors}
         />
         <ContactInfo
@@ -242,11 +193,11 @@ export default function RegisterMadrasah() {
 
         <ImageUpload 
           label="মাদরাসা ইলহাকের ছবি" 
-          value={formData.madrasahIlhakimage} 
+          value={formData.ilhakImage} 
           onChange={handleChange} 
-          fieldName="madrasahIlhakimage"
-          onImageUpload={(url) => handleChange('madrasahIlhakimage', url)}
-          error={validationErrors.madrasahIlhakimage}
+          fieldName="ilhakImage"
+          onImageUpload={(url) => handleChange('ilhakImage', url)}
+          error={validationErrors.ilhakImage}
         />
 
         <div className="flex justify-end mt-8">

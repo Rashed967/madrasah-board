@@ -1,37 +1,31 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { districts, divisions } from '../locationData';
-import subDistricts from '../../../../../data/subDistricts.json';
-import policeStations from '../../../../../data/policeStations.json';
-import { getAllZones } from '@/services/zoneService';
+import { divisions, getDistricts, getSubDistricts, getPoliceStations } from '@/data/locations';
+import { IMadrasahAddress } from '@/features/madrasah/interfaces';
+import { getAllZones } from '@/features/zone';
 
-// কুরিয়ার অপশন
-const courierAddressOptions = ["ডাক", "কুরিয়ার"];
-
-interface LocationFormProps {
+interface Props {
   formData: {
-    division: string;
-    district: string;
-    subDistrict: string;
-    policeStation: string;
-    village: string;
-    holdingNumber: string;
-    zone: string;
-    courierAddress: string;
+    address: IMadrasahAddress;
   };
   handleChange: (field: string, value: string) => void;
   errors?: Record<string, string>;
 }
+
+const courierTypes = ['কুরিয়ার', 'ডাক'];
 
 /**
  * LocationForm Component
  * Handles the location and address section of the madrasah registration form
  * Including division, district, upazila, and detailed address information
  */
-const LocationForm: React.FC<LocationFormProps> = ({ formData, handleChange, errors = {} }) => {
+const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
   const [zones, setZones] = useState([]);
   const [isLoadingZones, setIsLoadingZones] = useState(true);
+  const [districts, setDistricts] = useState<string[]>([]);
+  const [subDistricts, setSubDistricts] = useState<string[]>([]);
+  const [policeStationList, setPoliceStationList] = useState<string[]>([]);
 
   useEffect(() => {
     const loadZones = async () => {
@@ -48,23 +42,66 @@ const LocationForm: React.FC<LocationFormProps> = ({ formData, handleChange, err
     loadZones();
   }, []);
 
-  // Get filtered location data based on selections
-  const filteredDistricts = formData.division ? districts[formData.division] || [] : [];
-  const filteredSubDistricts = formData.district ? subDistricts[formData.district] || [] : [];
-  const filteredPoliceStations = formData.subDistrict && formData.district ? 
-    (policeStations[formData.district]?.[formData.subDistrict] || []) : [];
-  
+  // Update districts when division changes
+  useEffect(() => {
+    if (formData.address.division) {
+      const districtList = getDistricts(formData.address.division);
+      setDistricts(districtList);
+      // Reset dependent fields
+      if (formData.address.district) {
+        handleChange('address.district', '');
+        handleChange('address.subDistrict', '');
+        handleChange('address.policeStation', '');
+      }
+    } else {
+      setDistricts([]);
+    }
+  }, [formData.address.division]);
+
+  // Update subdistricts when district changes
+  useEffect(() => {
+    if (formData.address.district) {
+      const subDistrictList = getSubDistricts(formData.address.district);
+      setSubDistricts(subDistrictList);
+      // Reset dependent fields
+      if (formData.address.subDistrict) {
+        handleChange('address.subDistrict', '');
+        handleChange('address.policeStation', '');
+      }
+    } else {
+      setSubDistricts([]);
+    }
+  }, [formData.address.district]);
+
+  // Update police stations when subdistrict changes
+  useEffect(() => {
+    if (formData.address.district && formData.address.subDistrict) {
+      const policeStations = getPoliceStations(formData.address.district, formData.address.subDistrict);
+      setPoliceStationList(policeStations);
+      // Reset dependent field
+      if (formData.address.policeStation) {
+        handleChange('address.policeStation', '');
+      }
+    } else {
+      setPoliceStationList([]);
+    }
+  }, [formData.address.district, formData.address.subDistrict]);
+
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-900">ঠিকানা</h2>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+    <div className="mb-6 mt-8">
+      <h2 className="text-xl font-semibold mb-4">ঠিকানা</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Division Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">বিভাগ</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            বিভাগ <span className="text-red-500">*</span>
+          </label>
           <select
-            value={formData.division}
-            onChange={(e) => handleChange('division', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.division ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.division}
+            onChange={(e) => handleChange('address.division', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.division'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
             <option value="">বিভাগ নির্বাচন করুন</option>
             {divisions.map((division) => (
@@ -73,108 +110,141 @@ const LocationForm: React.FC<LocationFormProps> = ({ formData, handleChange, err
               </option>
             ))}
           </select>
-          {errors.division && (
-            <p className="mt-1 text-sm text-red-500">{errors.division}</p>
+          {errors?.['address.division'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.division']}</p>
           )}
         </div>
 
         {/* District Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">জেলা</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            জেলা <span className="text-red-500">*</span>
+          </label>
           <select
-            value={formData.district}
-            onChange={(e) => handleChange('district', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.district ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.district}
+            onChange={(e) => handleChange('address.district', e.target.value)}
+            disabled={!formData.address.division}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.district'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
+              !formData.address.division ? 'bg-gray-100' : ''
+            }`}
           >
             <option value="">জেলা নির্বাচন করুন</option>
-            {filteredDistricts.map((district) => (
+            {districts.map((district) => (
               <option key={district} value={district}>
                 {district}
               </option>
             ))}
           </select>
-          {errors.district && (
-            <p className="mt-1 text-sm text-red-500">{errors.district}</p>
+          {errors?.['address.district'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.district']}</p>
           )}
         </div>
 
         {/* Sub-District Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">উপজেলা</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            উপজেলা <span className="text-red-500">*</span>
+          </label>
           <select
-            value={formData.subDistrict}
-            onChange={(e) => handleChange('subDistrict', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.subDistrict ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.subDistrict}
+            onChange={(e) => handleChange('address.subDistrict', e.target.value)}
+            disabled={!formData.address.district}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.subDistrict'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
+              !formData.address.district ? 'bg-gray-100' : ''
+            }`}
           >
             <option value="">উপজেলা নির্বাচন করুন</option>
-            {filteredSubDistricts.map((subDistrict) => (
+            {subDistricts.map((subDistrict) => (
               <option key={subDistrict} value={subDistrict}>
                 {subDistrict}
               </option>
             ))}
           </select>
-          {errors.subDistrict && (
-            <p className="mt-1 text-sm text-red-500">{errors.subDistrict}</p>
+          {errors?.['address.subDistrict'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.subDistrict']}</p>
           )}
         </div>
 
         {/* Police Station Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">থানা</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            থানা <span className="text-red-500">*</span>
+          </label>
           <select
-            value={formData.policeStation}
-            onChange={(e) => handleChange('policeStation', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.policeStation ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.policeStation}
+            onChange={(e) => handleChange('address.policeStation', e.target.value)}
+            disabled={!formData.address.subDistrict}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.policeStation'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
+              !formData.address.subDistrict ? 'bg-gray-100' : ''
+            }`}
           >
             <option value="">থানা নির্বাচন করুন</option>
-            {filteredPoliceStations.map((station) => (
+            {policeStationList.map((station) => (
               <option key={station} value={station}>
                 {station}
               </option>
             ))}
           </select>
-          {errors.policeStation && (
-            <p className="mt-1 text-sm text-red-500">{errors.policeStation}</p>
+          {errors?.['address.policeStation'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.policeStation']}</p>
           )}
         </div>
 
         {/* Village */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">গ্রাম/মহল্লা</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            গ্রাম/মহল্লা <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
-            placeholder="গ্রাম/মহল্লা লিখুন"
-            value={formData.village}
-            onChange={(e) => handleChange('village', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.village ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.village}
+            onChange={(e) => handleChange('address.village', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.village'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="গ্রাম/মহল্লা"
           />
-          {errors.village && (
-            <p className="mt-1 text-sm text-red-500">{errors.village}</p>
+          {errors?.['address.village'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.village']}</p>
           )}
         </div>
 
         {/* Holding Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">হোল্ডিং নম্বর</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            হোল্ডিং নম্বর <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
-            placeholder="হোল্ডিং নম্বর লিখুন"
-            value={formData.holdingNumber}
-            onChange={(e) => handleChange('holdingNumber', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.holdingNumber ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.holdingNumber}
+            onChange={(e) => handleChange('address.holdingNumber', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.holdingNumber'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="হোল্ডিং নম্বর"
           />
-          {errors.holdingNumber && (
-            <p className="mt-1 text-sm text-red-500">{errors.holdingNumber}</p>
+          {errors?.['address.holdingNumber'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.holdingNumber']}</p>
           )}
         </div>
 
         {/* Zone */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">জোন</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            জোন <span className="text-red-500">*</span>
+          </label>
           <select
-            value={formData.zone}
-            onChange={(e) => handleChange('zone', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.zone ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.zone}
+            onChange={(e) => handleChange('address.zone', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.zone'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
             <option value="">জোন নির্বাচন করুন</option>
             {isLoadingZones ? (
@@ -187,28 +257,33 @@ const LocationForm: React.FC<LocationFormProps> = ({ formData, handleChange, err
               ))
             )}
           </select>
-          {errors.zone && (
-            <p className="mt-1 text-sm text-red-500">{errors.zone}</p>
+          {errors?.['address.zone'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.zone']}</p>
           )}
         </div>
 
-        {/* Courier Address */}
+
+        {/* Courier Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">চিঠি প্রেরণের মাধ্যম</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+          চিঠি প্রেরণের মাধ্যম <span className="text-red-500">*</span>
+          </label>
           <select
-            value={formData.courierAddress}
-            onChange={(e) => handleChange('courierAddress', e.target.value)}
-            className={`mt-1 block w-full rounded-md border ${errors.courierAddress ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            value={formData.address.courierAddress || ''}
+            onChange={(e) => handleChange('address.courierAddress', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['address.courierAddress'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
-            <option value="">চিঠি প্রেরণের মাধ্যম</option>
-            {courierAddressOptions?.map((address) => (
-              <option key={address} value={address}>
-                {address}
+            <option value="">চিঠি প্রেরণের মাধ্যম নির্বাচন করুন</option>
+            {courierTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
               </option>
             ))}
           </select>
-          {errors.courierAddress && (
-            <p className="mt-1 text-sm text-red-500">{errors.courierAddress}</p>
+          {errors?.['address.courierAddress'] && (
+            <p className="text-red-500 text-xs italic">{errors['address.courierAddress']}</p>
           )}
         </div>
       </div>

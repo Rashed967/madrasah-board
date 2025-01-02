@@ -8,19 +8,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-import type { MadrasahData } from '@/types/madrasah';
+
 import { marhalaTypes } from '@/constants/madrasahConstants';
+import { IMadrasah } from '@/features/madrasah/interfaces';
 
 interface MadrasahTableProps {
-  madrasahs: MadrasahData[];
-  onDelete: (id: string) => void;
+  madrasahs: IMadrasah[];
+  onDelete: (id: string) => Promise<void>;
+  getAddressField: (madrasah: IMadrasah, field: string) => string;
+  getMadrasahInfoField: (madrasah: IMadrasah, field: string) => string | number;
 }
 
-export function MadrasahTable({ madrasahs, onDelete }: MadrasahTableProps) {
+export function MadrasahTable({ madrasahs, onDelete, getAddressField, getMadrasahInfoField }: MadrasahTableProps) {
   return (
     <div className="bg-white rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full text-sm">
           <thead>
             <tr className="bg-emerald-500 text-white">
               <th className="px-6 py-3 text-left">কোড</th>
@@ -36,7 +39,7 @@ export function MadrasahTable({ madrasahs, onDelete }: MadrasahTableProps) {
           </thead>
           <tbody>
             {madrasahs.map((madrasah) => (
-              <tr key={madrasah._id} className="border-b border-gray-200 hover:bg-gray-50">
+              <tr key={madrasah._id} className="border-b hover:bg-gray-50">
                 <td className="px-6 py-4">{madrasah.code}</td>
                 <td className="px-6 py-4">
                   <Link 
@@ -48,20 +51,20 @@ export function MadrasahTable({ madrasahs, onDelete }: MadrasahTableProps) {
                 </td>
                 <td className="px-6 py-4">
                   {[
-                    madrasah.address.policeStation,
-                    madrasah.address.subDistrict,
-                    madrasah.address.district
+                    getAddressField(madrasah, 'policeStation'),
+                    getAddressField(madrasah, 'subDistrict'),
+                    getAddressField(madrasah, 'district')
                   ].filter(Boolean).join(', ')}
                 </td>
                 <td className="px-6 py-4">
-                  {marhalaTypes.find(m => m.value === madrasah.madrasah_information.highestMarhala)?.label || madrasah.madrasah_information.highestMarhala}
+                  {marhalaTypes.find(m => m.value === getMadrasahInfoField(madrasah, 'highestMarhala'))?.label || getMadrasahInfoField(madrasah, 'highestMarhala')}
                 </td>
-                <td className="px-6 py-4">{madrasah.muhtamim?.name || '-'}</td>
+                <td className="px-6 py-4">{getMadrasahInfoField(madrasah, 'muhtamimName')}</td>
                 <td className="px-6 py-4">
-                  {madrasah.madrasah_information.madrasahType === 'BOY' ? 'বালক' : 'বালিকা'}
+                  {getMadrasahInfoField(madrasah, 'madrasahType') === 'BOY' ? 'বালক' : 'বালিকা'}
                 </td>
-                <td className="px-6 py-4">{madrasah.email}</td>
-                <td className="px-6 py-4">{madrasah.contactNo1}</td>
+                <td className="px-6 py-4">{madrasah.email || '-'}</td>
+                <td className="px-6 py-4">{madrasah.contactNo1 || '-'}</td>
                 <td className="px-6 py-4 text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

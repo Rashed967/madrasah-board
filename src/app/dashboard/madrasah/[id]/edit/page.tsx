@@ -12,9 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import toast from "react-hot-toast";
-import { updateMadrasahBasicInfo, getMadrasahById } from '@/services/madrasahService';
-import { MadrasahBasicInfoUpdate } from '@/types/madrasahUpdate';
-import type { Madrasah } from '@/types/madrasah';
+import { updateMadrasahBasicInfo, getMadrasahById, updateMadrasahInformation } from '@/services/madrasahService';
+import { updateMadrasahAddress } from '@/services/addressService';
 import BasicInfoForm from "@/components/forms/BasicInfoForm";
 import { useRouter } from 'next/navigation';
 import {
@@ -25,10 +24,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
-import { updateMadrasahAddress } from '@/services/addressService';
 import { AddressForm } from '@/components/forms/AddressForm';
-import { MadrasahAddress } from '@/types/address';
 import { useMadrasahForm } from '@/hooks/useMadrasahForm';
+
+import { Types } from "mongoose";
+import { IMadrasah, IMadrasahAddress, TCourierAddress, TMadrasahType, TMutawalliDesignation } from "@/features/madrasah/interfaces";
 
 interface TabProps {
   label: string;
@@ -189,99 +189,132 @@ const ImageUpload = ({ label, imageUrl, onImageChange, previewUrl = null }) => {
   );
 };
 
+const initialFormState: IMadrasah = {
+  _id: '',
+  user: '',
+  madrasahNames: {
+    bengaliName: '',
+    englishName: '',
+    arabicName: ''
+  },
+  description: '',
+  code: '',
+  email: '',
+  communicatorName: '',
+  contactNo1: '',
+  contactNo2: '',
+  ilhakImage: '',
+  address: {
+    division: '',
+    district: '',
+    subDistrict: '',
+    policeStation: '',
+    village: '',
+    holdingNumber: '',
+    zone: '',
+    courierAddress: '' as TCourierAddress
+  },
+  madrasah_information: {
+    highestMarhala: '',
+    totalStudents: 0,
+    totalTeacherAndStuff: 0,
+    madrasahType: '' as TMadrasahType
+  },
+  muhtamim: {
+    name: '',
+    contactNo: '',
+    nidNumber: '',
+    highestEducationalQualification: '',
+    code: ''
+  },
+  chairman_mutawalli: {
+    name: '',
+    contactNo: '',
+    nidNumber: '',
+    designation: '' as TMutawalliDesignation,
+    code: ''
+  },
+  educational_secretory: {
+    name: '',
+    contactNo: '',
+    nidNumber: '',
+    highestEducationalQualification: '',
+    code: ''
+  },
+  madrasahResult: [],
+  status: 'pending',
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+
 export default function EditMadrasahPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const { madrasahData, setMadrasahData } = useMadrasahForm({
-    _id: "",
-    madrasahNames: {
-      bengaliName: "",
-      arabicName: "",
-      englishName: "" 
-    },
-    code: "",
-    email: "",
-    description: "",
-    communicatorName: "",
-    contactNo1: "",
-    contactNo2: "",
-    ilhakImage: "",
-    address: {
-      division: "",
-      district: "",
-      subDistrict: "",
-      policeStation: "",
-      village: "",
-      holdingNumber: "",
-      zone: "",
-      courierAddress: ""
-    },
-    madrasah_information: {
-      highestMarhala: "",
-      totalStudents: 0,
-      totalTeacherAndStuff: 0,
-      madrasahType: ""
-    },
-    muhtamim: {
-      name: "",
-      nidNumber: "",
-      contactNo: "",
-      highestEducationalQualification: ""
-    },
-    chairman_mutawalli: {
-      name: "",
-      nidNumber: "",
-      contactNo: "",
-      designation: ""
-    },
-    educational_secretory: {
-      name: "",
-      nidNumber: "",
-      contactNo: "",
-      highestEducationalQualification: ""
-    }
-  });
-
-  const [initialAddress, setInitialAddress] = useState(null);
-
-  const router = useRouter();
+  const [formData, setFormData] = useState<IMadrasah>(initialFormState);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMadrasahData = async () => {
+    const fetchMadrasah = async () => {
       try {
-        const response = await getMadrasahById(id);
-        if (response.success) {
-          setMadrasahData(response.data);
-          setInitialAddress(response.data.address);
-          console.log('Fetched madrasah data:', response.data);
+        const response = await getMadrasahById(params.id);
+        if (response.success && response.data) {
+          // Ensure all required fields are present
+          const madrasahData: IMadrasah = {
+            ...initialFormState,
+            ...response.data,
+            // Ensure nested objects have all required fields
+            madrasahNames: {
+              bengaliName: response.data.madrasahNames?.bengaliName || '',
+              englishName: response.data.madrasahNames?.englishName || '',
+              arabicName: response.data.madrasahNames?.arabicName || ''
+            },
+            muhtamim: {
+              name: response.data.muhtamim?.name || '',
+              contactNo: response.data.muhtamim?.contactNo || '',
+              nidNumber: response.data.muhtamim?.nidNumber || '',
+              highestEducationalQualification: response.data.muhtamim?.highestEducationalQualification || '',
+              code: response.data.muhtamim?.code || ''
+            },
+            chairman_mutawalli: {
+              name: response.data.chairman_mutawalli?.name || '',
+              contactNo: response.data.chairman_mutawalli?.contactNo || '',
+              nidNumber: response.data.chairman_mutawalli?.nidNumber || '',
+              designation: response.data.chairman_mutawalli?.designation || '' as TMutawalliDesignation,
+              code: response.data.chairman_mutawalli?.code || ''
+            },
+            educational_secretory: {
+              name: response.data.educational_secretory?.name || '',
+              contactNo: response.data.educational_secretory?.contactNo || '',
+              nidNumber: response.data.educational_secretory?.nidNumber || '',
+              highestEducationalQualification: response.data.educational_secretory?.highestEducationalQualification || '',
+              code: response.data.educational_secretory?.code || ''
+            }
+          };
+          setFormData(madrasahData);
         }
       } catch (error) {
-        console.error('Error fetching madrasah data:', error);
+        console.error('Error fetching madrasah:', error);
+        toast.error('মাদরাসার তথ্য লোড করতে সমস্যা হয়েছে');
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (id) {
-      fetchMadrasahData();
-    }
-  }, [id]);
+    fetchMadrasah();
+  }, [params.id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setMadrasahData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: value
-        }
-      }));
-    } else {
-      setMadrasahData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const [activeTab, setActiveTab] = useState("basic");
@@ -299,138 +332,117 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
     type: 'info'
   });
 
-  const handleBasicInfoUpdate = async (e: React.FormEvent) => {
+  const handleBasicInfoUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
-      setIsLoading(true);
+      const basicInfo = {
+        madrasahNames: formData.madrasahNames,
+        email: formData.email,
+        communicatorName: formData.communicatorName,
+        contactNo1: formData.contactNo1,
+        contactNo2: formData.contactNo2,
+        description: formData.description
+      };
       
-      const updateData = {
-        madrasahNames: {
-          bengaliName: madrasahData.madrasahNames.bengaliName,
-          arabicName: madrasahData.madrasahNames.arabicName,
-          englishName: madrasahData.madrasahNames.englishName
-        },
-        email: madrasahData.email,
-        description: madrasahData.description,
-        communicatorName: madrasahData.communicatorName,
-        contactNo1: madrasahData.contactNo1,
-        contactNo2: madrasahData.contactNo2,
-        ilhakImage: madrasahData.ilhakImage || ''
+      const response = await updateMadrasahBasicInfo(params.id, basicInfo);
+      if (response.success) {
+        setStatusDialog({
+          isOpen: true,
+          title: 'Success',
+          message: 'Basic information updated successfully',
+          type: 'success'
+        });
+      }
+    } catch (error) {
+      setStatusDialog({
+        isOpen: true,
+        title: 'Error',
+        message: 'Failed to update basic information',
+        type: 'error'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      if (typeof formData.address === 'string') {
+        throw new Error('Invalid address format');
+      }
+
+      const addressData: IMadrasahAddress = {
+        division: formData.address.division,
+        district: formData.address.district,
+        subDistrict: formData.address.subDistrict,
+        policeStation: formData.address.policeStation,
+        village: formData.address.village,
+        holdingNumber: formData.address.holdingNumber,
+        zone: formData.address.zone,
+        courierAddress: formData.address.courierAddress
       };
 
-      const response = await updateMadrasahBasicInfo(params.id, updateData);
-      
+      const response = await updateMadrasahAddress(params.id, addressData);
       if (response.success) {
         setStatusDialog({
           isOpen: true,
-          title: 'সফল',
-          message: 'মাদ্রাসার মৌলিক তথ্য সফলভাবে আপডেট করা হয়েছে',
+          title: 'Success',
+          message: 'Address updated successfully',
           type: 'success'
         });
       }
     } catch (error) {
-      console.error('Error updating madrasah:', error);
       setStatusDialog({
         isOpen: true,
-        title: 'ত্রুটি',
-        message: 'মাদ্রাসার মৌলিক তথ্য আপডেট করা যায়নি',
+        title: 'Error',
+        message: 'Failed to update address',
         type: 'error'
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  const handleAddressUpdate = async (e: React.FormEvent) => {
+  const handleInformationUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-
+    setIsSubmitting(true);
     try {
-      if (!madrasahData.address?._id) {
-        setStatusDialog({
-          isOpen: true,
-          title: 'ত্রুটি',
-          message: 'ঠিকানার আইডি পাওয়া যায়নি',
-          type: 'error'
-        });
-        setIsLoading(false);
-        return;
+      if (typeof formData.madrasah_information === 'string') {
+        throw new Error('Invalid madrasah information format');
       }
 
-      // Get changed address fields
-      const addressData = {};
-      const fields = ['division', 'district', 'subDistrict', 'policeStation', 'village', 'holdingNumber', 'zone'];
-      
-      fields.forEach(field => {
-        const currentValue = madrasahData.address[field];
-        const initialValue = initialAddress?.[field];
-        console.log(`Checking field ${field}:`, { current: currentValue, initial: initialValue });
-        if (currentValue && currentValue !== initialValue) {
-          addressData[field] = currentValue;
-        }
-      });
+      const infoData = {
+        ...formData.madrasah_information,
+        madrasah: formData._id || ''
+      };
 
-      console.log('Changed address fields:', addressData);
-
-      if (Object.keys(addressData).length === 0) {
-        setStatusDialog({
-          isOpen: true,
-          title: 'তথ্য',
-          message: 'কোনো তথ্য পরিবর্তন করা হয়নি',
-          type: 'info'
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      console.log('Sending address data:', addressData);
-
-      const response = await updateMadrasahAddress(madrasahData.address._id, addressData);
-      console.log('Server response:', response);
-      
+      const response = await updateMadrasahInformation(params.id, infoData);
       if (response.success) {
-        setInitialAddress(madrasahData.address); // Update initial address after successful save
         setStatusDialog({
           isOpen: true,
-          title: 'সফল',
-          message: response.message || 'মাদ্রাসার ঠিকানা সফলভাবে আপডেট করা হয়েছে',
+          title: 'Success',
+          message: 'Madrasah information updated successfully',
           type: 'success'
-        });
-      } else {
-        setStatusDialog({
-          isOpen: true,
-          title: 'ত্রুটি',
-          message: response.message || 'মাদ্রাসার ঠিকানা আপডেট করা যায়নি',
-          type: 'error'
         });
       }
     } catch (error) {
-      console.error('Error:', error);
       setStatusDialog({
         isOpen: true,
-        title: 'ত্রুটি',
-        message: 'মাদ্রাসার ঠিকানা আপডেট করার সময় একটি সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।',
+        title: 'Error',
+        message: 'Failed to update madrasah information',
         type: 'error'
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
-  };
-
-  const handleImageChange = (section: string, imageFile: File, previewUrl: string) => {
-    setMadrasahData({
-      ...madrasahData,
-      [section]: {
-        ...madrasahData[section],
-        image: URL.createObjectURL(imageFile),
-        imagePreview: previewUrl
-      }
-    });
   };
 
   const renderBasicInformation = () => (
     <form onSubmit={handleBasicInfoUpdate}>
-      <BasicInfoForm madrasahData={madrasahData} onChange={handleChange} />
+      <BasicInfoForm madrasahData={formData} onChange={handleChange} />
       <div className="mt-8 flex justify-end">
         <button
           type="submit"
@@ -442,266 +454,220 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
     </form>
   );
 
-  const renderAddressInformation = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">ঠিকানার তথ্য</h2>
-      <div>
-        <AddressForm 
-          address={madrasahData.address}
-          onChange={(e) => {
-            const { name, value } = e.target;
-            const fieldName = name.split('.')[1]; // Extract field name from "address.fieldName"
-            setMadrasahData({
-              ...madrasahData,
-              address: {
-                ...madrasahData.address,
-                [fieldName]: value
-              }
-            });
-          }}
+  const renderAddressInformation = () => {
+    if (typeof formData.address === 'string') return null;
+
+    return (
+      <form onSubmit={handleFormSubmit} className="space-y-6">
+        <AddressForm
+          address={formData.address}
+          onChange={handleChange}
         />
-        <div className="mt-6 flex justify-end">
+        <div className="mt-4 flex justify-end">
           <button
-            onClick={handleAddressUpdate}
-            disabled={isLoading}
-            className="px-4 py-2 bg-[#52b788] text-white rounded-md hover:bg-[#52b788]/90 transition-colors duration-200 disabled:opacity-50"
+            type="submit"
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 disabled:bg-gray-400"
+            disabled={isSubmitting}
           >
-            {isLoading ? 'আপডেট হচ্ছে...' : 'পরিবর্তন সংরক্ষণ করুন'}
+            {isSubmitting ? 'Updating...' : 'Update Address'}
           </button>
         </div>
-      </div>
-    </div>
-  );
+      </form>
+    );
+  };
 
-  const renderMadrasahInformation = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">মাদ্রাসার তথ্য</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SelectField
-          label="সর্বোচ্চ মারহালা"
-          name="madrasah_information.highestMarhala"
-          value={madrasahData.madrasah_information.highestMarhala}
-          onChange={(name, value) => setMadrasahData({
-            ...madrasahData,
-            madrasah_information: {
-              ...madrasahData.madrasah_information,
-              [name]: value
-            }
-          })}
-          options={marhalaTypes}
-        />
-        <SelectField
-          label="মাদ্রাসার ধরণ"
-          name="madrasah_information.madrasahType"
-          value={madrasahData.madrasah_information.madrasahType}
-          onChange={(name, value) => setMadrasahData({
-            ...madrasahData,
-            madrasah_information: {
-              ...madrasahData.madrasah_information,
-              [name]: value
-            }
-          })}
-          options={madrasahTypes}
-        />
-        <InputField
-          label="মোট শিক্ষার্থী"
-          name="madrasah_information.totalStudents"
-          type="number"
-          value={madrasahData.madrasah_information.totalStudents}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            madrasah_information: {
-              ...madrasahData.madrasah_information,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="মোট শিক্ষক ও কর্মচারী"
-          name="madrasah_information.totalTeacherAndStuff"
-          type="number"
-          value={madrasahData.madrasah_information.totalTeacherAndStuff}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            madrasah_information: {
-              ...madrasahData.madrasah_information,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-      </div>
-    </div>
-  );
+  const renderMadrasahInformation = () => {
+    const info = typeof formData.madrasah_information === 'string' 
+      ? null 
+      : formData.madrasah_information;
 
-  const renderMuhtamimInformation = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">মুহতামিমের তথ্য</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <InputField
-          label="নাম"
-          name="muhtamim.name"
-          value={madrasahData.muhtamim.name}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            muhtamim: {
-              ...madrasahData.muhtamim,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="যোগাযোগ নম্বর"
-          name="muhtamim.contactNo"
-          value={madrasahData.muhtamim.contactNo}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            muhtamim: {
-              ...madrasahData.muhtamim,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="এনআইডি নম্বর"
-          name="muhtamim.nidNumber"
-          value={madrasahData.muhtamim.nidNumber}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            muhtamim: {
-              ...madrasahData.muhtamim,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
-          name="muhtamim.highestEducationQualification"
-          value={madrasahData.muhtamim.highestEducationalQualification}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            muhtamim: {
-              ...madrasahData.muhtamim,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-      </div>
-    </div>
-  );
+    if (!info) return null;
 
-  const renderMutawalliInformation = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">সভাপতি/মুতাওয়াল্লির তথ্য</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <InputField
-          label="নাম"
-          name="chairman_mutawalli.name"
-          value={madrasahData.chairman_mutawalli.name}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            chairman_mutawalli: {
-              ...madrasahData.chairman_mutawalli,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="যোগাযোগ নম্বর"
-          name="chairman_mutawalli.contactNo"
-          value={madrasahData.chairman_mutawalli.contactNo}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            chairman_mutawalli: {
-              ...madrasahData.chairman_mutawalli,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="এনআইডি নম্বর"
-          name="chairman_mutawalli.nidNumber"
-          value={madrasahData.chairman_mutawalli.nidNumber}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            chairman_mutawalli: {
-              ...madrasahData.chairman_mutawalli,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <SelectField
-          label="পদবি"
-          name="chairman_mutawalli.designation"
-          value={madrasahData.chairman_mutawalli.designation}
-          onChange={(name, value) => setMadrasahData({
-            ...madrasahData,
-            chairman_mutawalli: {
-              ...madrasahData.chairman_mutawalli,
-              [name]: value
-            }
-          })}
-          options={designationTypes}
-        />
-      </div>
-    </div>
-  );
+    return (
+      <form onSubmit={handleInformationUpdate} className="space-y-6">
+        <h2 className="text-xl font-semibold mb-4">মাদ্রাসার তথ্য</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <SelectField
+            label="সর্বোচ্চ মারহালা"
+            name="madrasah_information.highestMarhala"
+            value={info.highestMarhala}
+            onChange={handleSelectChange}
+            options={marhalaTypes}
+          />
+          <SelectField
+            label="মাদ্রাসার ধরণ"
+            name="madrasah_information.madrasahType"
+            value={info.madrasahType}
+            onChange={handleSelectChange}
+            options={madrasahTypes}
+          />
+          <InputField
+            label="মোট শিক্ষার্থী"
+            name="madrasah_information.totalStudents"
+            value={info.totalStudents.toString()}
+            onChange={handleChange}
+            type="number"
+          />
+          <InputField
+            label="মোট শিক্ষক ও কর্মচারী"
+            name="madrasah_information.totalTeacherAndStuff"
+            value={info.totalTeacherAndStuff.toString()}
+            onChange={handleChange}
+            type="number"
+          />
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            type="submit"
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 disabled:bg-gray-400"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Updating...' : 'Update Information'}
+          </button>
+        </div>
+      </form>
+    );
+  };
 
-  const renderEducationSecretaryInformation = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">শিক্ষা সচিবের তথ্য</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <InputField
-          label="নাম"
-          name="educational_secretory.name"
-          value={madrasahData.educational_secretory.name}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            educational_secretory: {
-              ...madrasahData.educational_secretory,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="যোগাযোগ নম্বর"
-          name="educational_secretory.contactNo"
-          value={madrasahData.educational_secretory.contactNo}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            educational_secretory: {
-              ...madrasahData.educational_secretory,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="এনআইডি নম্বর"
-          name="educational_secretory.nidNumber"
-          value={madrasahData.educational_secretory.nidNumber}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            educational_secretory: {
-              ...madrasahData.educational_secretory,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-        <InputField
-          label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
-          name="educational_secretory.highestEducationQualification"
-          value={madrasahData.educational_secretory.highestEducationalQualification}
-          onChange={(e) => setMadrasahData({
-            ...madrasahData,
-            educational_secretory: {
-              ...madrasahData.educational_secretory,
-              [e.target.name]: e.target.value
-            }
-          })}
-        />
-      </div>
+  const renderMuhtamimInformation = () => {
+    const muhtamim = typeof formData.muhtamim === 'string'
+      ? null
+      : formData.muhtamim;
 
-    </div>
-  );
+    if (!muhtamim) return null;
+
+    return (
+      <form onSubmit={handleBasicInfoUpdate} className="space-y-6">
+        <h2 className="text-xl font-semibold mb-4">মুহতামিমের তথ্য</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InputField
+            label="নাম"
+            name="muhtamim.name"
+            value={muhtamim.name}
+            onChange={handleChange}
+          />
+          <InputField
+            label="মোবাইল নম্বর"
+            name="muhtamim.contactNo"
+            value={muhtamim.contactNo}
+            onChange={handleChange}
+          />
+          <InputField
+            label="এনআইডি নম্বর"
+            name="muhtamim.nidNumber"
+            value={muhtamim.nidNumber}
+            onChange={handleChange}
+          />
+          <InputField
+            label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
+            name="muhtamim.highestEducationalQualification"
+            value={muhtamim.highestEducationalQualification}
+            onChange={handleChange}
+          />
+        </div>
+      </form>
+    );
+  };
+
+  const renderEducationSecretaryInformation = () => {
+    const secretary = typeof formData.educational_secretory === 'string'
+      ? null
+      : formData.educational_secretory;
+
+    if (!secretary) return null;
+
+    return (
+      <form onSubmit={handleBasicInfoUpdate} className="space-y-6">
+        <h2 className="text-xl font-semibold mb-4">শিক্ষা সচিবের তথ্য</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InputField
+            label="নাম"
+            name="educational_secretory.name"
+            value={secretary.name}
+            onChange={handleChange}
+          />
+          <InputField
+            label="মোবাইল নম্বর"
+            name="educational_secretory.contactNo"
+            value={secretary.contactNo}
+            onChange={handleChange}
+          />
+          <InputField
+            label="এনআইডি নম্বর"
+            name="educational_secretory.nidNumber"
+            value={secretary.nidNumber}
+            onChange={handleChange}
+          />
+          <InputField
+            label="সর্বোচ্চ শিক্ষাগত যোগ্যতা"
+            name="educational_secretory.highestEducationalQualification"
+            value={secretary.highestEducationalQualification}
+            onChange={handleChange}
+          />
+        </div>
+      </form>
+    );
+  };
+
+  const renderMutawalliInformation = () => {
+    const mutawalli = typeof formData.chairman_mutawalli === 'string'
+      ? null
+      : formData.chairman_mutawalli;
+
+    if (!mutawalli) return null;
+
+    return (
+      <form onSubmit={handleBasicInfoUpdate} className="space-y-6">
+        <h2 className="text-xl font-semibold mb-4">সভাপতি/মুতাওয়াল্লীর তথ্য</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InputField
+            label="নাম"
+            name="chairman_mutawalli.name"
+            value={mutawalli.name}
+            onChange={handleChange}
+          />
+          <InputField
+            label="মোবাইল নম্বর"
+            name="chairman_mutawalli.contactNo"
+            value={mutawalli.contactNo}
+            onChange={handleChange}
+          />
+          <InputField
+            label="এনআইডি নম্বর"
+            name="chairman_mutawalli.nidNumber"
+            value={mutawalli.nidNumber}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="পদবি"
+            name="chairman_mutawalli.designation"
+            value={mutawalli.designation}
+            onChange={handleSelectChange}
+            options={["CHAIRMAN", "MUTAWALLI"]}
+          />
+        </div>
+      </form>
+    );
+  };
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "basic":
+        return renderBasicInformation();
+      case "address":
+        return renderAddressInformation();
+      case "madrasah":
+        return renderMadrasahInformation();
+      case "muhtamim":
+        return renderMuhtamimInformation();
+      case "mutawalli":
+        return renderMutawalliInformation();
+      case "secretary":
+        return renderEducationSecretaryInformation();
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="container mx-auto py-6 mt-20 px-6">
@@ -746,12 +712,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
             </div>
 
             <div>
-              {activeTab === "basic" && renderBasicInformation()}
-              {activeTab === "address" && renderAddressInformation()}
-              {activeTab === "madrasah" && renderMadrasahInformation()}
-              {activeTab === "muhtamim" && renderMuhtamimInformation()}
-              {activeTab === "mutawalli" && renderMutawalliInformation()}
-              {activeTab === "secretary" && renderEducationSecretaryInformation()}
+              {renderTabContent()}
             </div>
           </div>
         </div>

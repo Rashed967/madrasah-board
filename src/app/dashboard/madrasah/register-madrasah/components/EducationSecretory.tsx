@@ -1,16 +1,14 @@
 'use client';
 
+import { IEducationalSecretary } from '@/features/madrasah/interfaces';
 import React from 'react';
 
 
 interface EducationSecretoryProps {
   formData: {
-    shikkhaSocheebName: string;
-    shikkhaSocheebNID: string;
-    shikkhaSocheebMobile: string;
-    shikkhaSocheebEducation: string;
+    educational_secretory: Pick<IEducationalSecretary, 'name' | 'contactNo' | 'nidNumber' | 'highestEducationalQualification'>;
   };
-  handleChange: (field: string, value: string | File | null) => void;
+  handleChange: (field: string, value: string | null) => void;
   errors?: Record<string, string>;
 }
 
@@ -26,15 +24,15 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
 
       {/* Shikkha Socheeb Information */}
       <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-gray-900">শিক্ষা সচিবের তথ্য</h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <h2 className="text-xl font-semibold text-gray-900 mt-2">শিক্ষা সচিবের তথ্য</h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div>
             <label className="block text-sm font-medium text-gray-700">নাম</label>
             <input
               type="text"
               placeholder="শিক্ষা সচিবের নাম লিখুন"
-              value={formData.shikkhaSocheebName}
-              onChange={(e) => handleChange('shikkhaSocheebName', e.target.value)}
+              value={formData.educational_secretory.name}
+              onChange={(e) => handleChange('educational_secretory.name', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
           </div>
@@ -43,8 +41,8 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
             <input
               type="text"
               placeholder="জাতীয় পরিচয়পত্র নম্বর লিখুন"
-              value={formData.shikkhaSocheebNID}
-              onChange={(e) => handleChange('shikkhaSocheebNID', e.target.value)}
+              value={formData.educational_secretory.nidNumber}
+              onChange={(e) => handleChange('educational_secretory.nidNumber', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
           </div>
@@ -53,8 +51,8 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
             <input
               type="tel"
               placeholder="মোবাইল নম্বর লিখুন"
-              value={formData.shikkhaSocheebMobile}
-              onChange={(e) => handleChange('shikkhaSocheebMobile', e.target.value)}
+              value={formData.educational_secretory.contactNo}
+              onChange={(e) => handleChange('educational_secretory.contactNo', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
           </div>
@@ -63,8 +61,8 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
             <input
               type="text"
               placeholder="শিক্ষাগত যোগ্যতা লিখুন"
-              value={formData.shikkhaSocheebEducation}
-              onChange={(e) => handleChange('shikkhaSocheebEducation', e.target.value)}
+              value={formData.educational_secretory.highestEducationalQualification}
+              onChange={(e) => handleChange('educational_secretory.highestEducationalQualification', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
           </div>

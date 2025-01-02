@@ -2,20 +2,21 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MdAdd } from 'react-icons/md';
 import toast from 'react-hot-toast';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { divisions } from '@/data/divisions';
-import { createZone } from '@/services/zoneService';
 import { StatusDialog } from '@/components/ui/status-dialog';
+import ZoneName from '../components/ZoneName';
+import ZoneDistrict from '../components/ZoneDistrict';
+import ZoneSubmitButton from '../components/ZoneSubmitButton';
+import { divisions } from '@/data/divisions';
+import { createZone } from '@/features/zone/zone.services';
 
 // Get all unique districts from divisions
-const allDistricts = Object.values(divisions).reduce((acc, divisionDistricts) => {
+const allDistricts : string[] = Object.values(divisions).reduce((acc, divisionDistricts) => {
   return [...acc, ...Object.keys(divisionDistricts)];
 }, [] as string[]);
 
 // Remove duplicates and sort
-const districts = [...new Set(allDistricts)].sort();
+const districts : string[] = [...new Set(allDistricts)].sort();
 
 export default function AddZone() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function AddZone() {
       });
 
   
-      // ‍ুshow dialog based on response
+      // ‍show dialog based on response
       if (response.success) {
         setStatusDialog({
           isOpen: true,
@@ -82,8 +83,7 @@ export default function AddZone() {
           message: response.message || 'জোন তৈরি করতে সমস্যা হয়েছে'
         });
       }
-    
-
+  
       // Clear form
       setZoneName('');
       setSelectedDistricts([]);
@@ -115,75 +115,20 @@ export default function AddZone() {
         <h1 className="text-2xl font-bold mb-6">নতুন জোন যোগ করুন</h1>
         
         <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              জোনের নাম
-            </label>
-            <input
-              type="text"
-              value={zoneName}
-              onChange={(e) => setZoneName(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#52B788]/70"
-              placeholder="জোনের নাম লিখুন"
-              required
-            />
-          </div>
+          <ZoneName 
+            zoneName={zoneName}
+            setZoneName={setZoneName}
+          />
 
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              জেলা নির্বাচন করুন
-            </label>
-            <Select onValueChange={handleAddDistrict}>
-              <SelectTrigger className='ring-1 ring-[#52B788]/70'>
-                <SelectValue placeholder="জেলা নির্বাচন করুন" />
-              </SelectTrigger>
-              <SelectContent>
-                {districts.map((district) => (
-                  <SelectItem 
-                    key={district} 
-                    value={district}
-                    disabled={selectedDistricts.includes(district)}
-                  >
-                    {district}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <ZoneDistrict
+            districts={districts}
+            selectedDistricts={selectedDistricts}
+            onAddDistrict={handleAddDistrict}
+            onRemoveDistrict={handleRemoveDistrict}
+          />
 
-            {selectedDistricts.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-sm font-semibold mb-2">নির্বাচিত জেলাসমূহ:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedDistricts.map((district) => (
-                    <span
-                      key={district}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-[#52B788]/80 text-white"
-                    >
-                      {district}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveDistrict(district)}
-                        className="ml-2 text-white hover:text-white"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="inline-flex items-center px-4 py-2 bg-[#52B788] text-white rounded-md hover:bg-[#52B788]/70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-            >
-              <MdAdd className="mr-2" />
-              {isLoading ? 'লোড হচ্ছে...' : 'জোন যোগ করুন'}
-            </button>
-          </div>
+          <ZoneSubmitButton isLoading={isLoading} />
+          
         </form>
       </div>
 
@@ -194,6 +139,8 @@ export default function AddZone() {
         message={statusDialog.message}
         type={statusDialog.type}
       />
+
+      
     </div>
   );
 }

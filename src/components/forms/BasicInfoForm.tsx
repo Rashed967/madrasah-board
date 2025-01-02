@@ -1,6 +1,6 @@
 // import {  } from "@/components/ui/input-field";
 import { ChangeEvent, FormEvent } from "react";
-import { IMadrasah } from "@/types/global/madrasah.types";
+import { IMadrasah } from "@/features/madrasah/interfaces";
 import { InputField } from "./InputField";
 
 interface BasicInfoFormProps {

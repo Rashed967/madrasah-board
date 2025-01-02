@@ -1,16 +1,14 @@
 'use client';
 
+
+import { IMuhtamim } from '@/features/madrasah/interfaces';
 import React from 'react';
 
-
-interface MuhtamimInfoProps {
+interface Props {
   formData: {
-    muhtamimName: string;
-    muhtamimNID: string;
-    muhtamimMobile: string;
-    muhtamimEducation: string;
+    muhtamim: IMuhtamim;
   };
-  handleChange: (field: string, value: string | File | null) => void;
+  handleChange: (field: string, value: string) => void;
   errors?: Record<string, string>;
 }
 
@@ -19,69 +17,83 @@ interface MuhtamimInfoProps {
  * Handles the staff information section of the madrasah registration form
  * Including Muhtamim, Shikkha Socheeb, and Shovapoti details
  */
-const MuhtamimInfo: React.FC<MuhtamimInfoProps> = ({ formData, handleChange, errors = {} }) => {
+export default function MuhtamimInfo({ formData, handleChange, errors }: Props) {
   return (
-    <div className="space-y-8">
-      {/* Muhtamim Information */}
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-gray-900">মুহতামিমের তথ্য</h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">নাম</label>
-            <input
-              type="text"
-              placeholder="মুহতামিমের নাম লিখুন"
-              value={formData.muhtamimName}
-              onChange={(e) => handleChange('muhtamimName', e.target.value)}
-              className={`mt-1 block w-full rounded-md border ${errors.muhtamimName ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
-            />
-            {errors.muhtamimName && (
-              <p className="mt-1 text-sm text-red-500">{errors.muhtamimName}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">জাতীয় পরিচয়পত্র নম্বর</label>
-            <input
-              type="text"
-              placeholder="জাতীয় পরিচয়পত্র নম্বর লিখুন"
-              value={formData.muhtamimNID}
-              onChange={(e) => handleChange('muhtamimNID', e.target.value)}
-              className={`mt-1 block w-full rounded-md border ${errors.muhtamimNID ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
-            />
-            {errors.muhtamimNID && (
-              <p className="mt-1 text-sm text-red-500">{errors.muhtamimNID}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">মোবাইল নম্বর</label>
-            <input
-              type="tel"
-              placeholder="মোবাইল নম্বর লিখুন"
-              value={formData.muhtamimMobile}
-              onChange={(e) => handleChange('muhtamimMobile', e.target.value)}
-              className={`mt-1 block w-full rounded-md border ${errors.muhtamimMobile ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
-            />
-            {errors.muhtamimMobile && (
-              <p className="mt-1 text-sm text-red-500">{errors.muhtamimMobile}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">শিক্ষাগত যোগ্যতা</label>
-            <input
-              type="text"
-              placeholder="শিক্ষাগত যোগ্যতা লিখুন"
-              value={formData.muhtamimEducation}
-              onChange={(e) => handleChange('muhtamimEducation', e.target.value)}
-              className={`mt-1 block w-full rounded-md border ${errors.muhtamimEducation ? 'border-red-500' : 'border-gray-300'} px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
-            />
-            {errors.muhtamimEducation && (
-              <p className="mt-1 text-sm text-red-500">{errors.muhtamimEducation}</p>
-            )}
-          </div>
+    <div className="mb-6 ">
+      <h2 className="text-xl font-semibold mb-4">মুহতামিমের তথ্য</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            নাম
+          </label>
+          <input
+            type="text"
+            value={formData.muhtamim.name}
+            onChange={(e) => handleChange('muhtamim.name', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['muhtamim.name'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="মুহতামিমের নাম"
+          />
+          {errors?.['muhtamim.name'] && (
+            <p className="text-red-500 text-xs italic">{errors['muhtamim.name']}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            এনআইডি নম্বর
+          </label>
+          <input
+            type="text"
+            value={formData.muhtamim.nidNumber}
+            onChange={(e) => handleChange('muhtamim.nidNumber', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['muhtamim.nidNumber'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="এনআইডি নম্বর"
+          />
+          {errors?.['muhtamim.nidNumber'] && (
+            <p className="text-red-500 text-xs italic">{errors['muhtamim.nidNumber']}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            মোবাইল নম্বর
+          </label>
+          <input
+            type="text"
+            value={formData.muhtamim.contactNo}
+            onChange={(e) => handleChange('muhtamim.contactNo', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['muhtamim.contactNo'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="মোবাইল নম্বর"
+          />
+          {errors?.['muhtamim.contactNo'] && (
+            <p className="text-red-500 text-xs italic">{errors['muhtamim.contactNo']}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            শিক্ষাগত যোগ্যতা
+          </label>
+          <input
+            type="text"
+            value={formData.muhtamim.highestEducationalQualification}
+            onChange={(e) => handleChange('muhtamim.highestEducationalQualification', e.target.value)}
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['muhtamim.highestEducationalQualification'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="শিক্ষাগত যোগ্যতা"
+          />
+          {errors?.['muhtamim.highestEducationalQualification'] && (
+            <p className="text-red-500 text-xs italic">{errors['muhtamim.highestEducationalQualification']}</p>
+          )}
         </div>
       </div>
     </div>
   );
-};
-
-export default MuhtamimInfo;
+}
