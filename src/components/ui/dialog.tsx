@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title: string ;
   description?: string;
   children?: React.ReactNode;
   onSubmit?: () => void;

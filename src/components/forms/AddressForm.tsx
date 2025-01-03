@@ -1,6 +1,5 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {  SelectField } from "@/components/ui/select";
+import { InputField } from "./InputField";
 import { divisions, districts, upazilas, policeStations } from '@/data/locations';
 import { IMadrasahAddress } from "@/features/madrasah/interfaces";
 
@@ -11,64 +10,6 @@ interface AddressFormProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 
-interface SelectFieldProps {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  options: string[];
-}
-
-
-
-const SelectField = ({ label, name, value, onChange, options }: SelectFieldProps) => (
-  <div className="space-y-2">
-    <Label>{label}</Label>
-    <Select 
-      value={value} 
-      onValueChange={(newValue) => 
-        onChange({ 
-          target: { 
-            name, 
-            value: newValue 
-          } 
-        } as React.ChangeEvent<HTMLSelectElement>)
-      }
-    >
-      <SelectTrigger>
-        <SelectValue placeholder="নির্বাচন করুন" />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option} value={option}>
-            {option}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  </div>
-);
-
-interface InputFieldProps {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
-}
-
-export const InputField = ({ label, name, value, onChange, type = "text" }: InputFieldProps) => (
-  <div className="space-y-2">
-    <Label>{label}</Label>
-    <Input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={label}
-    />
-  </div>
-);
 
 export const AddressForm = ({ address, onChange }: AddressFormProps) => {
   return (

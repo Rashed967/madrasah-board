@@ -6,3 +6,5 @@ export interface IMadrasahInformation {
     totalTeacherAndStuff: number;
     madrasahType: TMadrasahType;
 }
+
+export default IMadrasahInformation

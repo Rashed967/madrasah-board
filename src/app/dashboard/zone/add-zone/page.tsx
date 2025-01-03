@@ -35,6 +35,7 @@ export default function AddZone() {
     message: ''
   });
 
+
   const handleAddDistrict = (district: string) => {
     if (!selectedDistricts.includes(district)) {
       setSelectedDistricts([...selectedDistricts, district]);

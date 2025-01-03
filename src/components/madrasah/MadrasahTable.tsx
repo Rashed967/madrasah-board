@@ -1,16 +1,7 @@
-import Link from 'next/link';
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MdEdit, MdDelete } from "react-icons/md";
-import { BsThreeDots } from "react-icons/bs";
 
-import { marhalaTypes } from '@/constants/madrasahConstants';
+
 import { IMadrasah } from '@/features/madrasah/interfaces';
+import { MadrasahTableRow } from './MadrasahTableRow';
 
 interface MadrasahTableProps {
   madrasahs: IMadrasah[];
@@ -39,67 +30,13 @@ export function MadrasahTable({ madrasahs, onDelete, getAddressField, getMadrasa
           </thead>
           <tbody>
             {madrasahs.map((madrasah) => (
-              <tr key={madrasah._id} className="border-b hover:bg-gray-50">
-                <td className="px-6 py-4">{madrasah.code}</td>
-                <td className="px-6 py-4">
-                  <Link 
-                    href={`/dashboard/madrasah/${madrasah._id}`}
-                    className="text-[#52b788] hover:text-[#52b788]/80 hover:underline"
-                  >
-                    {madrasah.madrasahNames.bengaliName}
-                  </Link>
-                </td>
-                <td className="px-6 py-4">
-                  {[
-                    getAddressField(madrasah, 'policeStation'),
-                    getAddressField(madrasah, 'subDistrict'),
-                    getAddressField(madrasah, 'district')
-                  ].filter(Boolean).join(', ')}
-                </td>
-                <td className="px-6 py-4">
-                  {marhalaTypes.find(m => m.value === getMadrasahInfoField(madrasah, 'highestMarhala'))?.label || getMadrasahInfoField(madrasah, 'highestMarhala')}
-                </td>
-                <td className="px-6 py-4">{getMadrasahInfoField(madrasah, 'muhtamimName')}</td>
-                <td className="px-6 py-4">
-                  {getMadrasahInfoField(madrasah, 'madrasahType') === 'BOY' ? 'বালক' : 'বালিকা'}
-                </td>
-                <td className="px-6 py-4">{madrasah.email || '-'}</td>
-                <td className="px-6 py-4">{madrasah.contactNo1 || '-'}</td>
-                <td className="px-6 py-4 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        className="h-7 w-7 rounded-full bg-emerald-500 hover:bg-emerald-600 transition-colors flex items-center justify-center p-0"
-                      >
-                        <BsThreeDots className="h-4 w-4 text-white" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent 
-                      align="end" 
-                      className="w-40 bg-white shadow-lg border border-gray-100 rounded-md p-1"
-                      sideOffset={5}
-                    >
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/dashboard/madrasah/${madrasah._id}/edit`}
-                          className="flex items-center px-3 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 rounded-md cursor-pointer transition-colors"
-                        >
-                          <MdEdit className="h-4 w-4 mr-2" />
-                          <span>সম্পাদনা</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => onDelete(madrasah._id)}
-                        className="flex items-center px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 rounded-md cursor-pointer transition-colors mt-1"
-                      >
-                        <MdDelete className="h-4 w-4 mr-2" />
-                        <span>মুছে ফেলুন</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
-              </tr>
+              <MadrasahTableRow
+                key={madrasah._id.toString()}
+                madrasah={madrasah}
+                onDelete={onDelete}
+                getAddressField={getAddressField}
+                getMadrasahInfoField={getMadrasahInfoField}
+              />
             ))}
           </tbody>
         </table>

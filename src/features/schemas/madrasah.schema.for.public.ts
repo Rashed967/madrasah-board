@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { addressSchema } from './address.schema';
-import { madrasahInfoSchema } from './madrasah-info.schema';
-import { muhtamimSchema, mutawalliSchema, educationalSecretarySchema } from './staff.schema';
+import { createMadrasahInfoSchema } from './madrasah-info.schema';
+import staffSchemas from './staff.schema';
 
 const phoneRegex = /^01[3-9]\d{8}$/;
 
@@ -20,12 +20,13 @@ export const madrasahSchema = z.object({
   contactNo2: z.string().regex(phoneRegex, 'সঠিক মোবাইল নম্বর দিন'),
   
   address: addressSchema,
-  madrasah_information: madrasahInfoSchema,
+  madrasah_information: createMadrasahInfoSchema.partial(),
   
   // স্টাফ ইনফরমেশন
-  muhtamim: muhtamimSchema.partial(),
-  chairman_mutawalli: mutawalliSchema.partial(),
-  educational_secretory: educationalSecretarySchema.partial(),
+  muhtamim: staffSchemas.createMuhtamimSchema.optional(),
+  chairman_mutawalli: staffSchemas.createMutawalliSchema.optional(),
+  educational_secretory: staffSchemas.createEducationalSecretarySchema.optional(),
+
   
   ilhakImage: z.string().optional(),
 });

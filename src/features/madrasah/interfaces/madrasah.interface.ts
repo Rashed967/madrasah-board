@@ -33,6 +33,7 @@ export interface IMadrasah {
     description: string;
     ilhakImage: string;
     address: {
+        _id?: '';
         division: string;
         district: string;
         subDistrict: string;
@@ -43,6 +44,7 @@ export interface IMadrasah {
         courierAddress: TCourierAddress;
     };
     muhtamim: {
+        _id?: '';
         name: string;
         contactNo: string;
         nidNumber: string;
@@ -50,6 +52,7 @@ export interface IMadrasah {
         code: string;
     };
     chairman_mutawalli: {
+        _id?: '';
         name: string;
         contactNo: string;
         nidNumber: string;
@@ -57,14 +60,16 @@ export interface IMadrasah {
         code: string;
     };
     educational_secretory: {
+        _id?: '';
         name: string;
         contactNo: string;
         nidNumber: string;
         highestEducationalQualification: string;
-        madrasah?: Types.ObjectId;
+        madrasah?: '';
         code: string;
     };
     madrasah_information: {
+        _id?: '';
         highestMarhala: string;
         totalStudents: number;
         totalTeacherAndStuff: number;

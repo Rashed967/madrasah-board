@@ -4,6 +4,7 @@ import { ApiResponse } from '@/core/api/apiService';
 import { getCurrentUser } from '@/core/auth/authService';
 import { IMadrasah } from '../interfaces';
 import { removeEmptyFields } from '@/utils/object.utils';
+import { ObjectId, Types } from 'mongoose';
 
 
 const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;

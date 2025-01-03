@@ -102,6 +102,7 @@ export const updateMadrasahBasicInfo = async (
   data: any
 ): Promise<ApiResponse<IMadrasah>> => {
   try {
+    console.log('🔥 Update Basic Info Response:', data);
     const response = await patch<IMadrasah>(`/madrasah/${id}`, data);
     return {
       success: true as const,
@@ -185,36 +186,21 @@ export const updateMadrasahEducationalSecretary = async (id: string, data: any):
   }
 };
 
+
+
+
 export const updateMadrasahInformation = async (
   id: string,
-  data: {
-    madrasah: string;
-    highestMarhala: string;
-    madrasahType: string;
-    totalStudents: number;
-    totalTeacherAndStuff: number;
-  }
+  data: Partial<IMadrasah['madrasah_information']>
 ): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const isCreate = !id;
-    const endpoint = isCreate ? '/madrasah-information' : `/madrasah-information/${id}`;
-    const method = isCreate ? post : patch;
-
-    console.log(`${isCreate ? 'Creating' : 'Updating'} madrasah information:`, {
-      endpoint,
-      data
-    });
-
-    const response = await method<IMadrasah>(endpoint, data);
-    
-    console.log('IMadrasah information response:', response);
+    const response = await patch<IMadrasah>(`/madrasah-information/${id}`, data);
     return {
       success: true as const,
       message: response.message,
       data: response.data
     };
-  } catch (error) {
-    console.error('IMadrasah information error:', error);
+  } catch (error: any) {
     return {
       success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার তথ্য আপডেট করতে সমস্যা হয়েছে',

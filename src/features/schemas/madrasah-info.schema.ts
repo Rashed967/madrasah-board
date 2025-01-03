@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { madrasahTypes } from '@/data/madrasahTypes';
 import marhalaNames from '@/data/marhala.names';
 
-export const madrasahInfoSchema = z.object({
+export const createMadrasahInfoSchema = z.object({
   highestMarhala: z.enum(marhalaNames as [string, ...string[]], {
     errorMap: () => ({ message: 'সর্বোচ্চ মারহালা নির্বাচন করুন' }),
   }),
@@ -12,3 +12,14 @@ export const madrasahInfoSchema = z.object({
     errorMap: () => ({ message: 'মাদরাসার ধরণ নির্বাচন করুন' }),
   }),
 });
+
+
+// update madrasah information zod schema, all fields are optional
+export const updateMadrasahInfoSchema = createMadrasahInfoSchema.partial();
+
+const madrasahInfoSchemas  = {
+  createMadrasahInfoSchema,
+  updateMadrasahInfoSchema,
+}
+
+export default madrasahInfoSchemas
