@@ -42,7 +42,7 @@ export default function MadrasahNameAndBio({ formData, handleChange, errors }: P
         </div>
 
         <div>
-          <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
+          <label className="block text-gray-700 text-sm md:text-base  lg:text font-bold mb-2">
             মাদরাসার নাম (আরবি) <span className="text-red-500">*</span>
           </label>
           <input
@@ -51,11 +51,11 @@ export default function MadrasahNameAndBio({ formData, handleChange, errors }: P
             onChange={(e) => handleChange('madrasahNames.arabicName', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['madrasahNames.arabicName'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
-            placeholder="আরবিতে মাদরাসার নাম"
+            } px-3 py-2 text-right text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="اسم المدرسة بالعربية"
           />
           {errors?.['madrasahNames.arabicName'] && (
-            <p className="text-red-500 text-xs italic">{errors['madrasahNames.arabicName']}</p>
+            <p className="text-red-500 text-xs  italic">{errors['madrasahNames.arabicName']}</p>
           )}
         </div>
 
