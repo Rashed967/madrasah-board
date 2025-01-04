@@ -9,7 +9,7 @@ interface MadrasahPrintPreviewProps {
 
 export function MadrasahPrintPreview({ printContent, onClose }: MadrasahPrintPreviewProps) {
   return (
-    <Card className="w-10/12 p-4 mx-auto mt-8">
+    <Card className="mt-4 px-6 py-4">
       <div className="flex justify-end">
         <div className="flex gap-2 mb-6 no-print">
           <Button 

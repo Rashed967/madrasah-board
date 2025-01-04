@@ -219,7 +219,7 @@ export default function AllMadrasah() {
 
 
   return (
-    <div className="container mx-auto  py-6 px-2 md:px-4 ">
+    <div className=" mx-auto  py-6 px-2 md:px-4 ">
       {!showPrintPreview ? (
         <div>
           <MadrasahListHeaderSection 
