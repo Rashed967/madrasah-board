@@ -11,8 +11,9 @@ const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
 
 export type MadrasahApiResponse = ApiResponse<IMadrasah>;
 export type MadrasahListApiResponse = ApiResponse<IMadrasah[]>;
+// Promise<ApiResponse<IMadrasah>>
 
-export async function registerMadrasah(formData: any): Promise<ApiResponse<IMadrasah>> {
+export async function registerMadrasah(formData: any)  {
   const user = getCurrentUser();
   const isAdmin = user?.role === 'admin' || user?.role === 'super-admin';
 
@@ -25,26 +26,16 @@ export async function registerMadrasah(formData: any): Promise<ApiResponse<IMadr
   }
 
   const registrationData = removeEmptyFields({
-    ...formData,
-    status: formData.status || 'pending'
+    ...formData
   });
-  console.log('🚀 ~ file: madrasahService.ts:50 ~ registerMadrasah ~ registrationData:', registrationData);
+  const response = await post<IMadrasah>('/madrasah/create-by-admin', registrationData);
 
-  try {
-    const response = await post<IMadrasah>('/madrasah/create-by-admin', registrationData);
-    return {
-      success: true as const,
-      message: response.message,
-      data: response.data
-    };
-  } catch (error: any) {
-    return {
-      success: false as const,
-      message: error?.response?.data?.message || 'মাদরাসা নিবন্ধন করতে সমস্যা হয়েছে',
-      data: null
-    };
-  }
+  return response;
+
+  
 }
+
+
 
 export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Promise<ApiResponse<IMadrasah[]>> => {
   try {
@@ -185,9 +176,6 @@ export const updateMadrasahEducationalSecretary = async (id: string, data: any):
     };
   }
 };
-
-
-
 
 export const updateMadrasahInformation = async (
   id: string,

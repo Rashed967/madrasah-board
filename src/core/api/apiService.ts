@@ -79,7 +79,7 @@ export const request = async <T>(
     }
 
     const data = await response.json();
-    console.log('API Response Data:', data);
+    // console.log('API Response Data:', data);
 
     return {
       success: data.success ?? true,

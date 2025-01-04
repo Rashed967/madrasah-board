@@ -22,8 +22,8 @@ interface Props {
  */
 const MadrasahBasicInfo: React.FC<Props> = ({ formData, handleChange, errors }) => {
   return (
-    <div className="mb-6">
-      <h2 className="text-xl font-semibold mb-4 mt-4">মাদরাসার মৌলিক তথ্য</h2>
+    <div className=" p-6 ">
+      <h2 className="text-base text-lg font-semibold mb-4 mt-4">মাদরাসার মৌলিক তথ্য</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
 
@@ -36,7 +36,7 @@ const MadrasahBasicInfo: React.FC<Props> = ({ formData, handleChange, errors }) 
             onChange={(e) => handleChange('madrasah_information.highestMarhala', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['madrasah_information.highestMarhala'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2 text-sm md:text-base  focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
             <option value="">সর্বোচ্চ মারহালা নির্বাচন করুন</option>
             {marhalaNames.map((type) => (
@@ -59,7 +59,7 @@ const MadrasahBasicInfo: React.FC<Props> = ({ formData, handleChange, errors }) 
             onChange={(e) => handleChange('madrasah_information.madrasahType', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['madrasah_information.madrasahType'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
             <option value="">মাদরাসার ধরণ নির্বাচন করুন</option>
             {madrasahTypes.map((type) => (
@@ -85,7 +85,7 @@ const MadrasahBasicInfo: React.FC<Props> = ({ formData, handleChange, errors }) 
             onChange={(e) => handleChange('madrasah_information.totalStudents', parseInt(e.target.value) || 0)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['madrasah_information.totalStudents'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="মোট শিক্ষার্থীর সংখ্যা"
           />
           {errors?.['madrasah_information.totalStudents'] && (
@@ -103,7 +103,7 @@ const MadrasahBasicInfo: React.FC<Props> = ({ formData, handleChange, errors }) 
             onChange={(e) => handleChange('madrasah_information.totalTeacherAndStuff', parseInt(e.target.value) || 0)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['madrasah_information.totalTeacherAndStuff'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="মোট শিক্ষক ও কর্মচারীর সংখ্যা"
           />
           {errors?.['madrasah_information.totalTeacherAndStuff'] && (

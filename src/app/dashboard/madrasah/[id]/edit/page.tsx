@@ -37,7 +37,7 @@ const initialFormState: IMadrasah= {
   communicatorName: '',
   contactNo1: '',
   contactNo2: '',
-  ilhakImage: '',
+  ilhakPdf: '',
   address: {
     division: '',
     district: '',
@@ -68,14 +68,16 @@ const initialFormState: IMadrasah= {
     contactNo: '',
     nidNumber: '',
     designation: '' as TMutawalliDesignation,
-    code: ''
+    code: '',
+    _id: ""
   },
   educational_secretory: {
     name: '',
     contactNo: '',
     nidNumber: '',
     highestEducationalQualification: '',
-    code: ''
+    code: '',
+    _id: ""
   },
   madrasahResult: [],
   status: 'pending',
@@ -120,21 +122,24 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
               contactNo: response.data.muhtamim?.contactNo || '',
               nidNumber: response.data.muhtamim?.nidNumber || '',
               highestEducationalQualification: response.data.muhtamim?.highestEducationalQualification || '',
-              code: response.data.muhtamim?.code || ''
+              code: response.data.muhtamim?.code || '',
+              _id: response.data.muhtamim?._id
             },
             chairman_mutawalli: {
               name: response.data.chairman_mutawalli?.name || '',
               contactNo: response.data.chairman_mutawalli?.contactNo || '',
               nidNumber: response.data.chairman_mutawalli?.nidNumber || '',
               designation: response.data.chairman_mutawalli?.designation || '' as TMutawalliDesignation,
-              code: response.data.chairman_mutawalli?.code || ''
+              code: response.data.chairman_mutawalli?.code || '',
+              _id: response.data.chairman_mutawalli?._id
             },
             educational_secretory: {
               name: response.data.educational_secretory?.name || '',
               contactNo: response.data.educational_secretory?.contactNo || '',
               nidNumber: response.data.educational_secretory?.nidNumber || '',
               highestEducationalQualification: response.data.educational_secretory?.highestEducationalQualification || '',
-              code: response.data.educational_secretory?.code || ''
+              code: response.data.educational_secretory?.code || '',
+              _id: response.data.educational_secretory?._id
             }
           };
           setFormData(madrasahData);
@@ -149,6 +154,8 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
 
     fetchMadrasah();
   }, [params.id]);
+
+ 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -460,7 +467,7 @@ if (response.success) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const validationErrors = globalValidateRequest(staffSchemas.updateEducationalSecretarySchema, formData.educational_secretory);
+    const validationErrors = globalValidateRequest(staffSchemas.updateEducationalSecretarySchema, formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -572,7 +579,8 @@ if (response.success) {
 
   return (
   
-    <div className="container mx-auto py-6 mt-20 px-6">
+    <div className="container mx-auto py-6 mt-8 md:mt-12 px-6">
+
       <StatusDialog
         isOpen={statusDialog.isOpen}
         onClose={() => setStatusDialog(prev => ({ ...prev, isOpen: false }))}
@@ -580,10 +588,11 @@ if (response.success) {
         message={statusDialog.message}
         type={statusDialog.type}
       />
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex flex-col space-y-6">
+
+      <div className="bg-white rounded-lg shadow-lg p-6 ">
+        <div className="flex flex-col space-y-6 ">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">মাদ্রাসা তথ্য সম্পাদনা</h1>
+            <h1 className="text-base font-bold">মাদ্রাসা তথ্য সম্পাদনা</h1>
           </div>
 
           <div className="flex flex-col space-y-4">

@@ -1,10 +1,7 @@
 export type TMutawalliDesignation = 
     | "সভাপতি" 
-    | "চেয়ারম্যান" 
-    | "মোতাওয়াল্লী" 
-    | "সেক্রেটারি" 
-    | "ডিরেক্টর" 
-    | "প্রিন্সিপাল";
+    | "মুতাওয়াল্লি" 
+    | "সেক্রেটারি" ;
 
 export interface IMutawalli {
     name: string;

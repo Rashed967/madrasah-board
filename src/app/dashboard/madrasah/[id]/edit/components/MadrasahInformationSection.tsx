@@ -31,8 +31,8 @@ export function MadrasahInformationSection({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<h5 className="text-base font-semibold mb-2 mt-2 md:mt-4">মাদ্রাসার সার্বিক তথ্য</h5>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 md:mt-4">
 
       <SelectField
         label="সর্বোচ্চ মারহালা"
@@ -69,7 +69,7 @@ export function MadrasahInformationSection({
       <div className="mt-4 flex justify-end">
       <button
           type="submit"
-          className="px-4 py-2 bg-[#52b788] text-white rounded-md hover:bg-[#52b788]/90 transition-colors duration-200"
+          className="px-4 py-2 bg-[#52b788] text-white text-xs md:text-sm rounded-md hover:bg-[#52b788]/90 transition-colors duration-200"
         >
           
           {isSubmitting ? 'আপডেট হচ্ছে...' : 'আপডেট করুন'}

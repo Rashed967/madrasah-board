@@ -11,7 +11,9 @@ interface BasicInfoFormProps {
 
 export default function BasicInfoForm({ madrasahData, onChange, errors = {} }: BasicInfoFormProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-2 md:pt-4">
+            <h5 className="text-base font-semibold mb-2 mt-2 md:mt-4"> মাদ্রাসার তথ্য</h5>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
      

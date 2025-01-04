@@ -31,7 +31,7 @@ export interface IMadrasah {
     contactNo1: string;
     contactNo2: string;
     description: string;
-    ilhakImage: string;
+    ilhakPdf: string;
     address: {
         _id?: '';
         division: string;

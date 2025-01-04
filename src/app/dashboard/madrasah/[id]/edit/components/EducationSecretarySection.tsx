@@ -21,7 +21,7 @@ export function EducationSecretarySection({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">শিক্ষা সচিবের তথ্য</h2>
+      <h5 className="text-base font-semibold mb-2 mt-2 md:mt-4">শিক্ষা সচিবের তথ্য</h5>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <InputField
           label="নাম"
@@ -51,7 +51,7 @@ export function EducationSecretarySection({
       <div className="mt-4 flex justify-end">
         <button
           type="submit"
-          className="px-4 py-2 bg-[#52b788] text-white rounded-md hover:bg-[#52b788]/90 transition-colors duration-200"
+          className="px-4 py-2 bg-[#52b788] text-white text-xs md:text-sm rounded-md hover:bg-[#52b788]/90 transition-colors duration-200"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'আপডেট হচ্ছে...' : 'আপডেট করুন'}

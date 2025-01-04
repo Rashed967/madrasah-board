@@ -89,7 +89,8 @@ export const updateEducationalSecretary = async (
 ): Promise<ApiResponse<IMadrasah>> => {
   try {
 
-    const response = await patch<IMadrasah>(`/educational-secretaries/${id}`, data);
+    console.log('🚀 ~ file: staffService.ts:50 ~ updateEducationalSecretary ~ data:', data);
+    const response = await patch<IMadrasah>(`/educational-secretories/${id}`, data);
     return {
       success: true as const,
       statusCode:  response.statusCode || 200,

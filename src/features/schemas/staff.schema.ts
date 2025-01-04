@@ -1,3 +1,4 @@
+import chairmanMutawalliDesignation from '@/data/chairman_mutawalli.designation';
 import { z } from 'zod';
 
 const phoneRegex = /^01[3-9]\d{8}$/;
@@ -17,7 +18,7 @@ export const createMuhtamimSchema = baseStaffSchema.extend({
 
 // Mutawalli specific schema
 export const createMutawalliSchema = baseStaffSchema.extend({
-  designation: z.enum(["CHAIRMAN", "MUTAWALLI"], {
+  designation: z.enum(chairmanMutawalliDesignation as [string, ...string[]], {
     errorMap: () => ({ message: 'পদবি নির্বাচন করুন' }),
   }),
 });

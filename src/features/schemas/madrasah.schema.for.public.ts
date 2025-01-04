@@ -28,5 +28,5 @@ export const madrasahSchema = z.object({
   educational_secretory: staffSchemas.createEducationalSecretarySchema.optional(),
 
   
-  ilhakImage: z.string().optional(),
+  ilhakPdf: z.string().optional(),
 });

@@ -22,10 +22,12 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-[#edede9]">
       <Navbar />
-      <div className="flex">
+      <div className="flex ">
         <Sidebar />
-        <main className="flex-1 pl-1">
-          {children}
+        <main className="flex-1 pl-4 pr-4 overflow-x-auto min-w-0">
+          <div className="max-w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

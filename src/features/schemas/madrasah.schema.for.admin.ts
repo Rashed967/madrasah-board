@@ -55,11 +55,9 @@ export const madrasahSchemaForAdmin = z.object({
     name: z.string().optional(),
     contactNo: z.string().optional(),
     nidNumber: z.string().optional(),
-    designation: z.enum(chairmanMutawalliDesignation as [string, ...string[]], {
-      errorMap: () => ({ message: 'পদবী নির্বাচন করুন' }),
-    }),
+    designation: z.string().optional(),
     code: z.string().optional(),
-  }).optional().or(z.null()),
+  }).optional(),
 
   educational_secretory: z.object({
     name: z.string().optional(),
@@ -69,5 +67,5 @@ export const madrasahSchemaForAdmin = z.object({
     code: z.string().optional(),
   }).optional().or(z.null()),
 
-  ilhakImage: z.string().optional(),
+  ilhakPdf: z.string().optional(),
 });

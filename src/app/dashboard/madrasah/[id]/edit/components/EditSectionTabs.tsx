@@ -8,7 +8,7 @@ function Tab({ label, isActive, onClick }: TabProps) {
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+      className={`px-4 py-2 text-xs md:text-sm font-medium transition-colors duration-200 ${
         isActive
           ? "text-[#52b788] border-b-2 border-[#52b788]"
           : "text-gray-500 hover:text-[#52b788]"
@@ -26,7 +26,7 @@ interface EditSectionTabsProps {
 
 export function EditSectionTabs({ activeTab, onTabChange }: EditSectionTabsProps) {
   return (
-    <div className="flex space-x-4">
+    <div className="flex space-x-4 overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 pb-4">
       <Tab
         label="মৌলিক তথ্য"
         isActive={activeTab === "basic"}

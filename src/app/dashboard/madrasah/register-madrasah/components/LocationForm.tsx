@@ -88,8 +88,8 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
   }, [formData.address.district, formData.address.subDistrict]);
 
   return (
-    <div className="mb-6 mt-8">
-      <h2 className="text-xl font-semibold mb-4">ঠিকানা</h2>
+    <div className=" p-6">
+      <h2 className="text-lg font-semibold mb-4">ঠিকানা</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Division Selection */}
         <div>
@@ -101,7 +101,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             onChange={(e) => handleChange('address.division', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.division'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
             <option value="">বিভাগ নির্বাচন করুন</option>
             {divisions.map((division) => (
@@ -126,7 +126,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             disabled={!formData.address.division}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.district'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
+            } px-3 py-2  text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
               !formData.address.division ? 'bg-gray-100' : ''
             }`}
           >
@@ -153,7 +153,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             disabled={!formData.address.district}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.subDistrict'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
+            } px-3 py-2  text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
               !formData.address.district ? 'bg-gray-100' : ''
             }`}
           >
@@ -180,7 +180,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             disabled={!formData.address.subDistrict}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.policeStation'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
+            } px-3 py-2  text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 ${
               !formData.address.subDistrict ? 'bg-gray-100' : ''
             }`}
           >
@@ -207,7 +207,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             onChange={(e) => handleChange('address.village', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.village'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2  text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="গ্রাম/মহল্লা"
           />
           {errors?.['address.village'] && (
@@ -226,7 +226,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             onChange={(e) => handleChange('address.holdingNumber', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.holdingNumber'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2  text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="হোল্ডিং নম্বর"
           />
           {errors?.['address.holdingNumber'] && (
@@ -244,7 +244,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             onChange={(e) => handleChange('address.zone', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.zone'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2  text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
             <option value="">জোন নির্বাচন করুন</option>
             {isLoadingZones ? (
@@ -273,7 +273,7 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
             onChange={(e) => handleChange('address.courierAddress', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['address.courierAddress'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            } px-3 py-2  text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
           >
             <option value="">চিঠি প্রেরণের মাধ্যম নির্বাচন করুন</option>
             {courierTypes.map((type) => (

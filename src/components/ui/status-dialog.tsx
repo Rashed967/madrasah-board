@@ -20,10 +20,11 @@ export function StatusDialog({ isOpen, onClose, title, message, type }: StatusDi
       isOpen={isOpen}
       onClose={onClose}
       title={title}
+      className="sm:max-w-[400px]"
     >
-      <div className="flex flex-col items-center justify-center space-y-4 py-4">
-        <Icon className={`h-16 w-16 ${colorClass}`} />
-        <p className="text-lg text-center text-gray-700 whitespace-pre-line">{message}</p>
+      <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4 py-2 sm:py-4">
+        <Icon className={`h-12 w-12 sm:h-16 sm:w-16 ${colorClass}`} />
+        <p className="text-sm sm:text-lg text-center text-gray-700 whitespace-pre-line px-2">{message}</p>
       </div>
     </Dialog>
   );

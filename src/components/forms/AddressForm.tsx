@@ -2,6 +2,7 @@ import {  SelectField } from "@/components/ui/select";
 import { InputField } from "./InputField";
 import { divisions, districts, upazilas, policeStations } from '@/data/locations';
 import { IMadrasahAddress } from "@/features/madrasah/interfaces";
+import courierAddressOptions from "@/data/courierAddress.options";
 
 
 
@@ -13,7 +14,7 @@ interface AddressFormProps {
 
 export const AddressForm = ({ address, onChange }: AddressFormProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 md:mt-4">
       <SelectField
         label="বিভাগ"
         name="address.division"
@@ -53,6 +54,14 @@ export const AddressForm = ({ address, onChange }: AddressFormProps) => {
         name="address.holdingNumber"
         value={address.holdingNumber || ''}
         onChange={onChange}
+      />
+
+      <SelectField
+        label="কুরিয়ার উপজেলা"
+        name="address.courierAddress"
+        value={address.courierAddress || ''}
+        onChange={onChange}
+        options={courierAddressOptions}
       />
     </div>
   );

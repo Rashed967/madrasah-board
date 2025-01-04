@@ -32,27 +32,27 @@ export function Dialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className={cn("bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4 relative", className)}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+      <div className={cn("bg-white rounded-lg shadow-xl w-[95%] sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] max-w-md p-4 sm:p-6 space-y-4 relative", className)}>
         {/* Close Button */}
         <button 
           onClick={onClose} 
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-2 sm:top-4 right-2 sm:right-4 text-gray-500 hover:text-gray-700"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4 sm:h-5 sm:w-5" />
         </button>
 
         {/* Dialog Header */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 pr-8">{title}</h2>
           {description && (
-            <p className="text-sm text-gray-600 mt-2">{description}</p>
+            <p className="text-xs sm:text-sm text-gray-600 mt-2">{description}</p>
           )}
         </div>
 
         {/* Dialog Content */}
         {children && (
-          <div className="py-4">
+          <div className="py-2 sm:py-4">
             {children}
           </div>
         )}
@@ -62,6 +62,7 @@ export function Dialog({
           <Button 
             variant="outline" 
             onClick={onClose}
+            className="text-xs sm:text-sm py-1 px-2 sm:px-4"
           >
             বাতিল
           </Button>
@@ -71,6 +72,7 @@ export function Dialog({
                 onSubmit();
                 onClose();
               }}
+              className="text-xs sm:text-sm py-1 px-2 sm:px-4"
             >
               {submitText}
             </Button>

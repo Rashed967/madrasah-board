@@ -20,7 +20,7 @@ export function BasicInformationSection({
       <div className="mt-8 flex justify-end">
         <button
           type="submit"
-          className="px-4 py-2 bg-[#52b788] text-white rounded-md hover:bg-[#52b788]/90 transition-colors duration-200"
+          className="px-4 py-2 bg-[#52b788] text-xs md:text-sm text-white rounded-md hover:bg-[#52b788]/90 transition-colors duration-200"
         >
           সংরক্ষণ করুন
         </button>

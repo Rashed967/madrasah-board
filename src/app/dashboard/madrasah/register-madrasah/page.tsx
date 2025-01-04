@@ -14,10 +14,13 @@ import EducationSecretory from './components/EducationSecretory';
 import MutawalliInfo from './components/MutawalliInfo';
 import ImageUpload from './components/ImageUpload';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
-import {SuccessDialog} from '@/components/ui/success-dialog';
+import { SuccessDialog } from '@/components/ui/success-dialog';
 import { IMadrasah, TCourierAddress, TMadrasahType, TMutawalliDesignation } from '@/features/madrasah/interfaces';
 import { madrasahSchema } from '@/features/schemas/madrasah.schema.for.public';
 import { madrasahSchemaForAdmin } from '@/features/schemas/madrasah.schema.for.admin';
+import PdfUpload from './components/ImageUpload';
+import globalValidateRequest from '@/middleware/globalValidateRequest';
+import { StatusDialog } from '@/components/ui/status-dialog';
 
 /**
  * RegisterMadrasah Component
@@ -28,11 +31,24 @@ export default function RegisterMadrasah() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  // & {muhtamim: Omit<IMadrasah['muhtamim'], 'code'>}
-  
-  const initialFormState: Omit<IMadrasah, '_id' | 'user' | 'madrasahResult' | 'createdAt' | 'updatedAt' | 'status' | 'code' >   = {
+
+  const [statusDialog, setStatusDialog] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error';
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'success',
+    title: '',
+    message: ''
+  });
+
+  const initialFormState: Omit<IMadrasah, '_id' | 'user' | 'madrasahResult' | 'createdAt' | 'updatedAt' | 'status' | 'code'> = {
     madrasahNames: {
       bengaliName: '',
       englishName: '',
@@ -71,7 +87,7 @@ export default function RegisterMadrasah() {
       contactNo: '',
       nidNumber: '',
       designation: '' as TMutawalliDesignation,
-      code: '' as TMutawalliDesignation
+      code: ''
     },
     educational_secretory: {
       name: '',
@@ -80,22 +96,24 @@ export default function RegisterMadrasah() {
       highestEducationalQualification: '',
       code: ''
     },
-    ilhakImage: '',
+    ilhakPdf: '',
   };
 
-  const [formData, setFormData] = useState<Omit<IMadrasah, '_id' | 'user' | 'madrasahResult' | 'createdAt' | 'updatedAt' | 'status' | 'code' > >(initialFormState);
+  console.log(initialFormState);
+
+  const [formData, setFormData] = useState<Omit<IMadrasah, '_id' | 'user' | 'madrasahResult' | 'createdAt' | 'updatedAt' | 'status' | 'code'>>(initialFormState);
 
   const handleChange = (field: string, value: string | number) => {
     setFormData((prev) => {
       const newState = { ...prev };
       const fieldPath = field.split('.');
       let current: any = newState;
-      
+
       // Navigate to the nested object
       for (let i = 0; i < fieldPath.length - 1; i++) {
         current = current[fieldPath[i]];
       }
-      
+
       // Set the value
       current[fieldPath[fieldPath.length - 1]] = value;
       return newState;
@@ -104,118 +122,132 @@ export default function RegisterMadrasah() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    
+    setIsSubmitting(true);
+
+    const validationErrors = globalValidateRequest(madrasahSchemaForAdmin, formData);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setIsSubmitting(false);
+      setStatusDialog({
+        isOpen: true,
+        type: 'error',
+        title: 'ভুল তথ্য!',
+        message: 'সকল প্রয়োজনীয় তথ্য সঠিকভাবে পূরণ করুন'
+      });
+      return;
+    }
+
     try {
-      // Validate form data with Zod
-      const validationResult = madrasahSchemaForAdmin.safeParse(formData);
-      console.log(validationResult);
-      if (!validationResult.success) {
-        const errors: Record<string, string> = {};
-        validationResult.error.issues.forEach((issue) => {
-          const path = issue.path.join('.');
-          errors[path] = issue.message;
-        });
-        
-        setValidationErrors(errors);
-        toast.error('সকল প্রয়োজনীয় তথ্য সঠিকভাবে পূরণ করুন');
-        return;
-      }
-
-      setValidationErrors({});
-      setIsLoading(true);
-
-      const response = await registerMadrasah(validationResult.data);
+      const response = await registerMadrasah(formData);
       console.log('Registration response:', response);
-      
+
       if (response.success) {
-        setSuccessMessage(response.message || 'মাদরাসা নিবন্ধন সফলভাবে সম্পন্ন হয়েছে');
-        setShowSuccessModal(true);
-        // Reset form data
+        setStatusDialog({
+          isOpen: true,
+          type: 'success',
+          title: 'সফল!',
+          message: response.message || 'মাদরাসা নিবন্ধন সফলভাবে সম্পন্ন হয়েছে'
+        });
         setFormData(initialFormState);
       } else {
-        toast.error(response.message || 'কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন');
+        setStatusDialog({
+          isOpen: true,
+          type: 'error',
+          title: 'ত্রুটি!',
+          message: response.message || 'মাদরাসা নিবন্ধন করতে সমস্যা হয়েছে'
+        });
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error('সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন');
-      }
+    } catch (error: any) {
+      setStatusDialog({
+        isOpen: true,
+        type: 'error',
+        title: 'ত্রুটি!',
+        message: error?.message || 'মাদরাসার তথ্য আপডেট করতে সমস্যা হয়েছে'
+      });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="p-6 mx-16 my-16">
+    <div className="m-4 md:m-8 lg:m-10 xl:m-12">
+      <StatusDialog
+        isOpen={statusDialog.isOpen}
+        onClose={() => setStatusDialog(prev => ({ ...prev, isOpen: false }))}
+        title={statusDialog.title}
+        message={statusDialog.message}
+        type={statusDialog.type}
+      />
       <div className="mb-6 px-6 text-center">
-        <h1 className="text-3xl font-semibold text-gray-800">মাদরাসা নিবন্ধন</h1>
-        <p className="text-base text-gray-600 mt-1">নতুন মাদরাসা নিবন্ধনের জন্য তথ্য পূরণ করুন</p>
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800">মাদরাসা নিবন্ধন</h1>
+        <p className="text-sm md:text-base text-gray-600 mt-1">নতুন মাদরাসা নিবন্ধনের জন্য তথ্য পূরণ করুন</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white/80 rounded-lg shadow-md p-12">
+      <form onSubmit={handleSubmit} className="space-y-0 md:space-y-4 bg-white/80 rounded-lg shadow-md p-4 md:p-6 lg:p-8 xl:p-10">
         <MadrasahNameAndBio
           formData={formData}
           handleChange={handleChange}
-          errors={validationErrors}
-        />
+          errors={errors}
+        />    
         <ContactInfo
           formData={formData}
           handleChange={handleChange}
-          errors={validationErrors}
+          errors={errors}
         />
-        <MadrasahBasicInfo 
-          formData={formData} 
-          handleChange={handleChange} 
-          errors={validationErrors}
+        <MadrasahBasicInfo
+          formData={formData}
+          handleChange={handleChange}
+          errors={errors}
         />
-        <LocationForm 
-          formData={formData} 
-          handleChange={handleChange} 
-          errors={validationErrors}
+        <LocationForm
+          formData={formData}
+          handleChange={handleChange}
+          errors={errors}
         />
-        <MuhtamimInfo 
-          formData={formData} 
-          handleChange={handleChange} 
-          errors={validationErrors}
+        <MuhtamimInfo
+          formData={formData}
+          handleChange={handleChange}
+          errors={errors}
         />
-        <EducationSecretory 
-          formData={formData} 
-          handleChange={handleChange} 
-          errors={validationErrors}
+        <EducationSecretory
+          formData={formData}
+          handleChange={handleChange}
+          errors={errors}
         />
-        <MutawalliInfo 
-          formData={formData} 
-          handleChange={handleChange} 
-          errors={validationErrors}
+        <MutawalliInfo
+          formData={formData}
+          handleChange={handleChange}
+          errors={errors}
         />
 
-        <ImageUpload 
-          label="মাদরাসা ইলহাকের ছবি" 
-          value={formData.ilhakImage} 
-          onChange={handleChange} 
-          fieldName="ilhakImage"
-          onImageUpload={(url) => handleChange('ilhakImage', url)}
-          error={validationErrors.ilhakImage}
+
+        <PdfUpload
+          label="মাদরাসা ইলহাকের পদকভা"
+          value={formData.ilhakPdf}
+          onChange={handleChange}
+          fieldName="ilhakPdf"
+          onPdfUpload={(url) => handleChange('ilhakPdf', url)}
+          error={errors.ilhakPdf}
         />
 
         <div className="flex justify-end mt-8">
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="inline-flex items-center px-6 py-3 bg-[#45B39D] hover:bg-[#3B9C85] text-white font-medium rounded-md shadow-sm transition-colors duration-200 gap-2"
           >
-            <PaperAirplaneIcon className="h-5 w-5" />
-            {isLoading ? (
+            {!isSubmitting && <PaperAirplaneIcon className="h-5 w-5" /> }
+            {isSubmitting ? (
               <span className="flex items-center">
                 <ClipLoader size={20} color="white" className="mr-2" />
-                প্রক্রিয়াকরণ হচ্ছে...
+                নিবন্ধন হচ্ছে...
               </span>
             ) : (
               'নিবন্ধন করুন'
             )}
           </button>
+
         </div>
       </form>
 

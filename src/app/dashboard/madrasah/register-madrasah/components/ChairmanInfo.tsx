@@ -18,18 +18,20 @@ interface Props {
 
 export default function ChairmanInfo({ formData, onChange, errors }: Props) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h2 className="text-2xl font-semibold mb-4">সভাপতি/মুতাওয়াল্লীর তথ্য</h2>
+    <div className="p-6 mb-6">
+      <h2 className="text-base md:text-xl lg:text-2xl font-semibold mb-6">সভাপতি/মুতাওয়াল্লীর তথ্য</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
             নাম
           </label>
           <input
             type="text"
             value={formData.chairman_mutawalli.name}
             onChange={(e) => onChange('chairman_mutawalli.name', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['chairman_mutawalli.name'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="সভাপতি/মুতাওয়াল্লীর নাম"
           />
           {errors?.['chairman_mutawalli.name'] && (
@@ -38,14 +40,16 @@ export default function ChairmanInfo({ formData, onChange, errors }: Props) {
         </div>
 
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
             এনআইডি নম্বর
           </label>
           <input
             type="text"
             value={formData.chairman_mutawalli.nidNumber}
             onChange={(e) => onChange('chairman_mutawalli.nidNumber', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['chairman_mutawalli.nidNumber'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="এনআইডি নম্বর"
           />
           {errors?.['chairman_mutawalli.nidNumber'] && (
@@ -54,14 +58,16 @@ export default function ChairmanInfo({ formData, onChange, errors }: Props) {
         </div>
 
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
             মোবাইল নম্বর
           </label>
           <input
             type="text"
             value={formData.chairman_mutawalli.contactNo}
             onChange={(e) => onChange('chairman_mutawalli.contactNo', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['chairman_mutawalli.contactNo'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="মোবাইল নম্বর"
           />
           {errors?.['chairman_mutawalli.contactNo'] && (
@@ -70,14 +76,16 @@ export default function ChairmanInfo({ formData, onChange, errors }: Props) {
         </div>
 
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
             শিক্ষাগত যোগ্যতা
           </label>
           <input
             type="text"
             value={formData.chairman_mutawalli.highestEducationalQualification}
             onChange={(e) => onChange('chairman_mutawalli.highestEducationalQualification', e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`mt-1 block w-full rounded-md border ${
+              errors?.['chairman_mutawalli.highestEducationalQualification'] ? 'border-red-500' : 'border-gray-300'
+            } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             placeholder="শিক্ষাগত যোগ্যতা"
           />
           {errors?.['chairman_mutawalli.highestEducationalQualification'] && (

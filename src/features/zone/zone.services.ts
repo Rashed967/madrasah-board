@@ -15,10 +15,10 @@ export async function createZone(data: ZoneInput): Promise<ApiResponse<IZone>> {
       data: null
     };
   }
-
   const response = await apiService.post<IZone>('/zones', validationResult.data);
   return response;
 }
+
 
 export async function getAllZones(): Promise<ApiResponse<IZone[]>> {
   const response = await apiService.get<IZone[]>('/zones?limit=1000'); // Set a high limit to get all zones
