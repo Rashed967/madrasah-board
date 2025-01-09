@@ -1,6 +1,5 @@
 'use client';
 
-
 import { IMadrasahNames } from '@/features/madrasah/interfaces';
 import React from 'react';
 
@@ -18,12 +17,11 @@ interface Props {
  * Handles the basic information section of the madrasah registration form
  * Including madrasah names, description, and general statistics
  */
-
 export default function MadrasahNameAndBio({ formData, handleChange, errors }: Props) {
   return (
-    <div className=" p-6 ">
+    <div className="p-6">
       <h2 className="text-lg font-semibold mb-6">মাদরাসার নাম ও পরিচিতি</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
             মাদরাসার নাম (বাংলা) <span className="text-red-500">*</span>
@@ -52,8 +50,8 @@ export default function MadrasahNameAndBio({ formData, handleChange, errors }: P
             onChange={(e) => handleChange('madrasahNames.arabicName', e.target.value)}
             className={`mt-1 block w-full rounded-md border ${
               errors?.['madrasahNames.arabicName'] ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
-            placeholder="আরবিতে মাদরাসার নাম"
+            } px-3 py-2 text-right text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+            placeholder="اسم المدرسة بالعربية"
           />
           {errors?.['madrasahNames.arabicName'] && (
             <p className="text-red-500 text-xs italic">{errors['madrasahNames.arabicName']}</p>
@@ -80,21 +78,21 @@ export default function MadrasahNameAndBio({ formData, handleChange, errors }: P
 
       </div>
       <div className="col-span-3 mt-4">
-          <label className="block text-gray-700 text-sm md:text-base font-bold mb-2">
-            মাদরাসার সংক্ষিপ্ত পরিচিতি <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            value={formData.description}
-            onChange={(e) => handleChange('description', e.target.value)}
-            className={`mt-1 block w-full rounded-md border h-32 ${
-              errors.description ? 'border-red-500' : 'border-gray-300'
-            } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
-            placeholder="মাদরাসার সংক্ষিপ্ত পরিচিতি লিখুন"
-          />
-          {errors?.['description'] && (
-            <p className="text-red-500 text-xs italic">{errors['description']}</p>
-          )}
-        </div>
+        <label className="block text-gray-700 text-sm md:text-base font-bold mb-2">
+          মাদরাসার সংক্ষিপ্ত পরিচিতি <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          value={formData.description}
+          onChange={(e) => handleChange('description', e.target.value)}
+          className={`mt-1 block w-full rounded-md border h-32 ${
+            errors.description ? 'border-red-500' : 'border-gray-300'
+          } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+          placeholder="মাদরাসার সংক্ষিপ্ত পরিচিতি লিখুন"
+        />
+        {errors?.['description'] && (
+          <p className="text-red-500 text-xs italic">{errors['description']}</p>
+        )}
+      </div>
     </div>
   );
 }

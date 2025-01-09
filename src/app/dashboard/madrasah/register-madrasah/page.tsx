@@ -223,7 +223,11 @@ export default function RegisterMadrasah() {
 
 
         <PdfUpload
+<<<<<<< HEAD
           label="মাদরাসা ইলহাকের পদকভা"
+=======
+          label="মাদরাসা ইলহাকের পিডিএফ আপলোড করুন"
+>>>>>>> 088703fa44dfc38f78c961695986133e839f3e14
           value={formData.ilhakPdf}
           onChange={handleChange}
           fieldName="ilhakPdf"
