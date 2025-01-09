@@ -1,38 +1,37 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import Image from 'next/image';
-import { validateImageSize, uploadToCloudinary } from '../utils/imageUpload';
+import { uploadToCloudinary } from '../utils/imageUpload';
 import { toast } from 'react-hot-toast';
 
-interface ImageUploadProps {
+interface PdfUploadProps {
   label: string;
   value?: string;
   onChange: (field: string, value: string) => void;
   fieldName: string;
-  onImageUpload?: (url: string) => void;
+  onPdfUpload?: (url: string) => void;
   error?: string;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({
+const PdfUpload: React.FC<PdfUploadProps> = ({
   label,
   value,
   onChange,
   fieldName,
-  onImageUpload,
+  onPdfUpload,
   error
 }) => {
   const [isUploading, setIsUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string>(value || '');
+  const [fileName, setFileName] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleImageChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePdfChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setErrorMessage('শুধুমাত্র ছবি আপলোড করা যাবে');
+    if (file.type !== 'application/pdf') {
+      setErrorMessage('শুধুমাত্র PDF ফাইল আপলোড করা যাবে');
       return;
     }
 
@@ -40,49 +39,46 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     const maxSizeKB = 300;
     const fileSizeKB = Math.round(file.size / 1024);
     if (fileSizeKB > maxSizeKB) {
-      setErrorMessage(`ছবির সাইজ ${maxSizeKB}KB এর বেশি হতে পারবে না (বর্তমান সাইজ: ${fileSizeKB}KB)`);
+      setErrorMessage(`ফাইলের সাইজ ${maxSizeKB}KB এর বেশি হতে পারবে না (বর্তমান সাইজ: ${fileSizeKB}KB)`);
       return;
     }
     setErrorMessage('');
 
     try {
       setIsUploading(true);
-      
-      // Create preview URL
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
+      setFileName(file.name);
 
       // Upload to Cloudinary
       const result = await uploadToCloudinary(file);
       
       if (!result.success || !result.url) {
-        setErrorMessage(result.error || 'ছবি আপলোড করতে সমস্যা হয়েছে');
-        setPreviewUrl('');
+        setErrorMessage(result.error || 'PDF আপলোড করতে সমস্যা হয়েছে');
+        setFileName('');
         return;
       }
 
       onChange(fieldName, result.url);
-      if (onImageUpload) {
-        onImageUpload(result.url);
+      if (onPdfUpload) {
+        onPdfUpload(result.url);
       }
-      toast.success('ছবি সফলভাবে আপলোড হয়েছে');
+      toast.success('PDF সফলভাবে আপলোড হয়েছে');
     } catch (error) {
-      console.error('Error uploading image:', error);
-      setErrorMessage('ছবি আপলোড করতে সমস্যা হয়েছে');
-      setPreviewUrl('');
+      console.error('Error uploading PDF:', error);
+      setErrorMessage('PDF আপলোড করতে সমস্যা হয়েছে');
+      setFileName('');
     } finally {
       setIsUploading(false);
     }
-  }, [onChange, fieldName, onImageUpload]);
+  }, [onChange, fieldName, onPdfUpload]);
 
-  const resetImage = () => {
-    setPreviewUrl('');
+  const resetFile = () => {
+    setFileName('');
     onChange(fieldName, '');
     setErrorMessage('');
   };
 
   return (
-    <div className="space-y-4 w-2/6">
+    <div className="space-y-4 p-6 w-full md:w-1/2">
       <label className="block text-sm font-medium text-gray-700">
         {label}
       </label>
@@ -95,17 +91,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           }`}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            {previewUrl ? (
-              <div className="relative w-full h-full flex items-center justify-center">
-                <Image
-                  src={previewUrl}
-                  alt="Preview"
-                  width={200}
-                  height={200}
-                  className="object-contain"
-                />
+            {fileName ? (
+              <div className="relative w-full h-full flex flex-col items-center justify-center">
+                <svg
+                  className="w-16 h-16 text-gray-500 mb-4"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                </svg>
+                <p className="text-sm text-gray-500">{fileName}</p>
                 <button
-                  onClick={resetImage}
+                  onClick={resetFile}
                   className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
                 >
                   <svg
@@ -127,23 +124,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               <>
                 <svg
                   className="w-8 h-8 mb-4 text-gray-500"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                  />
+                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
                 </svg>
                 <p className="mb-2 text-sm text-gray-500">
-                  <span className="font-semibold">ছবি আপলোড করুন</span>
+                  <span className="font-semibold">PDF ফাইল আপলোড করুন</span>
                 </p>
-                <p className="text-xs text-gray-500">PNG, JPG (সর্বোচ্চ 300KB)</p>
+                <p className="text-xs text-gray-500">সর্বোচ্চ 300KB</p>
               </>
             )}
           </div>
@@ -151,8 +140,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             id="dropzone-file"
             type="file"
             className="hidden"
-            onChange={handleImageChange}
-            accept="image/*"
+            onChange={handlePdfChange}
+            accept="application/pdf"
             disabled={isUploading}
           />
         </label>
@@ -164,11 +153,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       )}
       {isUploading && (
         <div className="text-center text-sm text-gray-500">
-          ছবি আপলোড হচ্ছে...
+          PDF আপলোড হচ্ছে...
         </div>
       )}
     </div>
   );
 };
 
-export default ImageUpload;
+export default PdfUpload;

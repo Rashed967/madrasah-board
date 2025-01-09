@@ -1,14 +1,13 @@
 'use client';
 
+import { IMutawalli } from '@/features/madrasah/interfaces';
 import React from 'react';
+
 
 
 interface MutawalliInfoProps {
   formData: {
-    mutawalliName: string;
-    mutawalliDesignation: string;
-    mutawalliNID: string;
-    mutawalliMobile: string;
+    chairman_mutawalli: IMutawalli;
   };
   handleChange: (field: string, value: string) => void;
   errors?: Record<string, string>;
@@ -25,20 +24,22 @@ const mutawalliDesignations = ["সভাপতি", "মুতাওয়া�
  */
 const MutawalliInfo: React.FC<MutawalliInfoProps> = ({ formData, handleChange, errors }) => {
   return (
-    <div className="space-y-8">
+    <div className="">
 
       {/* mutawalli Information */}
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-gray-900">সভাপতি/মুতাওয়াল্লির তথ্য</h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <div className="p-6 space-y-4">
+        <div>
+        <h2 className="text-lg font-semibold text-gray-900">সভাপতি/মুতাওয়াল্লির তথ্য</h2>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div>
             <label className="block text-sm font-medium text-gray-700">নাম</label>
             <input
               type="text"
               placeholder="সভাপতি/মুতাওয়াল্লির নাম লিখুন"
-              value={formData.mutawalliName}
-              onChange={(e) => handleChange('mutawalliName', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              value={formData.chairman_mutawalli.name}
+              onChange={(e) => handleChange('chairman_mutawalli.name', e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
           </div>
 
@@ -46,9 +47,9 @@ const MutawalliInfo: React.FC<MutawalliInfoProps> = ({ formData, handleChange, e
         <div>
           <label className="block text-sm font-medium text-gray-700">পদবী</label>
           <select
-            value={formData?.mutawalliDesignation}
-            onChange={(e) => handleChange('mutawalliDesignation', e.target.value)}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+            value={formData?.chairman_mutawalli?.designation}
+            onChange={(e) => handleChange('chairman_mutawalli.designation', e.target.value)}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
           >
             <option key="default" value="">পদবী নির্বাচন করুন</option>
             {mutawalliDesignations.map((designation) => (
@@ -63,9 +64,9 @@ const MutawalliInfo: React.FC<MutawalliInfoProps> = ({ formData, handleChange, e
             <input
               type="text"
               placeholder="জাতীয় পরিচয়পত্র নম্বর লিখুন"
-              value={formData.mutawalliNID}
-              onChange={(e) => handleChange('mutawalliNID', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              value={formData.chairman_mutawalli.nidNumber}
+              onChange={(e) => handleChange('chairman_mutawalli.nidNumber', e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
           </div>
           <div>
@@ -73,9 +74,9 @@ const MutawalliInfo: React.FC<MutawalliInfoProps> = ({ formData, handleChange, e
             <input
               type="tel"
               placeholder="মোবাইল নম্বর লিখুন"
-              value={formData.mutawalliMobile}
-              onChange={(e) => handleChange('mutawalliMobile', e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-lg focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              value={formData.chairman_mutawalli.contactNo}
+              onChange={(e) => handleChange('chairman_mutawalli.contactNo', e.target.value)}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
             />
           </div>
 

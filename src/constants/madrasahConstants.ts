@@ -1,4 +1,4 @@
-export const marhalaTypes = [
+export const marhala_types_with_label_Values = [
   { value: "", label: "মারহালা নির্বাচন করুন" },
   { value: "ইফতা", label: "ইফতা" },
   { value: "তাকমীল", label: "তাকমীল/দাওরায়ে হাদীস" },
@@ -8,7 +8,7 @@ export const marhalaTypes = [
   { value: "ইবতেদাইয়্যাহ", label: "ইবতেদাইয়্যাহ (৫ম শ্রেনী)" },
 ] as const;
 
-export const madrasahTypes = [
+export const madrasah_types_with_label_Values = [
   { value: "বালক", label: "বালক" },
   { value: "বালিকা", label: "বালিকা" },
 ] as const;

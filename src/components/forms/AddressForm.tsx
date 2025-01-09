@@ -1,76 +1,20 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {  SelectField } from "@/components/ui/select";
+import { InputField } from "./InputField";
 import { divisions, districts, upazilas, policeStations } from '@/data/locations';
-import { MadrasahAddress } from "@/types/address";
+import { IMadrasahAddress } from "@/features/madrasah/interfaces";
+import courierAddressOptions from "@/data/courierAddress.options";
+
+
 
 interface AddressFormProps {
-  address: MadrasahAddress;
+  address: IMadrasahAddress;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 
-interface SelectFieldProps {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  options: string[];
-}
-
-
-
-const SelectField = ({ label, name, value, onChange, options }: SelectFieldProps) => (
-  <div className="space-y-2">
-    <Label>{label}</Label>
-    <Select 
-      value={value} 
-      onValueChange={(newValue) => 
-        onChange({ 
-          target: { 
-            name, 
-            value: newValue 
-          } 
-        } as React.ChangeEvent<HTMLSelectElement>)
-      }
-    >
-      <SelectTrigger>
-        <SelectValue placeholder="নির্বাচন করুন" />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option} value={option}>
-            {option}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  </div>
-);
-
-interface InputFieldProps {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
-}
-
-export const InputField = ({ label, name, value, onChange, type = "text" }: InputFieldProps) => (
-  <div className="space-y-2">
-    <Label>{label}</Label>
-    <Input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={label}
-    />
-  </div>
-);
 
 export const AddressForm = ({ address, onChange }: AddressFormProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 md:mt-4">
       <SelectField
         label="বিভাগ"
         name="address.division"
@@ -110,6 +54,14 @@ export const AddressForm = ({ address, onChange }: AddressFormProps) => {
         name="address.holdingNumber"
         value={address.holdingNumber || ''}
         onChange={onChange}
+      />
+
+      <SelectField
+        label="কুরিয়ার উপজেলা"
+        name="address.courierAddress"
+        value={address.courierAddress || ''}
+        onChange={onChange}
+        options={courierAddressOptions}
       />
     </div>
   );

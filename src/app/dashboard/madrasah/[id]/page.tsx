@@ -3,14 +3,15 @@
 import { getMadrasahById } from '@/services/madrasahService';
 import { useEffect, useState } from 'react';
 import { MdLocationOn, MdPhone, MdEmail, MdPeople, MdSchool, MdPerson, MdStar, MdDomain } from 'react-icons/md';
-import {  Madrasah  } from '@/types/madrasah';
 import { InfoCard } from '@/components/madrasah/InfoCard';
 import { PersonCard } from '@/components/madrasah/PersonCard';
 import { StatsCard } from '@/components/madrasah/StatsCard';
 import { Description } from '@/components/madrasah/Description';
+import { IMadrasah } from '@/features/madrasah/interfaces';
+
 
 export default function MadrasahDetailsPage({ params }: { params: { id: string } }) {
-  const [madrasahData, setMadrasahData] = useState<Madrasah | null>(null);
+  const [madrasahData, setMadrasahData] = useState<IMadrasah | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

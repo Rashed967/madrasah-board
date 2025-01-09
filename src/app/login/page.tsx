@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import { setTokens, getDashboardRoute } from '@/services/authService';
-import { post } from '@/services/apiService';
+
 import Image from 'next/image';
+import { post } from '@/core/api/apiService';
 
 interface LoginData {
   accessToken: string;

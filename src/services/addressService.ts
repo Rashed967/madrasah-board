@@ -1,22 +1,26 @@
-import { patch } from './apiService';
-import { MadrasahAddress, AddressUpdateResponse } from '@/types/address';
+import { patch } from '@/core/api/apiService';
+import { IMadrasah, IMadrasahAddress } from '@/features/madrasah/interfaces';
+import { ApiResponse } from '@/shared/interfaces/api.interface';
+
+
 
 export const updateMadrasahAddress = async (
   id: string,
-  data: Partial<MadrasahAddress>
-): Promise<AddressUpdateResponse> => {
+  data: Partial<IMadrasahAddress>
+): Promise<ApiResponse<IMadrasah>> => {
   try {
     console.log('📝 Updating address:', {
-      endpoint: `/madrasah-addresses/${id}`,
+      madrasahId: id,
       data
     });
 
-    const response = await patch(`/madrasah-addresses/${id}`, data);
-    
-    console.log('✅ Address update response:', response);
-    return response;
+    const response = await patch<IMadrasah>(`/madrasah-addresses/${id}`, data);
+    return {
+      ...response,
+      statusCode: 200
+    };
   } catch (error) {
-    console.error('❌ Address update error:', error);
+    console.error('❌ Error updating address:', error);
     throw error;
   }
 };

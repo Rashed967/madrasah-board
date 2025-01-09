@@ -1,81 +1,89 @@
-import { post, get, patch } from './apiService';
-import { Madrasah } from '@/types/madrasah';
-import { ApiResponse } from './apiService';
+import { IMadrasah } from '@/features/madrasah/interfaces';
+
 import { getCurrentUser } from './authService';
-import { transformMadrasahFormToAPI } from '@/transforms';
+
+import { removeEmptyFields } from '@/utils/object.utils';
+import { ApiResponse } from '@/interfaces/api';
+import { post, get, patch } from '@/core/api/apiService';
+
 
 const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
 
-export type MadrasahApiResponse = ApiResponse<Madrasah>;
-export type MadrasahListApiResponse = ApiResponse<Madrasah[]>;
+export type MadrasahApiResponse = ApiResponse<IMadrasah>;
+export type MadrasahListApiResponse = ApiResponse<IMadrasah[]>;
+// Promise<ApiResponse<IMadrasah>>
 
-export async function registerMadrasah(formData: any): Promise<ApiResponse<Madrasah>> {
+export async function registerMadrasah(formData: any)  {
   const user = getCurrentUser();
   const isAdmin = user?.role === 'admin' || user?.role === 'super-admin';
 
   if (!isAdmin) {
     return {
-      success: false,
-      statusCode: 403,
+      success: false as const,
       message: 'অননুমোদিত অ্যাক্সেস',
-      data: null as any
+      data: null
     };
   }
 
-  const registrationData = transformMadrasahFormToAPI(formData);
-  console.log('🚀 ~ file: madrasahService.ts:50 ~ registerMadrasah ~ registrationData:', registrationData);
+  const registrationData = removeEmptyFields({
+    ...formData
+  });
+  const response = await post<IMadrasah>('/madrasah/create-by-admin', registrationData);
 
-  try {
-    const response = await post<Madrasah>('/madrasah/create-by-admin', registrationData);
-    return response;
-  } catch (error: any) {
-    return {
-      success: false,
-      statusCode: error?.response?.status || 500,
-      message: error?.response?.data?.message || 'মাদরাসা নিবন্ধন করতে সমস্যা হয়েছে',
-      data: null as any
-    };
-  }
+  return response;
+
+  
 }
 
-export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Promise<ApiResponse<Madrasah[]>> => {
+
+
+export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Promise<ApiResponse<IMadrasah[]>> => {
   try {
-    const response = await get<Madrasah[]>(`/madrasah?page=${page}&limit=${limit}`);
-    return response;
+    const response = await get<IMadrasah[]>(`/madrasah?page=${page}&limit=${limit}`);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
     };
   }
 };
 
-export const getMadrasahById = async (id: string): Promise<ApiResponse<Madrasah>> => {
+export const getMadrasahById = async (id: string): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const response = await get<Madrasah>(`/madrasah/${id}`);
-    return response;
+    const response = await get<IMadrasah>(`/madrasah/${id}`);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার তথ্য লোড করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
     };
   }
 };
 
-export const createMadrasah = async (data: any): Promise<ApiResponse<Madrasah>> => {
+export const createMadrasah = async (data: any): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const response = await post<Madrasah>('/madrasah', data);
-    return response;
+    const response = await post<IMadrasah>('/madrasah', data);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসা তৈরি করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
     };
   }
 };
@@ -83,72 +91,108 @@ export const createMadrasah = async (data: any): Promise<ApiResponse<Madrasah>> 
 export const updateMadrasahBasicInfo = async (
   id: string,
   data: any
-): Promise<ApiResponse<Madrasah>> => {
+): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const response = await patch<Madrasah>(`/madrasah/${id}`, data);
-    return response;
+    console.log('🔥 Update Basic Info Response:', data);
+    const response = await patch<IMadrasah>(`/madrasah/${id}`, data);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার তথ্য আপডেট করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
     };
   }
 };
 
-export const updateMadrasahAddress = async (id: string, data: any): Promise<ApiResponse<Madrasah>> => {
+export const updateMadrasahAddress = async (id: string, data: any): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const response = await patch<Madrasah>(`/madrasah/${id}/address`, data);
-    return response;
+    const response = await patch<IMadrasah>(`/madrasah/${id}/address`, data);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার ঠিকানা আপডেট করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
     };
   }
 };
 
-export const updateMadrasahMuhtamim = async (id: string, data: any): Promise<ApiResponse<Madrasah>> => {
+export const updateMadrasahMuhtamim = async (id: string, data: any): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const response = await patch<Madrasah>(`/madrasah/${id}/muhtamim`, data);
-    return response;
+    const response = await patch<IMadrasah>(`/madrasah/${id}/muhtamim`, data);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার মুহতামিম আপডেট করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
     };
   }
 };
 
-export const updateMadrasahChairmanMutawalli = async (id: string, data: any): Promise<ApiResponse<Madrasah>> => {
+export const updateMadrasahChairmanMutawalli = async (id: string, data: any): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const response = await patch<Madrasah>(`/madrasah/${id}/chairman-mutawalli`, data);
-    return response;
+    const response = await patch<IMadrasah>(`/madrasah/${id}/chairman-mutawalli`, data);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার চেয়ারম্যান মুতাওয়াল্লি আপডেট করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
     };
   }
 };
 
-export const updateMadrasahEducationalSecretary = async (id: string, data: any): Promise<ApiResponse<Madrasah>> => {
+export const updateMadrasahEducationalSecretary = async (id: string, data: any): Promise<ApiResponse<IMadrasah>> => {
   try {
-    const response = await patch<Madrasah>(`/madrasah/${id}/educational-secretary`, data);
-    return response;
+    const response = await patch<IMadrasah>(`/madrasah/${id}/educational-secretary`, data);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
   } catch (error: any) {
     return {
-      success: false,
-      statusCode: error?.response?.status || 500,
+      success: false as const,
       message: error?.response?.data?.message || 'মাদরাসার শিক্ষা সচিব আপডেট করতে সমস্যা হয়েছে',
-      data: null as any
+      data: null
+    };
+  }
+};
+
+export const updateMadrasahInformation = async (
+  id: string,
+  data: Partial<IMadrasah['madrasah_information']>
+): Promise<ApiResponse<IMadrasah>> => {
+  try {
+    const response = await patch<IMadrasah>(`/madrasah-information/${id}`, data);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
+  } catch (error: any) {
+    return {
+      success: false as const,
+      message: error?.response?.data?.message || 'মাদরাসার তথ্য আপডেট করতে সমস্যা হয়েছে',
+      data: null
     };
   }
 };

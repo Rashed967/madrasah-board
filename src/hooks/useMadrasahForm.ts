@@ -1,5 +1,6 @@
+import { IMadrasah, TCourierAddress, TMadrasahType } from '@/features/madrasah/interfaces';
 import { useState } from 'react';
-import { IMadrasah } from '@/types/global/madrasah.types';
+
 
 interface UseMadrasahFormReturn {
   madrasahData: Partial<IMadrasah>;
@@ -8,7 +9,7 @@ interface UseMadrasahFormReturn {
 }
 
 export const useMadrasahForm = (initialData?: Partial<IMadrasah>): UseMadrasahFormReturn => {
-  const [madrasahData, setMadrasahData] = useState<Partial<IMadrasah>>(initialData || {
+  const [madrasahData, setMadrasahData] = useState(initialData || {
     madrasahNames: {
       bengaliName: '',
       arabicName: '',
@@ -26,13 +27,13 @@ export const useMadrasahForm = (initialData?: Partial<IMadrasah>): UseMadrasahFo
       village: '',
       holdingNumber: '',
       zone: '',
-      courierAddress: ''
+      courierAddress: '' as TCourierAddress
     },
     madrasah_information: {
       highestMarhala: '',
       totalStudents: 0,
       totalTeacherAndStuff: 0,
-      madrasahType: ''
+      madrasahType: '' as TMadrasahType
     }
   });
 
