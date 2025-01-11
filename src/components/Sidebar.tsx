@@ -50,27 +50,16 @@ export default function Sidebar() {
       ]
     },
     { 
-      name: 'পরীক্ষার্থী', 
-      href: '/examinees', 
+      name: 'পরীক্ষা বিভাগ', 
+      href: '/exam', 
       icon: MdAssignment,
       submenu: [
-        { name: 'নতুন পরীক্ষার্থী যুক্ত করুন', href: '/dashboard/examinees/examine-registration', icon: MdAdd },
-        { name: 'সকল পরীক্ষার্থী', href: '/dashboard/examinees/all-examinees', icon: MdSavedSearch },
+        { name: 'পরীক্ষা ক্রিয়েট', href: '/dashboard/exam/create-exam', icon: MdAdd },
+        { name: 'প্রাক নিবন্ধন', href: '/dashboard/exam/pre-registration', icon: MdAdd },
+        { name: 'পরীক্ষার্থী নিবন্ধন', href: '/dashboard/exam/examine-registration', icon: MdAdd },
+        { name: 'সকল পরীক্ষার্থী', href: '/dashboard/exam/all-examinees', icon: MdSavedSearch },
       ]
     },
-    // { 
-    //   name: 'মাদরাসা',
-    //   href: '/madrasah', 
-    //   icon: MdSchool,
-    //   submenu: [
-    //     { name: 'মাদরাসা নিবন্ধন', href: '/dashboard/madrasah/register-madrasah', icon: MdAdd },
-    //     { 
-    //       name: 'সকল মাদরাসা', 
-    //       href: '/dashboard/madrasah/all-madrasah', 
-    //       icon: MdSavedSearch
-    //     },
-    //   ]
-    // },
     { 
       name: 'নিবন্ধন আবেদন', 
       href: '#', 
