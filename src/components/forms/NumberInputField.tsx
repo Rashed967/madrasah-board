@@ -1,16 +1,8 @@
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-interface InputFieldProps {
-    label: string;
-    name: string;
-    value: string | number;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    type?: string;
-    error?: string;
-}
 
-export const InputField = ({ label, name, value, onChange, type = "text", error }: InputFieldProps) => (
+  const NumberInputField = ({ label, name, value, onChange, type = "number", error,}) => (
     <div className="space-y-2">
         <Label>{label}</Label>
         <Input
@@ -24,3 +16,6 @@ export const InputField = ({ label, name, value, onChange, type = "text", error 
         {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
 );
+
+
+export default NumberInputField
