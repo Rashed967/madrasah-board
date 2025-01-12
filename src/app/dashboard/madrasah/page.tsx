@@ -1,5 +1,13 @@
 'use client';
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
+
+
 import { useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 import Link from 'next/link';

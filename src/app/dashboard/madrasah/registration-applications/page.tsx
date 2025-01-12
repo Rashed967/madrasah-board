@@ -1,5 +1,11 @@
 'use client';
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { MdCheck, MdClose, MdInfo } from 'react-icons/md';

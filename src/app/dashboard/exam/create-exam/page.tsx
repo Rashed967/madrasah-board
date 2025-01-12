@@ -1,4 +1,12 @@
-"use client";
+"use client"
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
+
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -18,7 +26,6 @@ import DateInputField from "@/components/forms/DateInputField";
 import TextInputField from "@/components/forms/textInputField";
 import NumberInputField from "@/components/forms/NumberInputField";
 import ExamFees from "./components/examFeeForBoys";
-
 
 // Initial form state
 const initialFormState = {
@@ -257,7 +264,7 @@ export default function CreateExamPage() {
             {/* Girls Fee Section */}
             <div className="space-y-4 ">
               <h3 className="text-lg font-medium">ছাত্রীদের পরীক্ষার ফি</h3>
-              
+　　 　 　 　
               <div className="grid gap-4">
                 {formData.examFeeForGirls.map((fee, index) => (
                   <div key={fee.marhala} className="grid grid-cols-2 gap-4 items-center">

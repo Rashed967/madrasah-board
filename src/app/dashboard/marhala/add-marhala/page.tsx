@@ -1,5 +1,11 @@
 'use client';
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 import React, { useState } from 'react';
 import { MdCheck } from 'react-icons/md';
 import toast, { Toaster } from 'react-hot-toast';

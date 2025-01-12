@@ -1,5 +1,11 @@
 'use client';
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Pagination } from '@/components/ui/pagination';
