@@ -88,9 +88,10 @@ interface SelectFieldProps {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: string[];
   className?: string;
+  error?: string;
 }
 
-function SelectField({ label, name, value, onChange, options, className }: SelectFieldProps) {
+function SelectField({ label, name, value, onChange, options, className, error }: SelectFieldProps) {
   return (
     <div className={className}>
       <Label>{label}</Label>
@@ -103,7 +104,7 @@ function SelectField({ label, name, value, onChange, options, className }: Selec
         } as React.ChangeEvent<HTMLSelectElement>;
         onChange(event);
       }}>
-        <SelectTrigger>
+        <SelectTrigger className={cn(error && "border-red-500")}>
           <SelectValue placeholder="নির্বাচন করুন" />
         </SelectTrigger>
         <SelectContent>
@@ -114,8 +115,9 @@ function SelectField({ label, name, value, onChange, options, className }: Selec
           ))}
         </SelectContent>
       </Select>
+      {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </div>
-  );
+  )
 }
 
 export {

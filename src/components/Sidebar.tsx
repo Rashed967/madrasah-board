@@ -55,7 +55,7 @@ export default function Sidebar() {
       icon: MdAssignment,
       submenu: [
         { name: 'পরীক্ষা ক্রিয়েট', href: '/dashboard/exam/create-exam', icon: MdAdd },
-        { name: 'প্রাক নিবন্ধন', href: '/dashboard/exam/pre-registration', icon: MdAdd },
+        { name: 'প্রাক নিবন্ধন', href: '/dashboard/exam/pre-examinee-registration', icon: MdAdd },
         { name: 'পরীক্ষার্থী নিবন্ধন', href: '/dashboard/exam/examine-registration', icon: MdAdd },
         { name: 'সকল পরীক্ষার্থী', href: '/dashboard/exam/all-examinees', icon: MdSavedSearch },
       ]

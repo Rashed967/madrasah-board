@@ -35,8 +35,6 @@ export async function registerMadrasah(formData: any)  {
   
 }
 
-
-
 export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Promise<ApiResponse<IMadrasah[]>> => {
   try {
     const response = await get<IMadrasah[]>(`/madrasah?page=${page}&limit=${limit}`);
@@ -57,6 +55,24 @@ export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Pro
 export const getMadrasahById = async (id: string): Promise<ApiResponse<IMadrasah>> => {
   try {
     const response = await get<IMadrasah>(`/madrasah/${id}`);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
+  } catch (error: any) {
+    return {
+      success: false as const,
+      message: error?.response?.data?.message || 'মাদরাসার তথ্য লোড করতে সমস্যা হয়েছে',
+      data: null
+    };
+  }
+};
+
+// get madrasah information by id form db
+export const getMadrasahInformationById = async (id: string) => {
+  try {
+    const response = await get<IMadrasah>(`/madrasah-information/${id}`);
     return {
       success: true as const,
       message: response.message,
@@ -195,4 +211,61 @@ export const updateMadrasahInformation = async (
       data: null
     };
   }
+};
+
+export const getMadrasahs = async ()=> {
+  try {
+    const response = await get<IMadrasah[]>('/madrasah');
+    console.log(response);
+    return {
+      success: true,
+      data: response.data,
+      message: 'Madrasahs retrieved successfully'
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error?.message || 'Failed to get madrasahs',
+      data: []
+    };
+  }
+};
+
+
+export const getAllMadrasahsForPreRegistration = async (page: number = 1, limit: number = 10): Promise<ApiResponse<IMadrasah[]>> => {
+  try {
+    const response = await get<IMadrasah[]>(`/madrasah?page=${page}&limit=${limit}`);
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data
+    };
+  } catch (error: any) {
+    return {
+      success: false as const,
+      message: error?.response?.data?.message || 'মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে',
+      data: null
+    };
+  }
+};
+
+
+
+
+
+
+export const madrasahServices = {
+  registerMadrasah,
+  getAllMadrasahs,
+  getMadrasahById,
+  createMadrasah,
+  updateMadrasahBasicInfo,
+  updateMadrasahAddress,
+  updateMadrasahMuhtamim,
+  updateMadrasahChairmanMutawalli,
+  updateMadrasahEducationalSecretary,
+  updateMadrasahInformation,
+  getMadrasahs,
+  getAllMadrasahsForPreRegistration,
+  getMadrasahInformationById
 };

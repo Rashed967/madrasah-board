@@ -99,7 +99,6 @@ export default function RegisterMadrasah() {
     ilhakPdf: '',
   };
 
-  console.log(initialFormState);
 
   const [formData, setFormData] = useState<Omit<IMadrasah, '_id' | 'user' | 'madrasahResult' | 'createdAt' | 'updatedAt' | 'status' | 'code'>>(initialFormState);
 

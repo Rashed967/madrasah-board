@@ -9,6 +9,7 @@ export interface IExamFeeForExaminee {
 }
 
 interface IExam {
+    _id?: Types.ObjectId;
     examName: string;
     examYear? : string;
     startDate?: string;
