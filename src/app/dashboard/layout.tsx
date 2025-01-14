@@ -6,6 +6,8 @@ import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
 import { isAuthenticated } from '@/services/authService';
 
+
+
 export default function DashboardLayout({
   children,
 }: {

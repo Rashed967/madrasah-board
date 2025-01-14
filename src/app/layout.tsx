@@ -9,8 +9,7 @@ const notoSerifBengali = Noto_Serif_Bengali({
 
 export const metadata = {
   title: 'Madrasah Management',
-  description: 'A comprehensive system for managing madrasahs',
-  viewport: 'width=device-width, initial-scale=1',
+  description: 'A comprehensive system for managing madrasahs'
 };
 
 export const viewport = {
@@ -27,6 +26,9 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="color-scheme" content="light" />
+        <meta name="theme-color" content="#ffffff" />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
