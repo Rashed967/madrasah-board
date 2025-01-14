@@ -67,12 +67,13 @@ export function MadrasahListFilterSection({
           </Select>
         </div>
 
-        <div>
+        <div className="text-gray-800">
 
           <Select
             value={selectedDistrict}
             onValueChange={(value) => onDistrictChange(value as District | 'all')}
             disabled={!selectedDivision || selectedDivision === 'all'}
+            
           >
             <SelectTrigger className="bg-white border-gray-200 focus:ring-0 focus:ring-offset-0">
               <SelectValue placeholder="সকল জেলা" />
