@@ -37,7 +37,7 @@ export default function ZoneDistrict({
 
       {selectedDistricts.length > 0 && (
         <div className="mt-4">
-          <h3 className="text-sm font-semibold mb-2">নির্বাচিত জেলাসমূহ:</h3>
+          <h3 className="text-sm font-semibold mb-2 text-gray-700">নির্বাচিত জেলাসমূহ:</h3>
           <div className="flex flex-wrap gap-2">
             {selectedDistricts.map((district) => (
               <span

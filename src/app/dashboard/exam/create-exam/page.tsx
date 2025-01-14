@@ -37,7 +37,7 @@ export default function CreateExamPage() {
     <div className="container  md:mx-6 lg:mx-8 mt-8">
       <Card className="bg-[#FBFBFB] md:mx-6 lg:mx-8">
         <CardHeader>
-          <CardTitle className="text-md md:text-lg font-bold">নতুন পরীক্ষা তৈরি করুন</CardTitle>
+          <CardTitle className="text-md md:text-lg font-bold text-gray-800">নতুন পরীক্ষা তৈরি করুন</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-8 ">

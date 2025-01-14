@@ -11,7 +11,7 @@ interface RegistrationInformationSectionProps {
 export default function RegistrationInformationSection({ formData, onChange, errors }: RegistrationInformationSectionProps) {     
 
 return ( 
-<div className="space-y-4"> 
+<div className="space-y-4 text-gray-800"> 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <NumberInputField
                label="রেজিস্ট্রেশন শুরুর নম্বর"

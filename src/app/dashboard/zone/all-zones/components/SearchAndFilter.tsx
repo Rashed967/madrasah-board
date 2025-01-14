@@ -25,7 +25,7 @@ export const SearchAndFilter = ({
             placeholder="জোন খুঁজুন..."
             value={searchTerm}
             onChange={onSearchChange}
-            className="w-full pl-10"
+            className="w-full pl-10 text-gray-700"
           />
           <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
             🔍
@@ -36,7 +36,7 @@ export const SearchAndFilter = ({
         <select
           value={selectedZoneName}
           onChange={onZoneNameChange}
-          className="w-64 h-10 rounded-md border border-gray-300 px-4 py-2 text-sm"
+          className="w-64 h-10 rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#52B788]/70"
         >
           <option value="">সব জোন</option>
           {zoneNames.map((zoneName) => (

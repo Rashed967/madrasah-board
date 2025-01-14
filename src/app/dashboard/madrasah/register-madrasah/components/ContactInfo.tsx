@@ -15,7 +15,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
   return (
     <div className="p-6">
       <div className="space-y-6">
-        <h2 className="text-lg font-semibold mb-6">যোগাযোগের তথ্য</h2>
+        <h2 className="text-lg font-semibold mb-6 text-gray-800">যোগাযোগের তথ্য</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
@@ -28,7 +28,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
               onChange={(e) => handleChange('communicatorName', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors.communicatorName ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs md:text-base text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors.communicatorName && (
               <p className="text-red-500 text-xs italic">{errors.communicatorName}</p>
@@ -36,7 +36,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
+            <label className="block text-gray-800 text-sm md:text-base lg:text font-bold mb-2">
               মোবাইল নম্বর
             </label>
             <input
@@ -46,7 +46,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
               onChange={(e) => handleChange('contactNo1', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors.contactNo1 ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs text-gray-700  md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors.contactNo1 && (
               <p className="text-red-500 text-xs italic">{errors.contactNo1}</p>
@@ -54,7 +54,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
+            <label className="block text-gray-800 text-sm md:text-base lg:text font-bold mb-2">
               বিকল্প মোবাইল নম্বর
             </label>
             <input
@@ -64,7 +64,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
               onChange={(e) => handleChange('contactNo2', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors.contactNo2 ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs text-gray-700 md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors.contactNo2 && (
               <p className="text-red-500 text-xs italic">{errors.contactNo2}</p>
@@ -72,7 +72,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">
+            <label className="block text-gray-800 text-sm md:text-base lg:text font-bold mb-2">
               ইমেইল
             </label>
             <input
@@ -82,7 +82,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ formData, handleChange, error
               onChange={(e) => handleChange('email', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs text-gray-700 md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors.email && (
               <p className="text-red-500 text-xs italic">{errors.email}</p>

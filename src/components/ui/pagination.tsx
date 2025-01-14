@@ -23,7 +23,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="h-8 px-3 text-xs border-gray-200 bg-[#52B788]"
+          className="h-8 px-3 text-xs text-white border-gray-200 bg-[#52B788]"
         >
           <ChevronLeft className="h-4 w-4" />
           পূর্ববর্তী

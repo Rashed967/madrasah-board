@@ -27,11 +27,11 @@ export const ZonesTable = ({ zones, onView, onDelete }: ZonesTableProps) => {
         <tbody className="divide-y divide-gray-200">
           {zones.map((zone, index) => (
             <tr key={zone._id.toString()} className="hover:bg-gray-50">
-              <td className="px-6 py-4 ">{zone.code}</td>
-              <td className="px-6 py-4 ">{zone.name}</td>
-              <td className="px-6 py-4 text-left">{zone.allDistricts.length > 0 ? zone.allDistricts.flat().concat().join(', ') : 'কোনো জেলা নেই'}</td>
-              <td className="px-6 py-4 ">{zone.allMarkazs.length}</td>
-              <td className="px-6 py-4  space-x-4">
+              <td className="px-6 py-4 text-gray-800">{zone.code}</td>
+              <td className="px-6 py-4 text-gray-800 ">{zone.name}</td>
+              <td className="px-6 py-4 text-gray-800 text-left">{zone.allDistricts.length > 0 ? zone.allDistricts.flat().concat().join(', ') : 'কোনো জেলা নেই'}</td>
+              <td className="px-6 py-4 text-gray-800">{zone.allMarkazs.length}</td>
+              <td className="px-6 py-4 text-gray-800  space-x-4">
                 <button
                   onClick={() => onView(zone)}
                   className="text-[#52B788] hover:text-[#52B788]/90 text-xl"

@@ -26,7 +26,7 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
 
       {/* Shikkha Socheeb Information */}
       <div className="p-6 space-y-4">
-        <div><h2 className="text-base text-lg  font-semibold ">শিক্ষা সচিবের তথ্য</h2></div>
+        <div><h2 className="text-base  font-semibold text-gray-800">শিক্ষা সচিবের তথ্য</h2></div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-gray-700 text-sm md:text-base lg:text font-bold mb-2">নাম</label>
@@ -37,7 +37,7 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
               onChange={(e) => handleChange('educational_secretory.name', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors?.['educational_secretory.name'] ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs md:text-base text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors?.['educational_secretory.name'] && (
               <p className="text-red-500 text-xs italic">{errors['educational_secretory.name']}</p>
@@ -52,7 +52,7 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
               onChange={(e) => handleChange('educational_secretory.nidNumber', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors?.['educational_secretory.nidNumber'] ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs md:text-base text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors?.['educational_secretory.nidNumber'] && (
               <p className="text-red-500 text-xs italic">{errors['educational_secretory.nidNumber']}</p>
@@ -67,7 +67,7 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
               onChange={(e) => handleChange('educational_secretory.contactNo', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors?.['educational_secretory.contactNo'] ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs md:text-base text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors?.['educational_secretory.contactNo'] && (
               <p className="text-red-500 text-xs italic">{errors['educational_secretory.contactNo']}</p>
@@ -82,7 +82,7 @@ const EducationSecretory: React.FC<EducationSecretoryProps> = ({ formData, handl
               onChange={(e) => handleChange('educational_secretory.highestEducationalQualification', e.target.value)}
               className={`mt-1 block w-full rounded-md border ${
                 errors?.['educational_secretory.highestEducationalQualification'] ? 'border-red-500' : 'border-gray-300'
-              } px-3 py-2 text-xs md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
+              } px-3 py-2 text-xs md:text-base text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
             {errors?.['educational_secretory.highestEducationalQualification'] && (
               <p className="text-red-500 text-xs italic">{errors['educational_secretory.highestEducationalQualification']}</p>

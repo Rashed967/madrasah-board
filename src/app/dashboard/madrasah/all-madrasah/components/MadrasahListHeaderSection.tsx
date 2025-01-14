@@ -17,17 +17,17 @@ export function MadrasahListHeaderSection({ onPrintList, onPrintAddresses }: Mad
         <Button
           onClick={onPrintList}
           variant="outline"
-          className="flex items-center gap-2 text-xs md:text-sm lg:text-base border border-[#52B788] hover:bg-gray-50"
+          className="flex items-center gap-2 text-xs md:text-sm lg:text-base text-gray-700 border border-[#52B788] hover:bg-gray-50"
         >
-          <Printer className="h-4 w-4" />
-          <span className="hidden md:inline">মাদরাসার</span> তালিকা <span className="hidden md:inline">প্রিন্ট</span>
+          <Printer className="h-4 w-4 text-gray-700" />
+          <span className="hidden md:inline ">মাদরাসার</span> তালিকা <span className="hidden md:inline">প্রিন্ট</span>
         </Button>
         <Button
           onClick={onPrintAddresses}
           variant="outline"
-          className="flex items-center gap-2 text-xs md:text-sm lg:text-base border border-[#52B788] hover:bg-gray-50"
+          className="flex items-center gap-2 text-xs md:text-sm lg:text-base text-gray-700 border border-[#52B788] hover:bg-gray-50"
         >
-          <Printer className="h-4 w-4" />
+          <Printer className="h-4 w-4 text-gray-700" />
           ঠিকানা <span className="hidden md:inline"> প্রিন্ট</span> 
         </Button>
       </div>

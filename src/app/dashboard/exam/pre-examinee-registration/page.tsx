@@ -131,7 +131,7 @@ export default function PreExamineeRegistrationPage() {
   );
 
   return (
-    <div className="container max-w-4xl mx-auto mt-8 px-4">
+    <div className="container max-w-4xl mx-auto mt-8 px-4 text-gray-800">
       <StatusDialog
         isOpen={statusDialog.isOpen}
         onClose={closeDialog}

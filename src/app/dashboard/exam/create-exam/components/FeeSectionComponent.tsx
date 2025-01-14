@@ -12,7 +12,7 @@ interface FeeSectionComponentProps {
 
 export default function FeeSectionComponent({ formData, errors, onFeeChange }: FeeSectionComponentProps) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-gray-800">
 {/* Boys Fee Section */}
 <div className="space-y-4 ">
   <h3 className="text-lg font-medium">ছাত্রদের পরীক্ষার ফি</h3>

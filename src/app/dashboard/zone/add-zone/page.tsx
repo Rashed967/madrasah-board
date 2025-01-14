@@ -113,7 +113,7 @@ export default function AddZone() {
   return (
     <div className="container mx-auto px-4 py-8 mt-28">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-6">নতুন জোন যোগ করুন</h1>
+        <h1 className="text-base md:text-lg font-bold mb-6 text-gray-800">নতুন জোন যোগ করুন</h1>
         
         <form onSubmit={handleSubmit}>
           <ZoneName 

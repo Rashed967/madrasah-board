@@ -163,7 +163,7 @@ export default function ExamineeProfile({ params }: { params: { id: string } }) 
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4">যোগাযোগের তথ্য</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">যোগাযোগের তথ্য</h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#52b788]/10 flex items-center justify-center">

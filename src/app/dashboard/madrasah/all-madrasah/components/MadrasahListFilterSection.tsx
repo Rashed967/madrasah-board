@@ -151,7 +151,7 @@ export function MadrasahListFilterSection({
               placeholder="লিখুন..."
               value={searchQuery}
               onChange={(e) => onSearchQueryChange(e.target.value)}
-              className="pl-8 bg-white border-gray-200 focus:ring-0 focus:ring-offset-0"
+              className="pl-8 bg-white border-gray-200 focus:ring-0 focus:ring-offset-0 text-gray-700"
             />
             <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>

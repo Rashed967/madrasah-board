@@ -19,7 +19,7 @@ export const InputField = ({ label, name, value, onChange, type = "text", error 
             value={value}
             onChange={onChange}
             placeholder={label}
-            className={error ? "border-red-500" : ""}
+            className={error ? "border-red-500 text-gray-800" : "text-gray-800"}
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
     </div>

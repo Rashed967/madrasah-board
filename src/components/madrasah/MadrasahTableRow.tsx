@@ -17,7 +17,7 @@ export function MadrasahTableRow({
   getMadrasahInfoField,
 }: MadrasahTableRowProps) {
   return (
-    <tr key={madrasah._id} className="border-b hover:bg-gray-50">
+    <tr key={madrasah._id} className="border-b hover:bg-gray-50 text-gray-800">
       <td className="px-6 py-4">{madrasah.code}</td>
       <td className="px-6 py-4">
         <Link 
@@ -39,7 +39,7 @@ export function MadrasahTableRow({
       </td>
       <td className="px-6 py-4">{getMadrasahInfoField(madrasah, 'muhtamimName')}</td>
       <td className="px-6 py-4">
-        {getMadrasahInfoField(madrasah, 'madrasahType') === 'BOY' ? 'বালক' : 'বালিকা'}
+        {getMadrasahInfoField(madrasah, 'madrasahType') === 'বালক' ? 'বালক' : 'বালিকা'}
       </td>
       <td className="px-6 py-4">{madrasah.email || '-'}</td>
       <td className="px-6 py-4">{madrasah.contactNo1 || '-'}</td>
