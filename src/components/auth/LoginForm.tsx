@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { setTokens, getDashboardRoute } from '@/services/authService';
@@ -29,6 +29,13 @@ export function LoginForm() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Prefetch possible dashboard routes
+  useEffect(() => {
+    router.prefetch('/dashboard');
+    router.prefetch('/teacher-dashboard');
+    router.prefetch('/madrasah-dashboard');
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -43,6 +50,7 @@ export function LoginForm() {
       const response = await post<LoginData>('/users/login', { username, password });
       
       if (response.success) {
+        // First set the tokens
         setTokens({
           accessToken: response.data.accessToken,
           user: response.data.user
@@ -50,8 +58,11 @@ export function LoginForm() {
         
         toast.success('সফলভাবে লগইন হয়েছে');
         
+        // Get dashboard route and redirect
         const dashboardRoute = getDashboardRoute();
-        router.push(dashboardRoute);
+        
+        // Force a hard navigation to dashboard
+        window.location.href = dashboardRoute;
       } else {
         toast.error(response.message || 'ইউজারনেম অথবা পাসওয়ার্ড ভুল');
       }
@@ -62,8 +73,16 @@ export function LoginForm() {
     }
   };
 
+  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  }, []);
+
+  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }, []);
+
   return (
-    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
       <div className="rounded-md shadow-sm space-y-4">
         <div>
           <Input
@@ -72,7 +91,8 @@ export function LoginForm() {
             type="text"
             placeholder="ইউজারনেম লিখুন"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleUsernameChange}
+            className='text-xs md:text-sm'
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
@@ -83,12 +103,12 @@ export function LoginForm() {
 
         <PasswordInput
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
         />
       </div>
 
       <div className="flex items-center justify-end">
-        <div className="text-sm">
+        <div className="text-xs">
           <a href="/forgot-password" className="font-medium text-[#52b788] hover:text-[#40916c]">
             পাসওয়ার্ড ভুলে গেছেন?
           </a>
@@ -98,7 +118,8 @@ export function LoginForm() {
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full"
+        size='sm'
+        className="w-full bg-[#52b788] hover:bg-[#40916c] text-white py-1 text-xs md:text-sm rounded-md"
       >
         {isLoading ? 'লগইন হচ্ছে...' : 'লগইন'}
       </Button>
