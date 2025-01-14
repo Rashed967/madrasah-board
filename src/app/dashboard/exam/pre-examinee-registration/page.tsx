@@ -26,22 +26,6 @@ import { PreExamineeRegistrationValidation } from "@/features/preExamineeRegistr
 import globalValidateRequest from "@/middleware/globalValidateRequest";
 import { preExamineeRegistrationServices } from "@/services/preExamineeRegistrationService";
 
-// Temporary static data
-const STATIC_EXAMS = [
-  { id: 1, name: "দাখিল" },
-  { id: 2, name: "আলিম" },
-];
-
-// const STATIC_MARHALAS = [
-//   { id: 1, name: "১ম বর্ষ" },
-//   { id: 2, name: "২য় বর্ষ" },
-//   { id: 3, name: "৩য় বর্ষ" },
-// ];
-
-const STATIC_MADRASAHS = [
-  { id: 1, code: "M001", name: "দারুল উলূম মাদরাসা", type: "boys" },
-  { id: 2, code: "M002", name: "জামিয়া ইসলামিয়া", type: "girls" },
-];
 
 const TRANSACTION_CATEGORIES = [
   { value: 'registrationFee', label: 'রেজিস্ট্রেশন ফি' },
@@ -62,7 +46,6 @@ const PAYMENT_METHODS = [
 ];
 
 const initialFormState = {
-
     exam: '',
     madrasah: '',
     examineesPerMahala: marhalaNames.map(marhalaName => ({
