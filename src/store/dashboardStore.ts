@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
-
-interface DashboardStats {
+export interface DashboardStats {
   totalMadrasahs: number;
   boysMadrasahs: number;
   girlsMadrasahs: number;

@@ -1,5 +1,6 @@
 import './globals.css';
 import { Noto_Serif_Bengali } from 'next/font/google';
+import { QueryProvider } from '@/components/providers/QueryProvider';
 
 const notoSerifBengali = Noto_Serif_Bengali({
   weight: ['400', '500', '600', '700'],
@@ -34,8 +35,18 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossOrigin="anonymous"
+        />
       </head>
-      <body className={notoSerifBengali.className}>{children}</body>
+      <body className={notoSerifBengali.className}>
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+      </body>
     </html>
   );
 }

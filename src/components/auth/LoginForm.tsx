@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from './PasswordInput';
 import { post } from '@/core/api/apiService';
+import Link from 'next/link';
 
 interface LoginData {
   accessToken: string;
@@ -61,8 +62,8 @@ export function LoginForm() {
         // Get dashboard route and redirect
         const dashboardRoute = getDashboardRoute();
         
-        // Force a hard navigation to dashboard
-        window.location.href = dashboardRoute;
+        // Redirect to dashboard
+        router.push(dashboardRoute);
       } else {
         toast.error(response.message || 'ইউজারনেম অথবা পাসওয়ার্ড ভুল');
       }
@@ -109,9 +110,9 @@ export function LoginForm() {
 
       <div className="flex items-center justify-end">
         <div className="text-xs">
-          <a href="/forgot-password" className="font-medium text-[#52b788] hover:text-[#40916c]">
+          <Link href="/forgot-password" className="font-medium text-[#52b788] hover:text-[#40916c]">
             পাসওয়ার্ড ভুলে গেছেন?
-          </a>
+          </Link>
         </div>
       </div>
 

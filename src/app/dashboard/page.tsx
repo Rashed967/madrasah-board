@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { getMadrasahStats } from '@/services/dashboardService';
+import { useQuery } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import type  {DashboardStats}  from '@/store/dashboardStore';
 
 // Lazy load components
 const StatsCards = dynamic(() => import('@/components/dashboard/StatsCards'), {
@@ -17,41 +20,18 @@ const StatsChart = dynamic(() => import('@/components/dashboard/StatsChart'), {
 
 export default function DashboardPage() {
   const { setStats, setIsLoading } = useDashboardStore();
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['dashboardStats'],
+    queryFn: getMadrasahStats,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+  });
 
   useEffect(() => {
-    async function fetchStats() {
-      try {
-        setIsLoading(true);
-        const stats = await getMadrasahStats() as any;
-        console.log('Fetched Stats:', stats);
-        if (!stats) {
-          setStats({
-            totalMadrasahs: 0,
-            boysMadrasahs: 0,
-            girlsMadrasahs: 0,
-            totalZones: 0,
-            currentYearExaminees: 0,
-            totalRegisteredExaminees: 0
-          });
-          return;
-        }
-        setStats({
-          totalMadrasahs: stats?.totalMadrasahs || 0,
-          boysMadrasahs: stats?.boysMadrasahs || 0,
-          girlsMadrasahs: stats?.girlsMadrasahs || 0,
-          totalZones: stats?.totalZones || 0,
-          currentYearExaminees: stats?.currentYearExaminees || 0,
-          totalRegisteredExaminees: stats?.totalRegisteredExaminees || 0
-        });
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    if (stats) {
+      setStats(stats as DashboardStats);
     }
-
-    fetchStats();
-  }, [setStats, setIsLoading]);
+    setIsLoading(isLoading);
+  }, [stats, isLoading, setStats, setIsLoading]);
 
   return (
     <div className="mt-8 md:mt-12 lg:mt-16 mx-6 mb-8">
@@ -59,8 +39,12 @@ export default function DashboardPage() {
         <h1 className="text-xl md:text-2xl font-bold mb-8">ড্যাশবোর্ড</h1>
       </div>
       
-      <StatsCards />
-      <StatsChart />
+      <Suspense fallback={<div className="animate-pulse h-32 bg-gray-100 rounded-lg" />}>
+        <StatsCards />
+      </Suspense>
+      <Suspense fallback={<div className="animate-pulse h-[300px] bg-gray-100 rounded-lg" />}>
+        <StatsChart />
+      </Suspense>
     </div>
   );
 }
