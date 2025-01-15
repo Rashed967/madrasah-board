@@ -5,7 +5,9 @@ import { QueryProvider } from '@/components/providers/QueryProvider';
 const notoSerifBengali = Noto_Serif_Bengali({
   weight: ['400', '500', '600', '700'],
   subsets: ['bengali'],
-  display: 'swap',
+  display: 'block',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 });
 
 export const metadata = {
@@ -36,9 +38,16 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
+          rel="preload"
+          href="/_next/static/media/d29f4cb91eec06de-s.p.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
           crossOrigin="anonymous"
         />
       </head>
