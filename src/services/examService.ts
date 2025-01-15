@@ -4,7 +4,7 @@ import  IExam  from "@/features/exam/exam.interface";
 export const createExam = async (examData: IExam) => {
   try {
     const response = await post<IExam>('/exams', examData);
-    console.log(' Create Response:', response);
+
     return {
       success: true as const,
       message: response.message,

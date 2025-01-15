@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
         message: 'জোন সফলভাবে তৈরি করা হয়েছে'
       });
     } catch (error) {
-      console.error('Error creating zone:', error);
       return NextResponse.json(
         { 
           success: false, 

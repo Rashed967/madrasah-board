@@ -63,7 +63,6 @@ export default function ExamineRegistrationPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Submission logic
-    console.log(formData);
     
     // Show success modal
     setShowSuccessModal(true);

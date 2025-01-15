@@ -145,7 +145,6 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           setFormData(madrasahData);
         }
       } catch (error) {
-        console.error('Error fetching madrasah:', error);
         toast.error('মাদরাসার তথ্য লোড করতে সমস্যা হয়েছে');
       } finally {
         setLoading(false);
@@ -323,8 +322,6 @@ if (response.success) {
         madrasahType: formData.madrasah_information.madrasahType
       };
 
-      console.log('🚀 ~ file: page.tsx:353 ~ handleInformationUpdate ~ infoData:', madrasahInfo);
-
       const response = await updateMadrasahInformation(formData.madrasah_information._id.toString(), madrasahInfo);
 
       if (response.success) {
@@ -358,7 +355,6 @@ if (response.success) {
   const handleMuhtamimUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log('🚀 ~ file: page.tsx:353 ~ handleMuhtamimUpdate ~ formData.muhtamim:', formData.muhtamim);
 
   
     const validationErrors = globalValidateRequest(staffSchemas.updateMuhtamimSchema, formData);
@@ -378,10 +374,7 @@ if (response.success) {
         nidNumber: formData.muhtamim.nidNumber,
         highestEducationalQualification: formData.muhtamim.highestEducationalQualification,
       };
-      console.log(formData.muhtamim);
       const response = await updateMuhtamim(formData.muhtamim._id.toString(), muhtamimInfo);
-      console.log('🚀 ~ file: page.tsx:353 ~ handleMuhtamimUpdate ~ formData.muhtamim:', response);
-
 
       if (response.success) {
         setStatusDialog({

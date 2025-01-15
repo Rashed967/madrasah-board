@@ -62,61 +62,19 @@ export default function AllMadrasah() {
       setError(null);
       const response = await getAllMadrasahs();
       
-      // Log raw data for inspection
-      console.log('Raw madrasah data:', response.data.map(m => ({
-        id: m._id,
-        name: m.madrasahNames.bengaliName,
-        type: m.madrasah_information?.madrasahType,
-        rawInfo: m.madrasah_information
-      })));
-      
-      // Log all madrasah types
-      console.log('All madrasah types:', response.data.map(m => ({
-        id: m._id,
-        name: m.madrasahNames.bengaliName,
-        type: m.madrasah_information?.madrasahType
-      })));
-      
       // Filter madrasahs based on selected filters
       let filteredMadrasahs = response.data;
 
       if (selectedMadrasahType && selectedMadrasahType !== 'all') {
-        console.log('Starting filter with type:', selectedMadrasahType);
         
         filteredMadrasahs = filteredMadrasahs.filter((m) => {
-          // Log raw madrasah info for debugging
-          console.log('Checking madrasah:', {
-            id: m._id,
-            name: m.madrasahNames.bengaliName,
-            rawType: m.madrasah_information?.madrasahType,
-            info: m.madrasah_information,
-            isString: typeof m.madrasah_information === 'string'
-          });
           
           const type = getMadrasahInfoField(m, 'madrasahType');
           const matches = type === selectedMadrasahType;
-          
-          console.log('Type comparison:', {
-            id: m._id,
-            originalType: m.madrasah_information?.madrasahType,
-            convertedType: type,
-            selectedType: selectedMadrasahType,
-            matches
-          });
-          
+
           return matches;
         });
 
-        console.log('Filter results:', {
-          selectedType: selectedMadrasahType,
-          totalMatches: filteredMadrasahs.length,
-          matchedMadrasahs: filteredMadrasahs.map(m => ({
-            id: m._id,
-            name: m.madrasahNames.bengaliName,
-            type: m.madrasah_information?.madrasahType,
-            convertedType: getMadrasahInfoField(m, 'madrasahType')
-          }))
-        });
       }
 
       if (selectedDivision && selectedDivision !== 'all') {
@@ -156,7 +114,6 @@ export default function AllMadrasah() {
       setTotalPages(Math.ceil(filteredMadrasahs.length / ITEMS_PER_PAGE));
     } catch (err) {
       setError('Failed to fetch madrasahs');
-      console.error('Error fetching madrasahs:', err);
     } finally {
       setLoading(false);
     }
@@ -217,7 +174,6 @@ export default function AllMadrasah() {
   };
 
   const handlePrint = useCallback((type: 'list' | 'addresses') => {
-    console.log('Madrasahs data for print:', madrasahs);
     setPrintType(type);
     setPrintContent(generatePrintContent(madrasahs, type));
     setShowPrintPreview(true);

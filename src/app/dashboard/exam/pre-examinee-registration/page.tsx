@@ -67,7 +67,6 @@ export default function PreExamineeRegistrationPage() {
         const response = await examServices.getAllExamForPreRegistration();
         setExams(response.data);
       } catch (error) {
-        console.error("পরীক্ষা ডাটা লোড করতে সমস্যা হয়েছে");
         showErrorDialog("পরীক্ষা ডাটা লোড করতে সমস্যা হয়েছে");
       }
     };

@@ -109,7 +109,6 @@ export const updateMadrasahBasicInfo = async (
   data: any
 ): Promise<ApiResponse<IMadrasah>> => {
   try {
-    console.log('🔥 Update Basic Info Response:', data);
     const response = await patch<IMadrasah>(`/madrasah/${id}`, data);
     return {
       success: true as const,
@@ -216,7 +215,6 @@ export const updateMadrasahInformation = async (
 export const getMadrasahs = async ()=> {
   try {
     const response = await get<IMadrasah[]>('/madrasah');
-    console.log(response);
     return {
       success: true,
       data: response.data,

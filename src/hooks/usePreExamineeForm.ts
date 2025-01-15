@@ -47,7 +47,6 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
         setSearchResults(filteredResults);
         setShowDropdown(true);
       } catch (error) {
-        console.error("মাদ্রাসা খুঁজতে সমস্যা হয়েছে");
       } finally {
         setIsSearching(false);
       }

@@ -42,7 +42,7 @@ export default function Sidebar() {
     },
     { 
       name: 'জোন', 
-      href: '#', 
+      href: '/dashboard/zone', 
       icon: MdLocationOn,
       submenu: [
         { name: 'নতুন জোন যুক্ত করুন', href: '/dashboard/zone/add-zone', icon: MdAdd },
@@ -51,7 +51,7 @@ export default function Sidebar() {
     },
     { 
       name: 'পরীক্ষা বিভাগ', 
-      href: '/exam', 
+      href: '#exams', 
       icon: MdAssignment,
       submenu: [
         { name: 'পরীক্ষা ক্রিয়েট', href: '/dashboard/exam/create-exam', icon: MdAdd },
@@ -62,7 +62,7 @@ export default function Sidebar() {
     },
     { 
       name: 'নিবন্ধন আবেদন', 
-      href: '#', 
+      href: '#registration-applications', 
       icon: MdNotifications,
       submenu: [
         { 
@@ -79,7 +79,7 @@ export default function Sidebar() {
     },
     { 
       name: 'মারহালা', 
-      href: '#', 
+      href: '#marhala', 
       icon: MdLibraryBooks,
       submenu: [
         {

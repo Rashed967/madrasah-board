@@ -207,7 +207,6 @@ export default function ExamineeProfile({ params }: { params: { id: string } }) 
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#52b788] focus:border-transparent bg-white"
                 onChange={(e) => {
                   // Here you would typically update the selected exam in state
-                  console.log('Selected exam:', e.target.value);
                 }}
               >
                 <option value="কেন্দ্রীয়_পরীক্ষা_১৪৪৬_হি">কেন্দ্রীয় পরীক্ষা ১৪৪৬ হি.</option>

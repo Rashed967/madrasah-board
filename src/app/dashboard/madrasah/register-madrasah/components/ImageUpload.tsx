@@ -63,7 +63,6 @@ const PdfUpload: React.FC<PdfUploadProps> = ({
       }
       toast.success('PDF সফলভাবে আপলোড হয়েছে');
     } catch (error) {
-      console.error('Error uploading PDF:', error);
       setErrorMessage('PDF আপলোড করতে সমস্যা হয়েছে');
       setFileName('');
     } finally {

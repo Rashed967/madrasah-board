@@ -12,7 +12,7 @@ export default function Home() {
       try {
         await router.push('/login');
       } catch (error) {
-        console.error('Redirect failed:', error);
+        return 
       } finally {
         setIsLoading(false);
       }

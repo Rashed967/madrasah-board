@@ -20,7 +20,6 @@ export default function MadrasahDetailsPage({ params }: { params: { id: string }
         const response = await getMadrasahById(params.id);
         setMadrasahData(response.data);
       } catch (error) {
-        console.error('Error fetching madrasah data:', error);
       } finally {
         setLoading(false);
       }

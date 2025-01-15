@@ -35,7 +35,6 @@ export const uploadToCloudinary = async (file: File): Promise<UploadResponse> =>
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Cloudinary error:', errorData);
       throw new Error(errorData.error?.message || 'Image upload failed');
     }
 
@@ -45,7 +44,6 @@ export const uploadToCloudinary = async (file: File): Promise<UploadResponse> =>
       url: data.secure_url,
     };
   } catch (error) {
-    console.error('Error uploading image:', error);
     return {
       success: false,
       error: 'ছবি আপলোড করতে সমস্যা হয়েছে',

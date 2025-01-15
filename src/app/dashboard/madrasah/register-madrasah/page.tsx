@@ -139,7 +139,6 @@ export default function RegisterMadrasah() {
 
     try {
       const response = await registerMadrasah(formData);
-      console.log('Registration response:', response);
 
       if (response.success) {
         setStatusDialog({

@@ -5,7 +5,6 @@ export async function getMadrasahStats() {
     const response = await request('/dashboard/stats');
     return response?.data;
   } catch (error) {
-    console.error(' Error fetching dashboard stats:', error);
     return {
       totalMadrasahs: 0,
       boysMadrasahs: 0,

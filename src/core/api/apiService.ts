@@ -65,11 +65,6 @@ export const request = async <T>(
       }
 
       const errorData = await response.json().catch(() => ({}));
-      console.log('API Error Response:', {
-        status: response.status,
-        statusText: response.statusText,
-        data: errorData
-      });
       return {
         success: false,
         statusCode: response.status,
@@ -79,7 +74,6 @@ export const request = async <T>(
     }
 
     const data = await response.json();
-    // console.log('API Response Data:', data);
 
     return {
       success: data.success ?? true,
@@ -137,10 +131,6 @@ export const put = <T>(endpoint: string, body: any): Promise<ApiResponse<T>> => 
 
 // PATCH request
 export const patch = async <T>(endpoint: string, body: any): Promise<ApiResponse<T>> => {
-  console.log('🚀 PATCH Request:', {
-    url: `${baseUrl}${endpoint}`,
-    body,
-  });
 
   try {
     const response = await request<T>(endpoint, {
@@ -150,10 +140,8 @@ export const patch = async <T>(endpoint: string, body: any): Promise<ApiResponse
       },
       body: JSON.stringify(body),
     });
-    console.log('🔥 PATCH Response:', response);
     return response;
   } catch (error) {
-    console.error('❌ PATCH Error:', error);
     throw error;
   }
 };

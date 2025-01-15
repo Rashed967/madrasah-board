@@ -2,63 +2,23 @@ import { ApiResponse, patch } from '@/core/api/apiService';
 import { IMadrasah } from '@/features/madrasah/interfaces';
 
 
-// {
-//   console.log('📝 Updating address:', {
-//     madrasahId: id,
-//     data
-//   });
-
-//   const response = await patch<IMadrasah>(`/madrasah-addresses/${id}`, data);
-//   return {
-//     ...response,
-//     statusCode: 200
-//   };
-// } catch (error) {
-//   console.error('❌ Error updating address:', error);
-//   throw error;
-// }
 
 export const updateMuhtamim = async (
   id: string,
   data: Partial<IMadrasah['muhtamim']>
 ): Promise<ApiResponse<IMadrasah>> => {
    try {
-  console.log('📝 Updating address:', {
-    madrasahId: id,
-    data
-  });
-
-  console.log('🚀 ~ file: madrasahService.ts:50 ~ updateMuhtamim ~ data:', data);
   const response = await patch<IMadrasah>(`/muhtamims/${id}`, data);
   return {
     ...response,
     statusCode: 200
   };
 } catch (error) {
-  console.error('❌ Error updating address:', error);
   throw error;
 }
 
 }
 
-
-// {
-//   console.log('🚀 ~ file: madrasahService.ts:50 ~ updateMuhtamim ~ data:', data);
-//   const response = await patch<IMadrasah>(`/muhtamims/${id}`, data);
-//   return {
-//     success: true as const,
-//     statusCode:  response.statusCode,
-//     message: response.message,
-//     data: response.data
-//   };
-// } catch (error: any) {
-//   return {
-//     success: false as const,
-//     statusCode: error?.response?.status,
-//     message: error?.response?.data?.message || 'মুহতামিমের তথ্য আপডেট করতে সমস্যা হয়েছে',
-//     data: null
-//   };
-// }
 
 
 export const updateChairmanMutawalli = async (
@@ -89,7 +49,6 @@ export const updateEducationalSecretary = async (
 ): Promise<ApiResponse<IMadrasah>> => {
   try {
 
-    console.log('🚀 ~ file: staffService.ts:50 ~ updateEducationalSecretary ~ data:', data);
     const response = await patch<IMadrasah>(`/educational-secretories/${id}`, data);
     return {
       success: true as const,

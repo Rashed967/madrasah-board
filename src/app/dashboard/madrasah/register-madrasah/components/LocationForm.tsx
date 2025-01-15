@@ -33,7 +33,6 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
         const response = await getAllZones();
         setZones(response.data);
       } catch (error) {
-        console.error('Failed to load zones:', error);
       } finally {
         setIsLoadingZones(false);
       }

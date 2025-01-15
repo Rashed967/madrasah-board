@@ -12,7 +12,6 @@ export async function GET() {
       data: response.data
     });
   } catch (error) {
-    console.error('Error fetching dashboard stats:', error);
     return NextResponse.json(
       {
         success: false,
