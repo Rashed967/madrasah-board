@@ -1,13 +1,13 @@
 import './globals.css';
-import { Noto_Serif_Bengali } from 'next/font/google';
+import localFont from 'next/font/local'
 import { QueryProvider } from '@/components/providers/QueryProvider';
 
-const notoSerifBengali = Noto_Serif_Bengali({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['bengali'],
-  display: 'block',
-  preload: true,
-  fallback: ['system-ui', 'arial'],
+const kalpurush = localFont({
+  src: '../../public/fonts/kalpurush.ttf',
+  weight: '400',
+  variable: '--font-kalpurush',
+  display: 'swap',
+  fallback: ['Arial'],
 });
 
 export const metadata = {
@@ -51,7 +51,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={notoSerifBengali.className}>
+      <body  className={kalpurush.className}>
         <QueryProvider>
           {children}
         </QueryProvider>
