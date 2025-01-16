@@ -32,7 +32,7 @@ export default function LoginPage() {
         </div>
         <div>
           <h1 className="mt-4 text-center text-base md:text-lg font-extrabold text-gray-900">
-          জাতীয় দ্বীনি মাদরাসা শিক্ষা বোর্ড
+          জাতীয় দ্বীনি মাদরাসা শিক্ষাবোর্ড বাংলাদেশ
           </h1>
         </div>
         <Suspense fallback={<div className="animate-pulse h-64 bg-gray-100 rounded-md"></div>}>

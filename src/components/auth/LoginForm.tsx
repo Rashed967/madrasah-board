@@ -61,9 +61,12 @@ export function LoginForm() {
         
         // Get dashboard route and redirect
         const dashboardRoute = getDashboardRoute();
-        
+        console.log('Dashboard route:', dashboardRoute, + 'redirecting to dashboard  ...');
         // Redirect to dashboard
         router.push(dashboardRoute);
+        // hard redirect
+        window.location.href = dashboardRoute;
+        console.log('Redirected to dashboard');
       } else {
         toast.error(response.message || 'ইউজারনেম অথবা পাসওয়ার্ড ভুল');
       }

@@ -99,9 +99,10 @@ export const hasRole = (requiredRole: string): boolean => {
 // Get dashboard route based on user role
 export const getDashboardRoute = (): string => {
   const role = getUserRole();
-  
+  console.log('Role:', role); // Log the role for debugging
   switch (role) {
     case 'super-admin':
+      return '/dashboard';
     case 'admin':
       return '/dashboard';
     case 'madrasah':
