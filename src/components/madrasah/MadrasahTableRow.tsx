@@ -18,7 +18,7 @@ export function MadrasahTableRow({
 }: MadrasahTableRowProps) {
   return (
     <tr key={madrasah._id} className="border-b hover:bg-gray-50 text-gray-800">
-      <td className="px-6 py-4">{madrasah.code}</td>
+      <td className="px-6 py-4">{Number(madrasah.code).toLocaleString('bn-BD')}</td>
       <td className="px-6 py-4">
         <Link 
           href={`/dashboard/madrasah/${madrasah._id}`}

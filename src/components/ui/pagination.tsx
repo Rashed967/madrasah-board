@@ -13,10 +13,7 @@ export function Pagination({
   onPageChange,
 }: PaginationProps) {
   return (
-    <div className="flex items-center justify-between  p-4 rounded-sm mt-4">
-      <div className="text-sm text-gray-600">
-        মোট মাদরাসা: {totalPages * 10}
-      </div>
+    <div className="flex items-center justify-end  p-4 rounded-sm mt-4">
       <div className="flex items-center gap-2">
         <Button
           variant="outline"

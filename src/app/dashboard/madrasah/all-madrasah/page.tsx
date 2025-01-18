@@ -20,6 +20,7 @@ import { MadrasahListHeaderSection } from './components/MadrasahListHeaderSectio
 import { MadrasahListFilterSection } from './components/MadrasahListFilterSection';
 import { MadrasahListTableSection } from './components/MadrasahListTableSection';
 import { MadrasahPrintPreview } from './components/MadrasahPrintPreview';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -29,6 +30,7 @@ export default function AllMadrasah() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalDocuments, setTotalDocuments] = useState(0);
   const [selectedDivision, setSelectedDivision] = useState<Division | 'all'>('all');
   const [selectedDistrict, setSelectedDistrict] = useState<District | 'all'>('all');
   const [selectedSubDistrict, setSelectedSubDistrict] = useState<string | null>(null);
@@ -38,6 +40,7 @@ export default function AllMadrasah() {
   const [showPrintPreview, setShowPrintPreview] = useState(false);
   const [printType, setPrintType] = useState<'list' | 'addresses'>('list');
   const [printContent, setPrintContent] = useState('');
+  const [limitPerPage, setLimitPerPage] = useState(ITEMS_PER_PAGE);
 
   const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
   const [availableSubDistricts, setAvailableSubDistricts] = useState<string[]>([]);
@@ -60,8 +63,9 @@ export default function AllMadrasah() {
     try {
       setLoading(true);
       setError(null);
-      const response = await getAllMadrasahs();
-      
+      const response = await getAllMadrasahs(currentPage, limitPerPage);
+      console.log(response)
+
       // Filter madrasahs based on selected filters
       let filteredMadrasahs = response.data;
 
@@ -112,12 +116,13 @@ export default function AllMadrasah() {
 
       setMadrasahs(filteredMadrasahs);
       setTotalPages(Math.ceil(filteredMadrasahs.length / ITEMS_PER_PAGE));
+      setTotalDocuments(response.meta.total);
     } catch (err) {
-      setError('Failed to fetch madrasahs');
+      setError('মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে');
     } finally {
       setLoading(false);
     }
-  }, [selectedDivision, selectedDistrict, selectedSubDistrict, selectedPoliceStation, selectedMadrasahType, searchQuery]);
+  }, [selectedDivision, selectedDistrict, selectedSubDistrict, selectedPoliceStation, selectedMadrasahType, searchQuery,limitPerPage, currentPage]);
 
   // Initial fetch on mount
   useEffect(() => {
@@ -173,6 +178,11 @@ export default function AllMadrasah() {
     setCurrentPage(page);
   };
 
+  const handleLimitChange = (limit: number) => {
+    setLimitPerPage(limit);
+    console.log(limit)
+  };
+
   const handlePrint = useCallback((type: 'list' | 'addresses') => {
     setPrintType(type);
     setPrintContent(generatePrintContent(madrasahs, type));
@@ -206,6 +216,26 @@ export default function AllMadrasah() {
             onMadrasahTypeChange={setSelectedMadrasahType}
             onSearchQueryChange={setSearchQuery}
           />
+
+          {/* Pagination info and limit selector */}
+          <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
+            <div className="text-sm text-gray-600">
+              ডাটাবেজে মাদরাসার সংখ্যা: {totalDocuments.toLocaleString('bn-BD')}
+            </div>
+            <div className='flex items-center gap-2'>
+              <label htmlFor="limitSelect" className='text-sm text-gray-600'>প্রতি পেজে দেখানো হবে:</label>
+              <select 
+                id="limitSelect"
+                className="bg-white px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-0 focus:ring-offset-0 text-sm" 
+                value={limitPerPage}
+                onChange={(e) => handleLimitChange(parseInt(e.target.value))}
+              >
+                {[10, 20, 50, 100, 150, 200, 250, 300, 400, 500, 600, 700].map((limit) => (
+                  <option key={limit} value={limit}>{limit}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           <MadrasahListTableSection
             madrasahs={madrasahs}

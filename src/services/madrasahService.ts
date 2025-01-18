@@ -35,13 +35,15 @@ export async function registerMadrasah(formData: any)  {
   
 }
 
-export const getAllMadrasahs = async (page: number = 1, limit: number = 10): Promise<ApiResponse<IMadrasah[]>> => {
+const selectedFields = '-chairman_mutawalli,-educational_secretory,-madrasahResult,-user,-registrationToken,-registrationTokenExpiry,-contactNo2,-description,-createdAt,-updatedAt,-updatedAt,-userAccountCreated';
+export const getAllMadrasahs = async (page: number = 1, limit: number = 10, ): Promise<ApiResponse<IMadrasah[]>> => {
   try {
-    const response = await get<IMadrasah[]>(`/madrasah?page=${page}&limit=${limit}`);
+    const response = await get<IMadrasah[]>(`/madrasah?page=${page}&limit=${limit}&select=${selectedFields}`);
     return {
       success: true as const,
       message: response.message,
-      data: response.data
+      data: response.data,
+      meta: response.meta
     };
   } catch (error: any) {
     return {
