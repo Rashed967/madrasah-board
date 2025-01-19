@@ -37,6 +37,7 @@ export default function AllMadrasah() {
   const [selectedPoliceStation, setSelectedPoliceStation] = useState<string | null>(null);
   const [selectedMadrasahType, setSelectedMadrasahType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [showPrintPreview, setShowPrintPreview] = useState(false);
   const [printType, setPrintType] = useState<'list' | 'addresses'>('list');
   const [printContent, setPrintContent] = useState('');
@@ -205,7 +206,7 @@ export default function AllMadrasah() {
             selectedSubDistrict={selectedSubDistrict}
             selectedPoliceStation={selectedPoliceStation}
             selectedMadrasahType={selectedMadrasahType}
-            searchQuery={searchQuery}
+            searchQuery={searchInput}
             availableDistricts={availableDistricts}
             availableSubDistricts={availableSubDistricts}
             availablePoliceStations={availablePoliceStations}
@@ -214,7 +215,11 @@ export default function AllMadrasah() {
             onSubDistrictChange={setSelectedSubDistrict}
             onPoliceStationChange={setSelectedPoliceStation}
             onMadrasahTypeChange={setSelectedMadrasahType}
-            onSearchQueryChange={setSearchQuery}
+            onSearchQueryChange={(value) => {
+              setSearchInput(value);
+              if (value === '') setSearchQuery('');
+            }}
+            onSearch={() => setSearchQuery(searchInput)}
           />
 
           {/* Pagination info and limit selector */}

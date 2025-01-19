@@ -20,12 +20,13 @@ interface MadrasahListFilterSectionProps {
   availableDistricts: string[];
   availableSubDistricts: string[];
   availablePoliceStations: string[];
-  onDivisionChange: (value: Division | 'all') => void;
-  onDistrictChange: (value: District | 'all') => void;
-  onSubDistrictChange: (value: string | null) => void;
-  onPoliceStationChange: (value: string | null) => void;
-  onMadrasahTypeChange: (value: string) => void;
-  onSearchQueryChange: (value: string) => void;
+  onDivisionChange: (division: Division | 'all') => void;
+  onDistrictChange: (district: District | 'all') => void;
+  onSubDistrictChange: (subDistrict: string) => void;
+  onPoliceStationChange: (policeStation: string) => void;
+  onMadrasahTypeChange: (type: string) => void;
+  onSearchQueryChange: (query: string) => void;
+  onSearch: () => void;
 }
 
 export function MadrasahListFilterSection({
@@ -44,6 +45,7 @@ export function MadrasahListFilterSection({
   onPoliceStationChange,
   onMadrasahTypeChange,
   onSearchQueryChange,
+  onSearch,
 }: MadrasahListFilterSectionProps) {
   return (
     <div className="bg-white rounded-sm shadow-sm p-4 mb-4">
@@ -93,7 +95,7 @@ export function MadrasahListFilterSection({
           <Select
             value={selectedSubDistrict || undefined}
             onValueChange={onSubDistrictChange}
-            disabled={!selectedDistrict}
+            disabled={!selectedDistrict || selectedDistrict === 'all'}
           >
             <SelectTrigger className="bg-white border-gray-200 focus:ring-0 focus:ring-offset-0">
               <SelectValue placeholder="সকল উপজেলা" />
@@ -113,7 +115,7 @@ export function MadrasahListFilterSection({
           <Select
             value={selectedPoliceStation || undefined}
             onValueChange={onPoliceStationChange}
-            disabled={!selectedSubDistrict}
+            disabled={!selectedSubDistrict || selectedSubDistrict === 'all'}
           >
             <SelectTrigger className="bg-white border-gray-200 focus:ring-0 focus:ring-offset-0">
               <SelectValue placeholder="সকল থানা" />
@@ -146,15 +148,20 @@ export function MadrasahListFilterSection({
         </div>
 
         <div>
-          <div className="relative">
-            <Input
+          <div className="px-2">
+            <input
               type="text"
-              placeholder="লিখুন..."
+              placeholder="মাদরাসার নাম অথবা কোড..."
+              className="w-full px-2 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
               value={searchQuery}
               onChange={(e) => onSearchQueryChange(e.target.value)}
-              className="pl-8 bg-white border-gray-200 focus:ring-0 focus:ring-offset-0 text-gray-700"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  onSearch();
+                }
+              }}
             />
-            <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+
           </div>
         </div>
       </div>
