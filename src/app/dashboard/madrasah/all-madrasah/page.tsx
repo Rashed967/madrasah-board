@@ -115,7 +115,7 @@ export default function AllMadrasah() {
       }
 
       setMadrasahs(filteredMadrasahs);
-      setTotalPages(Math.ceil(filteredMadrasahs.length / ITEMS_PER_PAGE));
+      setTotalPages(Math.ceil(response.meta.total / limitPerPage));
       setTotalDocuments(response.meta.total);
     } catch (err) {
       setError('মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে');
