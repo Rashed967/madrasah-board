@@ -35,7 +35,7 @@ export async function registerMadrasah(formData: any)  {
   
 }
 
-const selectedFields = '-chairman_mutawalli,-educational_secretory,-madrasahResult,-user,-registrationToken,-registrationTokenExpiry,-contactNo2,-description,-createdAt,-updatedAt,-updatedAt,-userAccountCreated';
+const selectedFields = '-chairman_mutawalli,-educational_secretory,-madrasahResult,-user,-registrationToken,-registrationTokenExpiry,-description,-createdAt,-updatedAt,-updatedAt,-userAccountCreated';
 export const getAllMadrasahs = async (page: number = 1, limit: number = 10, ): Promise<ApiResponse<IMadrasah[]>> => {
   try {
     const response = await get<IMadrasah[]>(`/madrasah?page=${page}&limit=${limit}&select=${selectedFields}`);

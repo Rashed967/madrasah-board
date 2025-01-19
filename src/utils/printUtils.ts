@@ -60,27 +60,43 @@ function generateAddressesContent(madrasahs: IMadrasah[]) {
   const getValue = (value: string | null | undefined) => value || '-';
 
   return `
-    <div style="width: 100%; max-width: 210mm; margin: 0 auto; padding: 10mm; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 5mm;">
+    <style>
+      @media print {
+        .courier-address {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color: white !important;
+          background-color: gray !important;
+        }
+      }
+    </style>
+    <div style="width: 100%; max-width: 210mm; margin: 0 auto; padding: 8mm; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 5mm;">
       ${madrasahs.map((madrasah) => `
         <div style="padding: 4mm; border: 2px solid black; break-inside: avoid; box-sizing: border-box; font-size: 11pt;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 3mm;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 2mm;">
             <span style="font-size: 11pt;">মুহতামিম,</span>
             <span style="font-size: 11pt;">কোড নং- ${getValue(madrasah.code)}</span>
           </div>
-          <div style="font-size: 11pt; margin-bottom: 2mm;">${getValue(madrasah?.muhtamim?.name)}</div>
-          <div style="font-size: 12pt; font-weight: bold; margin: 3mm 0px;">${getValue(madrasah.madrasahNames.bengaliName)}</div>
-          <div style="display: flex; justify-content: space-between; margin: 2mm 0px;">
+          <div style="font-size: 11pt; margin-bottom: 1mm;">${getValue(madrasah?.muhtamim?.name)}</div>
+          <div style="font-size: 12pt; font-weight: bold; margin: 1mm 0px;">${getValue(madrasah.madrasahNames.bengaliName)}
+          </div>
+          <div style="display: flex; justify-content: space-between; margin: 1mm 0px;">
             <span style="font-size: 11pt;">গ্রাম/মহল্লা: ${getValue(madrasah.address.village)}</span>
             <span style="font-size: 11pt;">ডাক: ${getValue(madrasah.address.policeStation)}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; margin: 2mm 0px;">
+          <div style="display: flex; justify-content: space-between; margin: 1mm 0px;">
             <span style="font-size: 11pt;">থানা: ${getValue(madrasah.address.subDistrict)}</span>
             <span style="font-size: 11pt;">জেলা: ${getValue(madrasah.address.district)}</span>
           </div>
-          <div style="display: flex; justify-content: space-between; margin: 2mm 0px;">
+          <div style="display: flex; justify-content: space-between; margin: 1mm 0px;">
             <span style="font-size: 10pt;">মোবাইল-১: ${getValue(madrasah.contactNo1)}</span>
-            <span style="font-size: 10pt;">মোবাইল-২: ${getValue(madrasah.contactNo2)}</span>
+      ${madrasah.contactNo2 ? `<span style="font-size: 10pt;">মোবাইল-২: ${getValue(madrasah.contactNo2)}</span>` : ''}
           </div>
+        <div style="display: flex; justify-content: center;">
+          <div class="courier-address" style="font-size: 10pt; margin-top: 1mm; background-color: gray; display: inline; padding: 1mm 2mm; color: white">
+          (${getValue(madrasah.address.courierAddress)})
+          </div>
+        </div>
         </div>      
       `).join('')}
     </div>
