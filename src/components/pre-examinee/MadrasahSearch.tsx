@@ -17,6 +17,13 @@ const MadrasahSearch = memo(({
   showDropdown, 
   onMadrasahSelect 
 }: MadrasahSearchProps) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
+      onSearchChange(e as any);
+    }
+  };
+
   return (
     <div className="relative">
       <Label>মাদ্রাসা অনুসন্ধান</Label>
@@ -25,7 +32,8 @@ const MadrasahSearch = memo(({
           placeholder="মাদ্রাসার নাম অথবা কোড"
           className="flex-1 text-xs"
           value={searchTerm}
-          onChange={onSearchChange}
+          onChange={(e) => onSearchChange(e)}
+          onKeyDown={handleKeyDown}
         />
       </div>
 

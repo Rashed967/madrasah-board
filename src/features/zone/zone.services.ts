@@ -19,8 +19,23 @@ export async function createZone(data: ZoneInput): Promise<ApiResponse<IZone>> {
   return response;
 }
 
-
 export async function getAllZones(): Promise<ApiResponse<IZone[]>> {
-  const response = await apiService.get<IZone[]>('/zones?limit=1000'); // Set a high limit to get all zones
+  const response = await apiService.get<IZone[]>('/zones');
   return response;
 }
+
+export const deleteZone = async (id: string) => {
+  try {
+    const response = await apiService.del(`/zones/${id}`);
+    return {
+      success: true as const,
+      message: response.message || 'জোন ডিলিট করা হয়েছে'
+    };
+  } catch (error: any) {
+    return {
+      success: false as const,
+      message: error?.response?.data?.message || 'জোন ডিলিট করতে সমস্যা হয়েছে',
+      data: null
+    };
+  }
+};

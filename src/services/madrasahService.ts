@@ -4,7 +4,7 @@ import { getCurrentUser } from './authService';
 
 import { removeEmptyFields } from '@/utils/object.utils';
 import { ApiResponse } from '@/interfaces/api';
-import { post, get, patch } from '@/core/api/apiService';
+import { post, get, patch, del } from '@/core/api/apiService';
 
 
 const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
@@ -250,9 +250,21 @@ export const getAllMadrasahsForPreRegistration = async (page: number = 1, limit:
 };
 
 
-
-
-
+export const deleteMadrasah = async (id: string) => {
+  try {
+    const response = await del(`/madrasah/${id}`);
+    return {
+      success: true as const,
+      message: response.message
+    };
+  } catch (error: any) {
+    return {
+      success: false as const,
+      message: error?.response?.data?.message || 'মাদরাসা ডিলিট করতে সমস্যা হয়েছে',
+      data: null
+    };
+  }
+};
 
 export const madrasahServices = {
   registerMadrasah,
@@ -267,5 +279,6 @@ export const madrasahServices = {
   updateMadrasahInformation,
   getMadrasahs,
   getAllMadrasahsForPreRegistration,
-  getMadrasahInformationById
+  getMadrasahInformationById,
+  deleteMadrasah
 };

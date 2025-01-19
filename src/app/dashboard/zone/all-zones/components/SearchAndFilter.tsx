@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, KeyboardEvent } from 'react';
 import { Input } from '@/components/ui/input';
 
 interface SearchAndFilterProps {
@@ -16,6 +16,13 @@ export const SearchAndFilter = ({
   onZoneNameChange,
   zoneNames
 }: SearchAndFilterProps) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onSearchChange(e as any);
+    }
+  };
+
   return (
     <div className="mb-6 flex flex-col md:flex-row gap-4">
       <div className="flex-2">
@@ -24,7 +31,8 @@ export const SearchAndFilter = ({
             type="text"
             placeholder="জোন খুঁজুন..."
             value={searchTerm}
-            onChange={onSearchChange}
+            onChange={(e) => onSearchChange(e)}
+            onKeyDown={handleKeyDown}
             className="w-full pl-10 text-gray-700"
           />
           <span className="absolute left-3 top-1/2 transform -translate-y-1/2">

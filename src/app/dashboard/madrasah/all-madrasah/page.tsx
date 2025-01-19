@@ -10,17 +10,18 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Pagination } from '@/components/ui/pagination';
 import { getSubDistricts, getPoliceStations } from '@/services/locationService';
-import { getAllMadrasahs } from '@/services/madrasahService';
+import { getAllMadrasahs, deleteMadrasah } from '@/services/madrasahService';
+import { StatusDialog } from '@/components/ui/status-dialog';
 
 import { generatePrintContent } from "@/utils/printUtils";
 import { divisions, Division, District } from '@/data/divisions';
 import { IMadrasah } from '@/features/madrasah/interfaces';
-
-import { MadrasahListHeaderSection } from './components/MadrasahListHeaderSection';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog } from '@/components/ui/alert-dialog';
 import { MadrasahListFilterSection } from './components/MadrasahListFilterSection';
+import { MadrasahListHeaderSection } from './components/MadrasahListHeaderSection';
 import { MadrasahListTableSection } from './components/MadrasahListTableSection';
 import { MadrasahPrintPreview } from './components/MadrasahPrintPreview';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -46,6 +47,19 @@ export default function AllMadrasah() {
   const [availableDistricts, setAvailableDistricts] = useState<string[]>([]);
   const [availableSubDistricts, setAvailableSubDistricts] = useState<string[]>([]);
   const [availablePoliceStations, setAvailablePoliceStations] = useState<string[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedMadrasah, setSelectedMadrasah] = useState<IMadrasah | null>(null);
+  const [statusDialog, setStatusDialog] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error';
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'success',
+    title: '',
+    message: ''
+  });
 
   const getAddressField = (madrasah: IMadrasah, field: string): string => {
     if (typeof madrasah.address === 'string') return '-';
@@ -164,14 +178,39 @@ export default function AllMadrasah() {
   }, [selectedDistrict, selectedSubDistrict]);
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("আপনি কি নিশ্চিত যে আপনি এই মাদরাসাটি মুছে ফেলতে চান?")) {
-      try {
-        // Implement delete functionality
-        toast.success("মাদরাসা সফলভাবে মুছে ফেলা হয়েছে");
+    const madrasah = madrasahs.find(m => m._id === id);
+    if (!madrasah) return;
+    setSelectedMadrasah(madrasah);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedMadrasah) return;
+    try {
+      const response = await deleteMadrasah(selectedMadrasah._id);
+      if(response.success) {
+        setStatusDialog({
+          isOpen: true,
+          type: 'success',
+          title: 'সফল!',
+          message: 'মাদরাসা সফলভাবে মুছে ফেলা হয়েছে'
+        });
         fetchMadrasahs();
-      } catch (error) {
-        toast.error("মাদরাসা মুছে ফেলতে সমস্যা হয়েছে");
+      } else {
+        setStatusDialog({
+          isOpen: true,
+          type: 'error',
+          title: 'ত্রুটি!',
+          message: response.message || 'মাদরাসা মুছে ফেলতে সমস্যা হয়েছে'
+        });
       }
+    } catch (error) {
+      setStatusDialog({
+        isOpen: true,
+        type: 'error',
+        title: 'ত্রুটি!',
+        message: 'মাদরাসা মুছে ফেলতে সমস্যা হয়েছে'
+      });
     }
   };
 
@@ -206,7 +245,7 @@ export default function AllMadrasah() {
             selectedSubDistrict={selectedSubDistrict}
             selectedPoliceStation={selectedPoliceStation}
             selectedMadrasahType={selectedMadrasahType}
-            searchQuery={searchInput}
+            searchQuery={searchQuery}
             availableDistricts={availableDistricts}
             availableSubDistricts={availableSubDistricts}
             availablePoliceStations={availablePoliceStations}
@@ -256,6 +295,20 @@ export default function AllMadrasah() {
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
+          />
+          <AlertDialog
+            isOpen={showDeleteDialog}
+            onClose={() => setShowDeleteDialog(false)}
+            onConfirm={handleConfirmDelete}
+            title="মাদরাসা মুছে ফেলার নিশ্চিতকরণ"
+            description={selectedMadrasah ? `আপনি কি নিশ্চিত যে আপনি "${selectedMadrasah.madrasahNames.bengaliName}" মাদরাসাটি মুছে ফেলতে চান?` : ''}
+          />
+          <StatusDialog
+            isOpen={statusDialog.isOpen}
+            type={statusDialog.type}
+            title={statusDialog.title}
+            message={statusDialog.message}
+            onClose={() => setStatusDialog(prev => ({ ...prev, isOpen: false }))}
           />
         </div>
       ) : (

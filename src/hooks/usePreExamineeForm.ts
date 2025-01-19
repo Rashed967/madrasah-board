@@ -33,37 +33,29 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
   const [latestRegistrationNumber, setLatestRegistrationNumber] = useState(0);
 
   // Debounced search function
-  const debouncedSearch = useCallback(
-    debounce(async (term: string) => {
-      if (term.length < 2) return;
+  const handleSearch = useCallback(async (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    const value = (e.target as HTMLInputElement).value;
+    setSearchTerm(value);
+    
+    // Only search if it's a keyboard event and the key is Enter
+    if ('key' in e && e.key === 'Enter' && value.length >= 2) {
       setIsSearching(true);
       try {
         const response = await madrasahServices.getAllMadrasahsForPreRegistration(1, 40);
         const filteredResults = response.data.filter((madrasah: any) => 
-          madrasah.madrasahNames.bengaliName.toLowerCase().includes(term.toLowerCase()) ||
-          madrasah.madrasahNames.englishName.toLowerCase().includes(term.toLowerCase()) ||
-          madrasah.code.toLowerCase().includes(term.toLowerCase())
+          madrasah.madrasahNames.bengaliName.toLowerCase().includes(value.toLowerCase()) ||
+          madrasah.madrasahNames.englishName?.toLowerCase().includes(value.toLowerCase()) ||
+          madrasah.code.toLowerCase().includes(value.toLowerCase())
         );
         setSearchResults(filteredResults);
         setShowDropdown(true);
       } catch (error) {
+        console.error('Error searching madrasahs:', error);
       } finally {
         setIsSearching(false);
       }
-    }, 500),
-    []
-  );
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    if (value.length >= 2) {
-      debouncedSearch(value);
-    } else {
-      setShowDropdown(false);
-      setSearchResults([]);
     }
-  };
+  }, []);
 
   const handleMadrasahSelect = (madrasah: any) => {
     setFormData(prev => ({ ...prev, madrasah: madrasah._id }));
