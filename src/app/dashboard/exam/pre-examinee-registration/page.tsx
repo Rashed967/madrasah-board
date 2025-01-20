@@ -18,7 +18,7 @@ import globalValidateRequest from "@/middleware/globalValidateRequest";
 import { preExamineeRegistrationServices } from "@/services/preExamineeRegistrationService";
 import { usePreExamineeForm } from "@/hooks/usePreExamineeForm";
 import { useStatusDialog } from "@/hooks/useStatusDialog";
-import { ExamType, PreExamineeRegistrationData } from "@/types/preExaminee.types";
+import { ExamType, IPaymentDetail, PreExamineeRegistrationData } from "@/types/preExaminee.types";
 
 // Dynamically import components
 const ExamSelection = dynamic(
@@ -92,9 +92,15 @@ export default function PreExamineeRegistrationPage() {
         exam: formData.exam,
         madrasah: formData.madrasah,
         examineesPerMahala: formData.examineesPerMahala,
-        totalFeesAmount: formData.totalFeesAmount
+        // totalFeesAmount: formData.totalFeesAmount
       },
-      transactionDetails: formData.transactionDetails,
+      transactionDetails: {
+        totalAmount: formData.transactionDetails.totalAmount,
+        paidAmount: formData.transactionDetails.paidAmount,
+        transactionCategory: formData.transactionDetails.transactionCategory,
+        description: formData.transactionDetails.description,
+        paymentDetails: formData.transactionDetails.paymentDetails as IPaymentDetail[] 
+      },
     };
     
     const validationErrors = globalValidateRequest(
@@ -130,7 +136,7 @@ export default function PreExamineeRegistrationPage() {
   );
 
   return (
-    <div className="container max-w-4xl mx-auto mt-8 px-4 text-gray-800">
+    <div className="container max-w-4xl mx-auto mt-8 px-4 text-gray-800 mb-4">
       <StatusDialog
         isOpen={statusDialog.isOpen}
         onClose={closeDialog}
@@ -165,7 +171,7 @@ export default function PreExamineeRegistrationPage() {
               </div>
             </div>
 
-            <div>
+            <div >
               <h3 className="font-medium mb-3">মারহালা-ভিত্তিক নিবন্ধন সংখ্যা</h3>
               {/* MarhalaRegistrationTable component */}
               <MarhalaRegistrationTable 

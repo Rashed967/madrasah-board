@@ -15,11 +15,15 @@ const initialFormState = {
   })),
   totalFeesAmount: 0,
   transactionDetails: {
-    amount: 0,
-    transactionType: '',
+    totalAmount: 0,
+    paidAmount: 0,
     transactionCategory: '',
     description: '',
-    paymentMethod: ''
+    paymentDetails: [{
+      amount: 0,
+      paymentMethod: '',
+      referenceNumber: ''
+    }]
   }
 };
 
@@ -106,7 +110,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
       };
     });
 
-    const totalFees = finalUpdatedExamineesPerMahala.reduce(
+    const totalFeesAmount = finalUpdatedExamineesPerMahala.reduce(
       (sum, marhala) => sum + marhala.totalFeesAmount,
       0
     );
@@ -114,10 +118,10 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     setFormData(prev => ({
       ...prev,
       examineesPerMahala: finalUpdatedExamineesPerMahala,
-      totalFeesAmount: totalFees,
+      totalFeesAmount,
       transactionDetails: {
         ...prev.transactionDetails,
-        amount: totalFees
+        totalAmount: totalFeesAmount
       }
     }));
 

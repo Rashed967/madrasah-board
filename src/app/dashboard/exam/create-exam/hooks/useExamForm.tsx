@@ -12,8 +12,8 @@ export const useExamForm = () => {
     endDate: "",
     registrationStartNumber: 0,
     preRegistrationFee: 0,
-    examFeeForBoys: marhalaNames.map(marhala => ({ marhala, amount: 0 })),
-    examFeeForGirls: marhalaNames.map(marhala => ({ marhala, amount: 0 }))
+    examFeeForBoys: marhalaNames.filter(marhala => marhala !== 'তাকমীল/দাওরায়ে হাদীস').map(marhala => ({ marhala, amount: 0 })),
+    examFeeForGirls: marhalaNames.filter(marhala => marhala !== 'তাকমীল/দাওরায়ে হাদীস').map(marhala => ({ marhala, amount: 0 }))
   };
 
   const [formData, setFormData] = useState(initialFormState);

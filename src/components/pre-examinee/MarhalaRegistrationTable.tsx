@@ -21,7 +21,7 @@ const MarhalaRegistrationTable = memo(({
   totalAmount
 }: MarhalaTableProps) => {
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-lg overflow-x-auto">
       <style jsx global>{`
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {

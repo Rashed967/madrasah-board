@@ -34,7 +34,7 @@ export default function CreateExamPage() {
   } = useExamForm();
 
   return (
-    <div className="container  md:mx-6 lg:mx-8 mt-8">
+    <div className="container  md:mx-6 mt-8 mb-8 ">
       <Card className="bg-[#FBFBFB] md:mx-6 lg:mx-8">
         <CardHeader>
           <CardTitle className="text-md md:text-lg font-bold text-gray-800">নতুন পরীক্ষা তৈরি করুন</CardTitle>

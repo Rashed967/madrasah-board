@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PAYMENT_METHOD, TRANSACTION_CATEGORY, TRANSACTION_TYPE } from "../transaction/transaction.constants";
+import { PAYMENT_METHOD, TRANSACTION_CATEGORY } from "../transaction/transaction.constants";
  
 // Create Pre Examinee Registration using this model
 
@@ -21,18 +21,26 @@ const createPreExamineeRegistrationValidationSchema = z.object({
             startingRegistrationNumber: z.number().optional(),
             endingRegistrationNumber: z.number().optional(),
         })),
-        totalFeesAmount: z.number({
-            required_error: 'মোট ফি আবশ্যক',
-        }),
     }),
 
     transactionDetails: z.object({
-        amount: z.number({
-            required_error: 'আমাউন্ট আবশ্যক',}).nonnegative('আমাউন্ট আবশ্যক').min(1, 'মোট টাকা এর পরিমান দিতে হবে'),
-        transactionType: z.enum([...TRANSACTION_TYPE, ''] as [string, ...string[]]).optional(),
-        transactionCategory: z.enum([...TRANSACTION_CATEGORY, ''] as [string, ...string[]]).optional(),
+        totalAmount: z.number({required_error:  'টোটাল আমাউন্ট আবশ্যক'}),
+        paidAmount: z.number({required_error:  'পেইড আমাউন্ট আবশ্যক'}),
+        transactionCategory: z.string({
+            required_error: 'ট্রান্স্যাকশন ক্যাটাগরি আবশ্যক',
+        }).nonempty('ট্রান্স্যাকশন ক্যাটাগরি আবশ্যক'),
         description: z.string().optional(),
-        paymentMethod: z.enum([...PAYMENT_METHOD, ''] as [string, ...string[]]).optional(),
+        paymentDetails: z.array(
+            z.object({
+              amount: z.number({
+                required_error: 'এমাউন্ট আবশ্যক'
+              }),
+              paymentMethod: z.string({
+                required_error: 'পেমেন্ট মেথড আবশ্যক',
+              }).nonempty('পেমেন্ট মেথড আবশ্যক'),
+              referenceNumber: z.string().optional()
+            })
+          ),
     })
 });
 

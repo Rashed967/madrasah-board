@@ -11,15 +11,24 @@ export interface MarhalaExaminee {
   totalExamineesSlots: number;
   startingRegistrationNumber: number;
   endingRegistrationNumber: number;
-  totalFeesAmount: number;
+  // totalFeesAmount: number;
+}
+
+type TPaymentMethod = 'cash' | 'cheque' | 'mobile_banking' | 'bank_transfer';
+
+export interface IPaymentDetail {
+    amount: number;
+    paymentMethod: TPaymentMethod;
+    paymentDate?: Date;
+    referenceNumber?: string;  // For cheque/bank transfer/mobile banking reference
 }
 
 export interface TransactionDetails {
-  amount: number;
-  transactionType: string;
+  totalAmount: number;
+  paidAmount?: number;
   transactionCategory: string;
-  description: string;
-  paymentMethod: string;
+  description?: string;
+  paymentDetails: IPaymentDetail[];  // Changed from single paymentMethod to array of payment details
 }
 
 export interface PreExamineeRegistrationData {
@@ -27,7 +36,7 @@ export interface PreExamineeRegistrationData {
     exam: string;
     madrasah: string;
     examineesPerMahala: MarhalaExaminee[];
-    totalFeesAmount: number;
+    // totalFeesAmount: number;
   };
   transactionDetails: TransactionDetails;
 }
