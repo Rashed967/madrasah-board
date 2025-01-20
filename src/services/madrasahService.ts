@@ -36,9 +36,10 @@ export async function registerMadrasah(formData: any)  {
 }
 
 const selectedFields = '-chairman_mutawalli,-educational_secretory,-madrasahResult,-user,-registrationToken,-registrationTokenExpiry,-description,-createdAt,-updatedAt,-updatedAt,-userAccountCreated';
-export const getAllMadrasahs = async (page: number = 1, limit: number = 10, ): Promise<ApiResponse<IMadrasah[]>> => {
+export const getAllMadrasahs = async (queryString: string = ''): Promise<ApiResponse<IMadrasah[]>> => {
   try {
-    const response = await get<IMadrasah[]>(`/madrasah?page=${page}&limit=${limit}&select=${selectedFields}`);
+    const response = await get<IMadrasah[]>(`/madrasah${queryString ? '?' + queryString : ''}`);
+    console.log(response)
     return {
       success: true as const,
       message: response.message,

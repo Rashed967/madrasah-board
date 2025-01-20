@@ -15,6 +15,7 @@ import { StatusDialog } from '@/components/ui/status-dialog';
 
 import { generatePrintContent } from "@/utils/printUtils";
 import { divisions, Division, District } from '@/data/divisions';
+import { getDistricts } from '@/data/locations';
 import { IMadrasah } from '@/features/madrasah/interfaces';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog } from '@/components/ui/alert-dialog';
@@ -32,10 +33,10 @@ export default function AllMadrasah() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [selectedDivision, setSelectedDivision] = useState<Division | 'all'>('all');
-  const [selectedDistrict, setSelectedDistrict] = useState<District | 'all'>('all');
-  const [selectedSubDistrict, setSelectedSubDistrict] = useState<string | null>(null);
-  const [selectedPoliceStation, setSelectedPoliceStation] = useState<string | null>(null);
+  const [selectedDivisions, setSelectedDivisions] = useState<string[]>([]);
+  const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState<string[]>([]);
+  const [selectedPoliceStations, setSelectedPoliceStations] = useState<string[]>([]);
   const [selectedMadrasahType, setSelectedMadrasahType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -75,107 +76,150 @@ export default function AllMadrasah() {
   };
 
   const fetchMadrasahs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      const response = await getAllMadrasahs(currentPage, limitPerPage);
-      console.log(response)
+      const queryParams = new URLSearchParams();
+      queryParams.append('page', String(currentPage));
+      queryParams.append('limit', String(limitPerPage));
 
-      // Filter madrasahs based on selected filters
-      let filteredMadrasahs = response.data;
-
-      if (selectedMadrasahType && selectedMadrasahType !== 'all') {
-        
-        filteredMadrasahs = filteredMadrasahs.filter((m) => {
-          
-          const type = getMadrasahInfoField(m, 'madrasahType');
-          const matches = type === selectedMadrasahType;
-
-          return matches;
-        });
-
+      if (selectedDivisions.length > 0) {
+        queryParams.append('divisions', selectedDivisions.join(','));
       }
-
-      if (selectedDivision && selectedDivision !== 'all') {
-        filteredMadrasahs = filteredMadrasahs.filter(
-          (m) => getAddressField(m, 'division') === selectedDivision
-        );
+      if (selectedDistricts.length > 0) {
+        queryParams.append('districts', selectedDistricts.join(','));
       }
-
-      if (selectedDistrict && selectedDistrict !== 'all') {
-        filteredMadrasahs = filteredMadrasahs.filter(
-          (m) => getAddressField(m, 'district') === selectedDistrict
-        );
+      if (selectedSubDistricts.length > 0) {
+        queryParams.append('subDistricts', selectedSubDistricts.join(','));
       }
-
-      if (selectedSubDistrict && selectedSubDistrict !== 'all') {
-        filteredMadrasahs = filteredMadrasahs.filter(
-          (m) => getAddressField(m, 'subDistrict') === selectedSubDistrict
-        );
+      if (selectedPoliceStations.length > 0) {
+        queryParams.append('policeStations', selectedPoliceStations.join(','));
       }
-
-      if (selectedPoliceStation && selectedPoliceStation !== 'all') {
-        filteredMadrasahs = filteredMadrasahs.filter(
-          (m) => getAddressField(m, 'policeStation') === selectedPoliceStation
-        );
+      if (selectedMadrasahType !== 'all') {
+        queryParams.append('madrasahType', selectedMadrasahType);
       }
-
       if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        filteredMadrasahs = filteredMadrasahs.filter(
-          (m) =>
-            m.madrasahNames.bengaliName.toLowerCase().includes(query) ||
-            m.code.toLowerCase().includes(query)
-        );
+        queryParams.append('searchTerm', searchQuery);
       }
 
-      setMadrasahs(filteredMadrasahs);
+      const response = await getAllMadrasahs(queryParams.toString());
+      setMadrasahs(response.data);
       setTotalPages(Math.ceil(response.meta.total / limitPerPage));
       setTotalDocuments(response.meta.total);
     } catch (err) {
       setError('মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে');
+      toast.error('মাদরাসার তথ্য লোড করতে সমস্যা হয়েছে');
     } finally {
       setLoading(false);
     }
-  }, [selectedDivision, selectedDistrict, selectedSubDistrict, selectedPoliceStation, selectedMadrasahType, searchQuery,limitPerPage, currentPage]);
+  }, [
+    selectedDivisions,
+    selectedDistricts,
+    selectedSubDistricts,
+    selectedPoliceStations,
+    selectedMadrasahType,
+    searchQuery,
+    currentPage,
+    limitPerPage,
+  ]);
 
-  // Initial fetch on mount
-  useEffect(() => {
-    fetchMadrasahs();
-  }, [fetchMadrasahs]);
-
-  // Update districts when division changes
-  useEffect(() => {
-    if (selectedDivision && selectedDivision !== "all") {
-      setAvailableDistricts(Object.keys(divisions[selectedDivision]));
-      setSelectedDistrict("all");
-      setSelectedSubDistrict("all");
-      setSelectedPoliceStation("all");
+  const fetchDistricts = useCallback(async () => {
+    if (selectedDivisions.length > 0) {
+      try {
+        const districts = await Promise.all(
+          selectedDivisions.map(division => getDistricts(division))
+        );
+        const allDistricts = districts.flat();
+        setAvailableDistricts([...new Set(allDistricts)] as string[]);
+      } catch (error) {
+        console.error('Error fetching districts:', error);
+        setAvailableDistricts([]);
+      }
     } else {
       setAvailableDistricts([]);
+      setSelectedDistricts([]);
     }
-  }, [selectedDivision]);
+  }, [selectedDivisions]);
 
-  // Update subdistricts when district changes
-  useEffect(() => {
-    if (selectedDistrict && selectedDistrict !== "all") {
-      setAvailableSubDistricts(getSubDistricts(selectedDistrict));
-      setSelectedSubDistrict("all");
-      setSelectedPoliceStation("all");
+  const fetchSubDistricts = useCallback(async () => {
+    if (selectedDistricts.length > 0) {
+      try {
+        const subDistricts = await Promise.all(
+          selectedDistricts.map(district => getSubDistricts(district))
+        );
+        const allSubDistricts = subDistricts.flat();
+        setAvailableSubDistricts([...new Set(allSubDistricts)]);
+      } catch (error) {
+        console.error('Error fetching sub-districts:', error);
+        setAvailableSubDistricts([]);
+      }
     } else {
       setAvailableSubDistricts([]);
+      setSelectedSubDistricts([]);
     }
-  }, [selectedDistrict]);
+  }, [selectedDistricts]);
 
-  // Update police stations when subdistrict changes
-  useEffect(() => {
-    if (selectedDistrict && selectedSubDistrict && selectedSubDistrict !== "all") {
-      setAvailablePoliceStations(getPoliceStations(selectedDistrict, selectedSubDistrict));
-      setSelectedPoliceStation("all");
+  const fetchPoliceStations = useCallback(async () => {
+    if (selectedSubDistricts.length > 0 && selectedDistricts.length > 0) {
+      try {
+        const stations = await Promise.all(
+          selectedSubDistricts.map(subDistrict => 
+            getPoliceStations(selectedDistricts[0], subDistrict)
+          )
+        );
+        const allStations = stations.flat();
+        setAvailablePoliceStations([...new Set(allStations)]);
+      } catch (error) {
+        console.error('Error fetching police stations:', error);
+        setAvailablePoliceStations([]);
+      }
     } else {
       setAvailablePoliceStations([]);
     }
-  }, [selectedDistrict, selectedSubDistrict]);
+  }, [selectedSubDistricts, selectedDistricts]);
+
+  const handleDivisionsChange = useCallback((newDivisions: string[]) => {
+    const removedDivisions = selectedDivisions.filter(d => !newDivisions.includes(d));
+    setSelectedDivisions(newDivisions);
+    
+    // If any divisions were removed, remove their districts from selection
+    if (removedDivisions.length > 0) {
+      const remainingDistricts = selectedDistricts.filter(district => {
+        // Keep only districts that belong to remaining divisions
+        const belongsToRemainingDivision = newDivisions.some(division => {
+          return divisions[division]?.districts?.some(d => d.name === district);
+        });
+        return belongsToRemainingDivision;
+      });
+      setSelectedDistricts(remainingDistricts);
+    }
+  }, [selectedDivisions, selectedDistricts, divisions]);
+
+  const handleDistrictsChange = useCallback((newDistricts: string[]) => {
+    const removedDistricts = selectedDistricts.filter(d => !newDistricts.includes(d));
+    setSelectedDistricts(newDistricts);
+    
+    // If any districts were removed, remove their subdistricts from selection
+    if (removedDistricts.length > 0) {
+      const remainingSubDistricts = selectedSubDistricts.filter(subDistrict => {
+        return newDistricts.length > 0; // Keep subdistricts only if there are selected districts
+      });
+      setSelectedSubDistricts(remainingSubDistricts);
+    }
+  }, [selectedDistricts, selectedSubDistricts]);
+
+  const handleSubDistrictsChange = useCallback((newSubDistricts: string[]) => {
+    const removedSubDistricts = selectedSubDistricts.filter(d => !newSubDistricts.includes(d));
+    setSelectedSubDistricts(newSubDistricts);
+    
+    // If any subdistricts were removed, remove their police stations from selection
+    if (removedSubDistricts.length > 0) {
+      const remainingPoliceStations = selectedPoliceStations.filter(station => {
+        return newSubDistricts.length > 0; // Keep police stations only if there are selected subdistricts
+      });
+      setSelectedPoliceStations(remainingPoliceStations);
+    }
+  }, [selectedSubDistricts, selectedPoliceStations]);
 
   const handleDelete = async (id: string) => {
     const madrasah = madrasahs.find(m => m._id === id);
@@ -229,6 +273,33 @@ export default function AllMadrasah() {
     setShowPrintPreview(true);
   }, [madrasahs]);
 
+  const handleFilterSubmit = () => {
+    setSearchQuery(searchInput);
+    fetchMadrasahs();
+    fetchDistricts();
+    fetchSubDistricts();
+    fetchPoliceStations();
+  };
+
+  // Initial fetch on mount
+  useEffect(() => {
+    fetchMadrasahs();
+  }, [currentPage]);
+
+  // Fetch districts when divisions change
+  useEffect(() => {
+    fetchDistricts();
+  }, [selectedDivisions, fetchDistricts]);
+
+  // Fetch sub-districts when districts change
+  useEffect(() => {
+    fetchSubDistricts();
+  }, [selectedDistricts, fetchSubDistricts]);
+
+  // Fetch police stations when sub-districts change
+  useEffect(() => {
+    fetchPoliceStations();
+  }, [selectedSubDistricts, selectedDistricts, fetchPoliceStations]);
 
   return (
     <div className=" mx-auto  py-6 px-2 md:px-4 ">
@@ -238,31 +309,9 @@ export default function AllMadrasah() {
             onPrintList={() => handlePrint('list')}
             onPrintAddresses={() => handlePrint('addresses')}
           />
-
-          <MadrasahListFilterSection
-            selectedDivision={selectedDivision}
-            selectedDistrict={selectedDistrict}
-            selectedSubDistrict={selectedSubDistrict}
-            selectedPoliceStation={selectedPoliceStation}
-            selectedMadrasahType={selectedMadrasahType}
-            searchQuery={searchQuery}
-            availableDistricts={availableDistricts}
-            availableSubDistricts={availableSubDistricts}
-            availablePoliceStations={availablePoliceStations}
-            onDivisionChange={setSelectedDivision}
-            onDistrictChange={setSelectedDistrict}
-            onSubDistrictChange={setSelectedSubDistrict}
-            onPoliceStationChange={setSelectedPoliceStation}
-            onMadrasahTypeChange={setSelectedMadrasahType}
-            onSearchQueryChange={(value) => {
-              setSearchInput(value);
-              if (value === '') setSearchQuery('');
-            }}
-            onSearch={() => setSearchQuery(searchInput)}
-          />
-
+          
           {/* Pagination info and limit selector */}
-          <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
+          <div className="mt-4 mb-2 flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
             <div className="text-sm text-gray-600">
               ডাটাবেজে মাদরাসার সংখ্যা: {totalDocuments.toLocaleString('bn-BD')}
             </div>
@@ -280,6 +329,31 @@ export default function AllMadrasah() {
               </select>
             </div>
           </div>
+
+          <MadrasahListFilterSection
+            selectedDivisions={selectedDivisions}
+            selectedDistricts={selectedDistricts}
+            selectedSubDistricts={selectedSubDistricts}
+            selectedPoliceStations={selectedPoliceStations}
+            selectedMadrasahType={selectedMadrasahType}
+            searchQuery={searchQuery}
+            searchInput={searchInput}
+            availableDistricts={availableDistricts}
+            availableSubDistricts={availableSubDistricts}
+            availablePoliceStations={availablePoliceStations}
+            onDivisionsChange={handleDivisionsChange}
+            onDistrictsChange={handleDistrictsChange}
+            onSubDistrictsChange={handleSubDistrictsChange}
+            onPoliceStationsChange={setSelectedPoliceStations}
+            onMadrasahTypeChange={setSelectedMadrasahType}
+            onSearchQueryChange={(value) => {
+              setSearchInput(value);
+              setSearchQuery(value);
+            }}
+            onApplyFilters={handleFilterSubmit}
+          />
+
+
 
           <MadrasahListTableSection
             madrasahs={madrasahs}
