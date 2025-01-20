@@ -25,7 +25,7 @@ export function Pagination({
           <ChevronLeft className="h-4 w-4" />
           পূর্ববর্তী
         </Button>
-        <div className="flex items-center gap-1 text-sm">
+        <div className="flex items-center gap-1 text-sm text-gray-700">
           <span>পৃষ্ঠা</span>
           <span className="font-medium">{currentPage}</span>
           <span>/</span>

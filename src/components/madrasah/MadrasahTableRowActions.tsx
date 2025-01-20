@@ -36,7 +36,7 @@ export function MadrasahTableRowActions({
         <DropdownMenuItem asChild>
           <Link
             href={`/dashboard/madrasah/${madrasahId}/edit`}
-            className="flex items-center px-3 py-2 text-sm hover:bg-emerald-50 hover:text-emerald-600 rounded-md cursor-pointer transition-colors"
+            className="flex items-center px-3 py-2 text-green-800 text-sm hover:bg-emerald-50 hover:text-emerald-600 rounded-md cursor-pointer transition-colors"
           >
             <MdEdit className="h-4 w-4 mr-2" />
             <span>সম্পাদনা</span>
@@ -44,7 +44,7 @@ export function MadrasahTableRowActions({
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => onDelete(madrasahId)}
-          className="flex items-center px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 rounded-md cursor-pointer transition-colors mt-1"
+          className="flex items-center px-3 py-2 text-red-800 text-sm hover:bg-red-50 hover:text-red-600 rounded-md cursor-pointer transition-colors mt-1"
         >
           <MdDelete className="h-4 w-4 mr-2" />
           <span>মুছে ফেলুন</span>

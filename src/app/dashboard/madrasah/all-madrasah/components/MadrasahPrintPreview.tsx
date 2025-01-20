@@ -31,7 +31,7 @@ export function MadrasahPrintPreview({ printContent, onClose }: MadrasahPrintPre
         </div>
       </div>
       <div 
-        className="print-preview-content"
+        className="print-preview-content text-black"
         dangerouslySetInnerHTML={{ __html: printContent }}
       />
     </Card>

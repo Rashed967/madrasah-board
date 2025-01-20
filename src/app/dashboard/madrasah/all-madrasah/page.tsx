@@ -312,14 +312,14 @@ export default function AllMadrasah() {
           
           {/* Pagination info and limit selector */}
           <div className="mt-4 mb-2 flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-600">
-              ডাটাবেজে মাদরাসার সংখ্যা: {totalDocuments.toLocaleString('bn-BD')}
+            <div className="text-sm text-gray-700">
+              মাদরাসার সংখ্যা: {totalDocuments.toLocaleString('bn-BD')}
             </div>
             <div className='flex items-center gap-2'>
-              <label htmlFor="limitSelect" className='text-sm text-gray-600'>প্রতি পেজে দেখানো হবে:</label>
+              <label htmlFor="limitSelect" className='text-sm text-gray-700'>প্রতি পেজে দেখানো হবে:</label>
               <select 
                 id="limitSelect"
-                className="bg-white px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-0 focus:ring-offset-0 text-sm" 
+                className="bg-white px-3 text-gray-700 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-0 focus:ring-offset-0 text-sm" 
                 value={limitPerPage}
                 onChange={(e) => handleLimitChange(parseInt(e.target.value))}
               >
