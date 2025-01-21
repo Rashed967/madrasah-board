@@ -35,9 +35,11 @@ export async function registerMadrasah(formData: any)  {
 }
 
 const selectedFields = '-chairman_mutawalli,-educational_secretory,-madrasahResult,-user,-registrationToken,-registrationTokenExpiry,-description,-createdAt,-updatedAt,-updatedAt,-userAccountCreated';
+const sortOrder = 'desc';
+const sortBy = 'code';
 export const getAllMadrasahs = async (queryString: string = ''): Promise<ApiResponse<IMadrasah[]>> => {
   try {
-    const response = await get<IMadrasah[]>(`/madrasah?select=${selectedFields}${queryString ? '&' + queryString : ''}`);
+    const response = await get<IMadrasah[]>(`/madrasah?select=${selectedFields}&sort=${sortOrder}&sortBy=${sortBy}${queryString ? '&' + queryString : ''}`);
     console.log(response)
     return {
       success: true as const,

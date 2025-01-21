@@ -12,8 +12,8 @@ export function StatsCard({ icon: Icon, label, value }: StatsCardProps) {
       <div className="flex items-center space-x-2">
         <Icon className="text-2xl text-gray-600" />
         <div>
-          <p className="text-sm text-gray-600">{label}</p>
-          <p className="text-2xl font-bold text-[#52b788]">{value || '-'}</p>
+          <p className="text-sm text-gray-800">{label}</p>
+          <p className="text-2xl font-bold text-[#52b788]">{Number(value)?.toLocaleString('bn-BD') || '-'}</p>
         </div>
       </div>
     </div>

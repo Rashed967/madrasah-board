@@ -3,12 +3,13 @@
 import { getMadrasahById } from '@/services/madrasahService';
 import { useEffect, useState } from 'react';
 import { MdLocationOn, MdPhone, MdEmail, MdPeople, MdSchool, MdPerson, MdStar, MdDomain } from 'react-icons/md';
+import { FaFilePdf } from 'react-icons/fa';
 import { InfoCard } from '@/components/madrasah/InfoCard';
 import { PersonCard } from '@/components/madrasah/PersonCard';
 import { StatsCard } from '@/components/madrasah/StatsCard';
 import { Description } from '@/components/madrasah/Description';
 import { IMadrasah } from '@/features/madrasah/interfaces';
-
+import { Spinner } from '@/components/ui/spinner';
 
 export default function MadrasahDetailsPage({ params }: { params: { id: string } }) {
   const [madrasahData, setMadrasahData] = useState<IMadrasah | null>(null);
@@ -29,11 +30,7 @@ export default function MadrasahDetailsPage({ params }: { params: { id: string }
   }, [params.id]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (!madrasahData) {
@@ -53,9 +50,10 @@ export default function MadrasahDetailsPage({ params }: { params: { id: string }
     educational_secretory,
     madrasah_information,
   } = madrasahData;
+  console.log(madrasahData);
 
   return (
-    <div className="mx-6 mt-16 mb-8 px-8 space-y-8">
+    <div className="mx-4 mt-16 mb-8 px-2 space-y-4">
       {/* Header Section */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="h-40 bg-gradient-to-r from-[#52b788] to-[#52b788]/70 relative">
@@ -71,7 +69,7 @@ export default function MadrasahDetailsPage({ params }: { params: { id: string }
       </div>
 
       {/* Basic Information */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
         <div className="space-y-4 bg-white p-6 rounded-lg shadow-md">
           <InfoCard icon={MdSchool} label="মাদ্রাসার কোড" value={code} />
           <InfoCard icon={MdEmail} label="ইমেইল" value={email} />
@@ -114,6 +112,23 @@ export default function MadrasahDetailsPage({ params }: { params: { id: string }
           />
         </div>
       </div>
+      <div className="mt-6">
+        {madrasahData?.ilhakPdf && (
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h4 className="font-semibold mb-4 text-gray-800">ইলহাক সংক্রান্ত তথ্য</h4>
+            <a
+              href={madrasahData.ilhakPdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-xs md:text-sm px-3 py-2 bg-[#52b788] text-white rounded-md hover:bg-[#52b788]/90 transition-colors"
+            >
+              <FaFilePdf className="w-4 h-4 mr-2" />
+              <span>ইলহাক পিডিএফ দেখুন</span>
+            </a>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }

@@ -11,8 +11,8 @@ export function InfoCard({ icon: Icon, label, value }: InfoCardProps) {
     <div className="flex items-center space-x-2">
       <Icon className="text-2xl text-gray-600" />
       <div>
-        <p className="text-sm text-gray-600">{label}</p>
-        <p className="font-medium">{value || '-'}</p>
+        <p className="text-sm text-gray-800">{label}</p>
+        <p className="font-medium text-gray-700">{value || '-'}</p>
       </div>
     </div>
   );
