@@ -112,6 +112,7 @@ export default function EditMadrasahPage({ params }: { params: { id: string } })
           const madrasahData: IMadrasah = {
             ...initialFormState,
             ...response.data,
+            description: response.data.description || '',
             madrasahNames: {
               bengaliName: response.data.madrasahNames?.bengaliName || '',
               englishName: response.data.madrasahNames?.englishName || '',
