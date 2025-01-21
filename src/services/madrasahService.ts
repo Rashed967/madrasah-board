@@ -32,13 +32,12 @@ export async function registerMadrasah(formData: any)  {
 
   return response;
 
-  
 }
 
 const selectedFields = '-chairman_mutawalli,-educational_secretory,-madrasahResult,-user,-registrationToken,-registrationTokenExpiry,-description,-createdAt,-updatedAt,-updatedAt,-userAccountCreated';
 export const getAllMadrasahs = async (queryString: string = ''): Promise<ApiResponse<IMadrasah[]>> => {
   try {
-    const response = await get<IMadrasah[]>(`/madrasah${queryString ? '?' + queryString : ''}`);
+    const response = await get<IMadrasah[]>(`/madrasah?select=${selectedFields}${queryString ? '&' + queryString : ''}`);
     console.log(response)
     return {
       success: true as const,

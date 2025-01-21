@@ -103,6 +103,19 @@ export default function AllMadrasah() {
       }
 
       const response = await getAllMadrasahs(queryParams.toString());
+      console.log('Filtered Response:', {
+        data: response.data.length,
+        meta: response.meta,
+        calculatedTotalPages: Math.ceil(response.meta.total / limitPerPage),
+        filters: {
+          divisions: selectedDivisions,
+          districts: selectedDistricts,
+          subDistricts: selectedSubDistricts,
+          policeStations: selectedPoliceStations,
+          madrasahType: selectedMadrasahType,
+          searchQuery
+        }
+      });
       setMadrasahs(response.data);
       setTotalPages(Math.ceil(response.meta.total / limitPerPage));
       setTotalDocuments(response.meta.total);
