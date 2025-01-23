@@ -25,7 +25,7 @@ export const preExamineeRegistrationServices = {
 
   async getAll(page: number = 1, limit: number = 10) {
     try {
-      const response = await get<IPreExamineeRegistration[]>(`/pre-examinee-registration?page=${page}&limit=${limit}`);
+      const response = await get(`/pre-examinee-registrations?page=${page}&limit=${limit}`);
       return {
         success: true,
         data: response.data,
@@ -39,7 +39,23 @@ export const preExamineeRegistrationServices = {
     }
   },
 
-  async getById(id: string) {
+  getById: async (id: string) => {
+    try {
+      const response = await get(`/pre-examinee-registrations/${id}`);
+      return {
+        success: true,
+        message: response.message,
+        data: response.data
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error?.response?.data?.message || 'Failed to fetch registration details',
+      };
+    }
+  },
+
+  async getByIdOld(id: string) {
     try {
       const response = await get<IPreExamineeRegistration>(`/pre-examinee-registration/${id}`);
       return {
@@ -55,24 +71,39 @@ export const preExamineeRegistrationServices = {
     }
   },
 
-  async update(id: string, data: Partial<IPreExamineeRegistration>) {
+  // async update(id: string, data: Partial<IPreExamineeRegistration>) {
+  //   try {
+  //     const response = await patch<IPreExamineeRegistration>(`/pre-examinee-registration/${id}`, data);
+  //     return {
+  //       success: true,
+  //       data: response.data,
+  //       message: 'Pre-examinee registration updated successfully'
+  //     };
+  //   } catch (error: any) {
+  //     return {
+  //       success: false,
+  //       error: error?.message || 'Failed to update pre-examinee registration'
+  //     };
+  //   }
+  // },
+
+
+  update: async (id: string, data: any) => {
     try {
-      const response = await patch<IPreExamineeRegistration>(`/pre-examinee-registration/${id}`, data);
+      const response = await patch(`/pre-examinee-registrations/${id}`, data);
       return {
         success: true,
-        data: response.data,
-        message: 'Pre-examinee registration updated successfully'
+        message: response.message,
+        data: response.data
       };
     } catch (error: any) {
       return {
         success: false,
-        error: error?.message || 'Failed to update pre-examinee registration'
+        message: error?.response?.data?.message || 'Failed to update registration',
       };
     }
   },
 
-
-  
   createPreExamineeRegistration: async (data: Record<string, unknown>) => {
     try {
       const response = await post<IPreExamineeRegistration>('/pre-examinee-registration', data);
