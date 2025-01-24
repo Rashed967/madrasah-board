@@ -70,9 +70,9 @@ function generateAddressesContent(madrasahs: IMadrasah[]) {
         }
       }
     </style>
-    <div style="width: 100%; max-width: 210mm; margin: 0 auto; padding: 8mm; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 5mm;">
+    <div style="width: 100%; max-width: 210mm; margin: 0 auto; padding: 0.5mm; display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 5mm;">
       ${madrasahs.map((madrasah) => `
-        <div style="padding: 4mm; border: 2px solid black; break-inside: avoid; box-sizing: border-box; font-size: 11pt;">
+        <div style="padding: 2mm; border: 2px solid black; break-inside: avoid; box-sizing: border-box; font-size: 11pt;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 2mm;">
             <span style="font-size: 11pt;">মুহতামিম,</span>
             <span style="font-size: 11pt;">কোড নং- ${getValue(madrasah.code)}</span>
@@ -81,19 +81,19 @@ function generateAddressesContent(madrasahs: IMadrasah[]) {
           <div style="font-size: 12pt; font-weight: bold; margin: 1mm 0px;">${getValue(madrasah.madrasahNames.bengaliName)}
           </div>
           <div style="display: flex; justify-content: space-between; margin: 1mm 0px;">
-            <span style="font-size: 11pt;">গ্রাম/মহল্লা: ${getValue(madrasah.address.village)}</span>
-            <span style="font-size: 11pt;">ডাক: ${getValue(madrasah.address.policeStation)}</span>
+            <span style="font-size: 11pt;">গ্রাম/মহল্লা: ${getValue(madrasah.address.holdingNumber), getValue(madrasah.address.village)}</span>
+            
           </div>
           <div style="display: flex; justify-content: space-between; margin: 1mm 0px;">
+          <span style="font-size: 11pt;">ডাক: ${getValue(madrasah.address.policeStation)}</span>
             <span style="font-size: 11pt;">থানা: ${getValue(madrasah.address.subDistrict)}</span>
-            <span style="font-size: 11pt;">জেলা: ${getValue(madrasah.address.district)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin: 1mm 0px;">
-            <span style="font-size: 10pt;">মোবাইল-১: ${getValue(madrasah.contactNo1)}</span>
-      ${madrasah.contactNo2 ? `<span style="font-size: 10pt;">মোবাইল-২: ${getValue(madrasah.contactNo2)}</span>` : ''}
+                      <span style="font-size: 11pt;">জেলা: ${getValue(madrasah.address.district)}</span>
+                      <span style="font-size: 11pt;">মোবা: ${getValue(madrasah.contactNo1)}, ${getValue(madrasah.contactNo2)}</span>
           </div>
         <div style="display: flex; justify-content: center;">
-          <div class="courier-address" style="font-size: 10pt; margin-top: 1mm; background-color: gray; display: inline; padding: 1mm 2mm; color: white">
+          <div class="courier-address" style="font-size: 8pt; margin-top: 0.5mm; background-color: gray; display: inline; padding: 1mm 2mm; color: white">
           (${getValue(madrasah.address.courierAddress)})
           </div>
         </div>
