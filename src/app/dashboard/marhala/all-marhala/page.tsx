@@ -1,34 +1,55 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { MdDelete, MdEdit, MdClose } from 'react-icons/md';
+import React, { useState, useMemo, useEffect } from 'react';
+import { MdDelete, MdEdit } from 'react-icons/md';
 import toast, { Toaster } from 'react-hot-toast';
-
-// Dummy data for marhala list
-const initialMarhalaList = [
-  {
-    id: 123456,
-    name: 'আল-ফাতিহা মারহালা',
-    category: 'হিফজ'
-  },
-  {
-    id: 234567,
-    name: 'আন-নাহউ মারহালা',
-    category: 'দরসিয়াত'
-  }
-];
-
-// Dummy data for marhala categories
-const marhalaCategories = [
-  { id: 1, name: 'হিফজ' },
-  { id: 2, name: 'দরসিয়াত' }
-];
+import { getAllMarhalas, deleteMarhala } from '@/features/marhala/marhala.service';
+import type { IMarhala } from '@/features/marhala/marhala.interface';
+import type { IKitab } from '@/features/kitab/kitab.interface';
+import { MoreHorizontal } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DeleteConfirmation } from './components/DeleteConfirmation';
 
 export default function AllMarhalaPage() {
-  const [marhalaList, setMarhalaList] = useState(initialMarhalaList);
+  const [marhalaList, setMarhalaList] = useState<IMarhala[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [editingMarhala, setEditingMarhala] = useState(null);
-  const marhalaPerPage = 5;
+  const [editingMarhala, setEditingMarhala] = useState<IMarhala | null>(null);
+  const [selectedMarhala, setSelectedMarhala] = useState<IMarhala | null>(null);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [marhalaToDelete, setMarhalaToDelete] = useState<IMarhala | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const marhalaPerPage = 10;
+
+  useEffect(() => {
+    const fetchMarhalas = async () => {
+      try {
+        const response = await getAllMarhalas();
+        if (response.success) {
+          setMarhalaList(response.data || []);
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error) {
+        toast.error('মারহালা লোড করতে সমস্যা হয়েছে');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMarhalas();
+  }, []);
 
   // Pagination Logic
   const paginatedMarhala = useMemo(() => {
@@ -51,182 +72,212 @@ export default function AllMarhalaPage() {
   };
 
   // Edit Marhala
-  const handleEditMarhala = (marhala) => {
+  const handleEditMarhala = (marhala: IMarhala) => {
     setEditingMarhala({...marhala});
   };
 
   // Save Edited Marhala
   const handleSaveEdit = () => {
-    if (!editingMarhala.name.trim() || !editingMarhala.category) {
+    if (!editingMarhala?.name?.bengaliName?.trim()) {
       toast.error('অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য পূরণ করুন');
       return;
     }
 
     // Update the marhala in the list
     const updatedList = marhalaList.map(m => 
-      m.id === editingMarhala.id ? editingMarhala : m
+      m._id === editingMarhala._id ? editingMarhala : m
     );
 
     setMarhalaList(updatedList);
-    toast.success(`${editingMarhala.name} মারহালা আপডেট হয়েছে`);
+    toast.success(`${editingMarhala.name.bengaliName} মারহালা আপডেট হয়েছে`);
     setEditingMarhala(null);
   };
 
   // Delete Marhala
-  const handleDeleteMarhala = (marhalaToDelete) => {
-    const updatedList = marhalaList.filter(m => m.id !== marhalaToDelete.id);
-    setMarhalaList(updatedList);
-    toast.success(`${marhalaToDelete.name} মারহালা মুছে ফেলা হয়েছে`);
+  const handleDeleteClick = (marhala: IMarhala) => {
+    setMarhalaToDelete(marhala);
+    setShowDeleteDialog(true);
   };
+
+  const handleConfirmDelete = async () => {
+    if (!marhalaToDelete?._id) return;
+    
+    const marhalaId = marhalaToDelete._id.toString();
+    const marhalaBengaliName = marhalaToDelete.name.bengaliName;
+    
+    // Close dialog before API call
+    setShowDeleteDialog(false);
+    setMarhalaToDelete(null);
+
+    try {
+      const response = await deleteMarhala(marhalaId);
+      
+      if (response.success) {
+        const updatedList = marhalaList.filter(m => m._id?.toString() !== marhalaId);
+        setMarhalaList(updatedList);
+        toast.success(`${marhalaBengaliName} মারহালা মুছে ফেলা হয়েছে`);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error('মারহালা মুছে ফেলতে সমস্যা হয়েছে');
+    }
+  };
+
+  // Show Marhala Details
+  const handleShowDetails = (marhala: IMarhala) => {
+    setSelectedMarhala(marhala);
+    setShowDetailsDialog(true);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="p-8 mt-12 mx-6 flex justify-center items-center">
+        <div className="text-lg">লোড হচ্ছে...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 mt-12 mx-6">
-      <h1 className="text-2xl font-bold mb-8">সকল মারহালা</h1>
+      <h1 className="text-lg font-bold mb-8">সকল মারহালা</h1>
       
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="w-full">
           <thead className="bg-[#52b788] text-white">
             <tr>
-              <th className="px-4 py-3 text-left">মারহালা আইডি</th>
-              <th className="px-4 py-3 text-left">মারহালা নাম</th>
-              <th className="px-4 py-3 text-left">মারহালা ক্যাটাগরি</th>
-              <th className="px-4 py-3 text-left">ক্রিয়াকলাপ</th>
+              <th className="px-4 py-3 text-left font-normal">মারহালা কোড</th>
+              <th className="px-4 py-3 text-left font-normal">মারহালা নাম</th>
+              <th className="px-4 py-3 text-left font-normal">মারহালার ধরণ</th>
+              <th className="px-4 py-3 text-left font-normal">মারহালার ক্যাটাগরি</th>
+              <th className="px-4 py-3 text-left font-normal">কিতাব সংখ্যা</th>
+              <th className="px-4 py-3 text-left font-normal">এ্যাকশন</th>
             </tr>
           </thead>
           <tbody>
             {paginatedMarhala.map((marhala) => (
-              <tr key={marhala.id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-4 text-sm text-gray-600">{marhala.id}</td>
-                <td className="px-4 py-4 text-sm font-semibold">{marhala.name}</td>
-                <td className="px-4 py-4 text-sm text-gray-600">{marhala.category}</td>
-                <td className="px-4 py-4 text-sm text-gray-600 flex space-x-2">
-                  <button 
-                    className="text-[#52b788] hover:bg-[#52b788]/10 p-2 rounded-full"
-                    onClick={() => handleEditMarhala(marhala)}
-                    title="সম্পাদনা করুন"
-                  >
-                    <MdEdit className="text-lg" />
-                  </button>
-                  <button 
-                    className="text-red-500 hover:bg-red-500/10 p-2 rounded-full"
-                    onClick={() => handleDeleteMarhala(marhala)}
-                    title="মুছে ফেলুন"
-                  >
-                    <MdDelete className="text-lg" />
-                  </button>
+              <tr key={marhala._id.toString()} className="border-b hover:bg-gray-50">
+                <td className="px-4 py-4 text-sm text-gray-600">{Number(marhala.code).toLocaleString('bn-BD')}</td>
+                <td className="px-4 py-4 text-sm font-semibold cursor-pointer" onClick={() => handleShowDetails(marhala)}>
+                  {marhala.name.bengaliName}
+                  {marhala.name.arabicName && (
+                    <span className="block text-gray-500 text-xs mt-1">
+                      {marhala.name.arabicName}
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-600">{marhala.marhalaType === 'boys' ? 'বালক' :  'বালিকা' }</td>
+                <td className="px-4 py-4 text-sm text-gray-600">{marhala.marhalaCategory === 'darsiyat' ? 'দারসিয়াত' : 'হিফজ'}</td>
+                <td className="px-4 py-4 text-sm text-gray-600">{Number(marhala.listOfKitabs.length).toLocaleString('bn-BD')}</td>
+                <td className="px-4 py-4 text-sm">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1 bg-[#52B788] rounded-full text-white">
+                        <MoreHorizontal className="h-5 w-5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className='bg-gray-200' align="end">
+                      <DropdownMenuItem onClick={() => handleEditMarhala(marhala)}>
+                        <MdEdit className="mr-2" />
+                        সম্পাদনা করুন
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleDeleteClick(marhala)}
+                        className="text-red-600"
+                      >
+                        <MdDelete className="mr-2" />
+                        মুছে ফেলুন
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-6">
-        <div className="text-sm text-gray-600">
-          মোট মারহালা: {marhalaList.length}
-        </div>
-        <div className="flex items-center space-x-4">
-          <button 
-            onClick={handlePreviousPage}
-            className="bg-[#52b788] text-white px-3 py-1.5 rounded text-sm hover:bg-[#52b788]/90 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={currentPage === 1}
-          >
-            পূর্ববর্তী
-          </button>
-          <span className="text-sm text-gray-600">
-            পৃষ্ঠা {currentPage} / {totalPages}
-          </span>
-          <button 
-            onClick={handleNextPage}
-            className="bg-[#52b788] text-white px-3 py-1.5 rounded text-sm hover:bg-[#52b788]/90 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={currentPage === totalPages}
-          >
-            পরবর্তী
-          </button>
-        </div>
-      </div>
-
-      {/* Edit Modal */}
-      {editingMarhala && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-xl w-[400px] p-6">
-            <div className="bg-[#52b788] text-white p-4 -m-6 mb-4 rounded-t-lg flex justify-between items-center">
-              <h2 className="text-lg font-bold">মারহালা সম্পাদনা</h2>
-              <button 
-                onClick={() => setEditingMarhala(null)}
-                className="text-white hover:bg-[#52b788]/90 p-2 rounded-full"
-              >
-                <MdClose className="text-xl" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label 
-                  htmlFor="editMarhalaName" 
-                  className="block text-gray-700 font-medium mb-2"
-                >
-                  মারহালা নাম <span className="text-red-500">*</span>
-                </label>
-                <input 
-                  type="text"
-                  id="editMarhalaName"
-                  value={editingMarhala.name}
-                  onChange={(e) => setEditingMarhala({
-                    ...editingMarhala, 
-                    name: e.target.value
-                  })}
-                  placeholder="মারহালা নাম লিখুন"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#52b788]"
-                  required
-                />
-              </div>
-
-              <div>
-                <label 
-                  htmlFor="editMarhalaCategory" 
-                  className="block text-gray-700 font-medium mb-2"
-                >
-                  মারহালা ক্যাটাগরি <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="editMarhalaCategory"
-                  value={editingMarhala.category}
-                  onChange={(e) => setEditingMarhala({
-                    ...editingMarhala, 
-                    category: e.target.value
-                  })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#52b788]"
-                  required
-                >
-                  <option value="">ক্যাটাগরি নির্বাচন করুন</option>
-                  {marhalaCategories.map((category) => (
-                    <option key={category.id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end space-x-4">
-              <button 
-                onClick={() => setEditingMarhala(null)}
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300"
-              >
-                বাতিল
-              </button>
-              <button 
-                onClick={handleSaveEdit}
-                className="bg-[#52b788] text-white px-4 py-2 rounded hover:bg-[#52b788]/90"
-              >
-                সংরক্ষণ
-              </button>
-            </div>
+        {/* Pagination */}
+        <div className="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            মোট {marhalaList.length}টি মারহালা
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className="px-3 py-1 bg-white border rounded hover:bg-gray-50 disabled:opacity-50"
+            >
+              পূর্ববর্তী
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 bg-white border rounded hover:bg-gray-50 disabled:opacity-50"
+            >
+              পরবর্তী
+            </button>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Details Dialog */}
+      <Dialog 
+        isOpen={showDetailsDialog} 
+        onClose={() => setShowDetailsDialog(false)}
+        title="মারহালা বিস্তারিত"
+      >
+        {selectedMarhala && (
+          <div className="space-y-4">
+            <div>
+              <h5 className="font-semibold">মারহালা নাম</h5>
+              <p className="text-gray-700">{selectedMarhala.name.bengaliName}</p>
+              {selectedMarhala.name.arabicName && (
+                <p className="text-gray-500 text-sm">{selectedMarhala.name.arabicName}</p>
+              )}
+            </div>
+            <div>
+              <h5 className="font-semibold">মারহালা কোড</h5>
+              <p className="text-gray-700">{Number(selectedMarhala.code).toLocaleString('bn-BD')}</p>
+            </div>
+            <div>
+              <h5 className="font-semibold">মারহালার ধরণ</h5>
+              <p className="text-gray-700">{selectedMarhala.marhalaType === 'boys' ? 'বালক' : 'বালিকা'}</p>
+            </div>
+            <div>
+              <h5 className="font-semibold">মারহালার ক্যাটাগরি</h5>
+              <p className="text-gray-700">{selectedMarhala.marhalaCategory === 'darsiyat' ? 'দারসিয়াত' : 'হিফজ'}</p>
+            </div>
+            <div>
+              <h5 className="font-semibold">কিতাব তালিকা</h5>
+              <div className="mt-2 space-y-2">
+                {selectedMarhala.listOfKitabs.map((kitab, index) => {
+                  const kitabObj = kitab as unknown as IKitab;
+                  return (
+                    <div key={typeof kitab === 'object' && '_id' in kitab ? kitab._id.toString() : index} className="text-gray-700">
+                      {index + 1}. {typeof kitab === 'object' && 'name' in kitab && kitabObj.name ? (
+                        <>
+                          {kitabObj.name.bengaliName}
+                          {kitabObj.name.arabicName && (
+                            <span className="text-gray-500 text-sm ml-2">({kitabObj.name.arabicName})</span>
+                          )}
+                        </>
+                      ) : 'কিতাব'}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmation 
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+        selectedMarhala={marhalaToDelete}
+      />
 
       {/* Toast Notifications */}
       <Toaster position="top-right" />
