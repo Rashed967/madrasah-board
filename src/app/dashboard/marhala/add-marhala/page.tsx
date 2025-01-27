@@ -1,83 +1,114 @@
 'use client';
 
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-};
-
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdCheck } from 'react-icons/md';
 import toast, { Toaster } from 'react-hot-toast';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { createMarhala } from '@/features/marhala/marhala.service';
+import { getAllKitabs } from '@/features/kitab/kitab.service';
+import type { IKitab } from '@/features/kitab/kitab.interface';
+import type { IMarhalaName, MarhalaCategory, CreateMarhalaData } from '@/features/marhala/marhala.interface';
 
-// Dummy data for marhala categories
-const marhalaCategories = [
-  { id: 1, name: 'হিফজ' },
-  { id: 2, name: 'দরসিয়াত' }
-];
+// Type for displaying marhala in the success modal
+type DisplayMarhala = {
+  name: IMarhalaName;
+  listOfKitabs: string[];
+  marhalaType: 'boys' | 'girls';
+  marhalaCategory: MarhalaCategory;
+};
 
 export default function AddMarhalaPage() {
-  const [marhalName, setMarhalName] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [addedMarhala, setAddedMarhala] = useState(null);
+  const [bengaliName, setBengaliName] = useState('');
+  const [arabicName, setArabicName] = useState('');
+  const [kitabs, setKitabs] = useState<IKitab[]>([]);
+  const [selectedKitabs, setSelectedKitabs] = useState<string[]>([]);
+  const [type, setType] = useState<'boys' | 'girls'>('boys');
+  const [category, setCategory] = useState<'hifz' | 'darsiyat'>('darsiyat');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const fetchKitabs = async () => {
+      try {
+        const response = await getAllKitabs(1, 100);
+        if (response.success) {
+          setKitabs(response.data);
+        } else {
+          toast.error('কিতাব লোড করতে সমস্যা হয়েছে');
+        }
+      } catch (error) {
+        console.error('Error fetching kitabs:', error);
+        toast.error('কিতাব লোড করতে সমস্যা হয়েছে');
+      }
+    };
+    fetchKitabs();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form
-    if (!marhalName.trim() || !selectedCategory) {
-      toast.error('অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য পূরণ করুন');
+    if (!bengaliName.trim()) {
+      toast.error('বাংলা নাম দিন');
       return;
     }
 
-    // Generate a unique ID (in real app, this would come from backend)
-    const newMarhalaId = Math.floor(100000 + Math.random() * 900000);
+    if (selectedKitabs.length === 0) {
+      toast.error('অন্তত একটি কিতাব নির্বাচন করুন');
+      return;
+    }
 
-    // Prepare marhala object
-    const newMarhala = {
-      id: newMarhalaId,
-      name: marhalName,
-      category: selectedCategory
-    };
+    try {
+      setIsLoading(true);
+      
+      const marhalaData: CreateMarhalaData = {
+        name: {
+          bengaliName,
+          arabicName: arabicName || undefined
+        },
+        listOfKitabs: selectedKitabs,
+        marhalaType: type,
+        marhalaCategory: category
+      };
 
-    // In a real app, this would be an API call
-    // For now, we'll just show success modal
-    setAddedMarhala(newMarhala);
-    setShowSuccessModal(true);
+      const response = await createMarhala(marhalaData);
 
-    // Reset form
-    setMarhalName('');
-    setSelectedCategory('');
-  };
-
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-    setAddedMarhala(null);
+      if (response.success) {
+        toast.success(response.message);
+        // Reset form
+        setBengaliName('');
+        setArabicName('');
+        setSelectedKitabs([]);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error('কিছু একটা সমস্যা হয়েছে');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="container mx-auto px-4 lg:px-0 mt-20">
-      <div className="max-w-xl mx-auto ">
-        <h1 className="text-2xl font-bold mb-8">নতুন মারহালা যুক্ত করুন</h1>
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-lg font-bold mb-8">নতুন মারহালা যুক্ত করুন</h1>
 
         <form 
           onSubmit={handleSubmit} 
-          className="bg-white rounded-lg shadow-md p-8"
+          className="bg-white rounded-lg shadow-md p-8 md:grid md:grid-cols-2 gap-4"
         >
           <div className="mb-6">
             <label 
-              htmlFor="marhalName" 
+              htmlFor="bengaliName" 
               className="block text-gray-700 font-medium mb-2"
             >
-              মারহালা নাম <span className="text-red-500">*</span>
+              মারহালার বাংলা নাম <span className="text-red-500">*</span>
             </label>
             <input 
               type="text" 
-              id="marhalName"
-              value={marhalName}
-              onChange={(e) => setMarhalName(e.target.value)}
-              placeholder="মারহালা নাম লিখুন"
+              id="bengaliName"
+              value={bengaliName}
+              onChange={(e) => setBengaliName(e.target.value)}
+              placeholder="মারহালার বাংলা নাম লিখুন"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#52b788]"
               required
             />
@@ -85,71 +116,89 @@ export default function AddMarhalaPage() {
 
           <div className="mb-6">
             <label 
-              htmlFor="marhalaCategory" 
+              htmlFor="arabicName" 
               className="block text-gray-700 font-medium mb-2"
             >
-              মারহালা ক্যাটাগরি <span className="text-red-500">*</span>
+              মারহালার আরবি নাম
+            </label>
+            <input 
+              type="text" 
+              id="arabicName"
+              value={arabicName}
+              onChange={(e) => setArabicName(e.target.value)}
+              placeholder="মারহালার আরবি নাম লিখুন"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label 
+              htmlFor="type" 
+              className="block text-gray-700 font-medium mb-2"
+            >
+              মারহালার ধরণ <span className="text-red-500">*</span>
             </label>
             <select
-              id="marhalaCategory"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              value={type}
+              onChange={(e) => setType(e.target.value as 'boys' | 'girls')}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#52b788]"
               required
             >
-              <option value="">ক্যাটাগরি নির্বাচন করুন</option>
-              {marhalaCategories.map((category) => (
-                <option key={category.id} value={category.name}>
-                  {category.name}
-                </option>
-              ))}
+              <option value="boys">বালক</option>
+              <option value="girls">বালিকা</option>
             </select>
           </div>
+
+          <div className="mb-6">
+            <label 
+              htmlFor="category" 
+              className="block text-gray-700 font-medium mb-2"
+            >
+              মারহালার ক্যাটাগরি <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value as 'hifz' | 'darsiyat')}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#52b788]"
+              required
+            >
+              <option value="darsiyat">দারসিয়াত</option>
+              <option value="hifz">হিফজ</option>
+            </select>
+          </div>
+
+          <div className="mb-6">
+            <label 
+              htmlFor="kitabs" 
+              className="block text-gray-700 font-medium mb-2"
+            >
+              কিতাব নির্বাচন করুন <span className="text-red-500">*</span>
+            </label>
+            <MultiSelect
+              options={kitabs.map(kitab => ({
+                value: String(kitab._id),
+                label: kitab.name.bengaliName
+              }))}
+              selected={selectedKitabs}
+              setSelected={setSelectedKitabs}
+              className="w-full"
+              placeholder="কিতাব নির্বাচন করুন"
+            />
+          </div>
+          <div className='hidden md:block'></div>
+          <div className='hidden md:block'></div>
 
           <div className="flex justify-end">
             <button 
               type="submit"
-              className="bg-[#52b788] text-white px-6 py-2 rounded-md hover:bg-[#52b788]/90 transition-colors flex items-center"
+              disabled={isLoading}
+              className="bg-[#52b788] text-white px-6 py-2 rounded-md hover:bg-[#52b788]/90 transition-colors flex items-center disabled:opacity-50"
             >
               <MdCheck className="mr-2" />
-              মারহালা যুক্ত করুন
+              {isLoading ? 'অপেক্ষা করুন...' : 'মারহালা যুক্ত করুন'}
             </button>
           </div>
         </form>
-
-        {/* Success Modal */}
-        {showSuccessModal && addedMarhala && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-xl w-[400px] p-6">
-              <div className="bg-[#52b788] text-white p-4 -m-6 mb-4 rounded-t-lg flex justify-between items-center">
-                <h2 className="text-lg font-bold">সফলভাবে যুক্ত হয়েছে</h2>
-              </div>
-
-              <div className="text-center py-6">
-                <div className="bg-[#52b788]/10 rounded-full p-4 inline-block mb-4">
-                  <MdCheck className="text-[#52b788] text-4xl" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">মারহালা যুক্ত হয়েছে</h3>
-                <p className="text-gray-600 mb-4">
-                  মারহালা: {addedMarhala.name}
-                  <br />
-                  ক্যাটাগরি: {addedMarhala.category}
-                  <br />
-                  আইডি: {addedMarhala.id}
-                </p>
-              </div>
-
-              <div className="flex justify-center">
-                <button 
-                  onClick={handleCloseSuccessModal}
-                  className="bg-[#52b788] text-white px-6 py-2 rounded-md hover:bg-[#52b788]/90"
-                >
-                  বন্ধ করুন
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Toast Notifications */}
         <Toaster position="top-right" />

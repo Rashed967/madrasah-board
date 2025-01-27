@@ -31,7 +31,7 @@ export const createKitab = async (data: KitabInput): Promise<KitabApiResponse> =
 
 export const getAllKitabs = async (page: number = 1, limit: number = 10): Promise<KitabListApiResponse> => {
   try {
-    const response = await get<IKitab[]>(`${MAIN_URL}/kitabs?page=${page}&limit=${limit}`);
+    const response = await get<IKitab[]>(`/kitabs?page=${page}&limit=${limit}`);
     return response;
   } catch (error: any) {
     return {
@@ -45,7 +45,7 @@ export const getAllKitabs = async (page: number = 1, limit: number = 10): Promis
 
 export const getKitabById = async (id: string): Promise<KitabApiResponse> => {
   try {
-    const response = await get<IKitab>(`${MAIN_URL}/kitabs/${id}`);
+    const response = await get<IKitab>(`/kitabs/${id}`);
     return response;
   } catch (error: any) {
     return {
