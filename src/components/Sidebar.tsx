@@ -79,6 +79,23 @@ export default function Sidebar() {
       ]
     },
     { 
+      name: 'কিতাব', 
+      href: '#marhala', 
+      icon: MdLibraryBooks,
+      submenu: [
+        {
+          name: 'নতুন কিতাব যুক্ত করুন',
+          href: '/dashboard/kitab/add-kitab',
+          icon: MdAdd
+        },
+        {
+          name: 'সকল কিতাব',
+          href: '/dashboard/kitab/all-kitabs',
+          icon: MdList
+        }
+      ]
+    },
+    { 
       name: 'মারহালা', 
       href: '#marhala', 
       icon: MdLibraryBooks,
