@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { EditKitabDialog } from './components/EditKitabDialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DeleteConfirmation } from './components/DeleteConfirmation';
 
 const dummyKitabs: IKitab[] = [];
 
@@ -24,6 +26,8 @@ export default function AllKitabsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [selectedKitab, setSelectedKitab] = useState<IKitab | null>(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [selectedKitabId, setSelectedKitabId] = useState<string | null>(null);
 
     useEffect(() => {
         loadKitabs();
@@ -73,10 +77,10 @@ export default function AllKitabsPage() {
 
     return (
         <>
-            <div className="container mx-auto p-6">
+            <div className="container mx-auto mt-2 pt-4 px-2 md:p-6">
                 <div className="flex flex-col gap-6">
                     <div className="flex justify-between items-center">
-                        <h1 className="text-2xl font-bold">সকল কিতাব</h1>
+                        <h1 className="text-lg font-bold">সকল কিতাব</h1>
                         <div className="text-sm text-muted-foreground">
                             মোট কিতাব: {Number(kitabs.length).toLocaleString('bn-BD')}
                         </div>
@@ -88,43 +92,55 @@ export default function AllKitabsPage() {
                                 <TableHeader className="bg-[#52B788] text-white">
                                     <TableRow>
                                         <TableHead>ক্রমিক</TableHead>
-                                        <TableHead>কিতাবের নাম (বাংলা)</TableHead>
-                                        <TableHead>কিতাবের নাম (আরবি)</TableHead>
+                                        <TableHead>বাংলা নাম</TableHead>
+                                        <TableHead>আরবি নাম</TableHead>
                                         <TableHead>কোড</TableHead>
                                         <TableHead>পূর্ণ নম্বর</TableHead>
                                         <TableHead className="text-right">অ্যাকশন</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {kitabs.map((kitab, index) => (
-                                        <TableRow key={kitab._id?.toString()} className={index % 2 === 1 ? 'bg-gray-300' : ''}>
-                                            <TableCell>{Number(index + 1).toLocaleString('bn-BD')}</TableCell>
-                                            <TableCell>{kitab.name.bengaliName}</TableCell>
-                                            <TableCell>{kitab.name.arabicName || '-'}</TableCell>
-                                            <TableCell>{Number(kitab.code).toLocaleString('bn-BD') || '-'}</TableCell>
-                                            <TableCell>{Number(kitab.fullMarks).toLocaleString('bn-BD')}</TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-6 w-6 p-0 bg-[#52B788] rounded-full">
-                                                            <MoreHorizontal className="h-4 w-4 text-white" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="bg-white/70">
-                                                        <DropdownMenuItem onClick={() => handleEdit(kitab)}>
-                                                            এডিট করুন
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem 
-                                                            className="text-red-600"
-                                                            onClick={() => kitab._id && handleDelete(kitab._id.toString())}
-                                                        >
-                                                            ডিলিট করুন
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                    {kitabs.length === 0 ? (
+                                        <TableRow className='pt-3'>
+                                            <TableCell colSpan={6} className="text-center py-4 ">
+                                                কোনো কিতাব নেই
                                             </TableCell>
                                         </TableRow>
-                                    ))}
+                                    ) : (
+                                        kitabs.map((kitab, index) => (
+                                            <TableRow key={kitab._id?.toString()} className={index % 2 === 1 ? 'bg-gray-300' : ''}>
+                                                <TableCell>{Number(index + 1).toLocaleString('bn-BD')}</TableCell>
+                                                <TableCell>{kitab.name.bengaliName}</TableCell>
+                                                <TableCell>{kitab.name.arabicName || '-'}</TableCell>
+                                                <TableCell>{Number(kitab.code).toLocaleString('bn-BD') || '-'}</TableCell>
+                                                <TableCell>{Number(kitab.fullMarks).toLocaleString('bn-BD')}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" className="h-6 w-6 p-0 bg-[#52B788] rounded-full">
+                                                                <MoreHorizontal className="h-4 w-4 text-white" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="bg-white/70">
+                                                            <DropdownMenuItem onClick={() => handleEdit(kitab)}>
+                                                                এডিট করুন
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem 
+                                                                className="text-red-600"
+                                                                onClick={() => {
+                                                                    setSelectedKitabId(kitab._id.toString());
+                                                                    setSelectedKitab(kitab);
+                                                                    setShowDeleteDialog(true);
+                                                                }}
+                                                            >
+                                                                ডিলিট করুন
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
                                 </TableBody>
                             </Table>
                         </CardContent>
@@ -140,6 +156,18 @@ export default function AllKitabsPage() {
                     onSuccess={loadKitabs}
                 />
             )}
+
+            <DeleteConfirmation
+                isOpen={showDeleteDialog}
+                onClose={() => setShowDeleteDialog(false)}
+                onConfirm={() => {
+                    if (selectedKitabId) {
+                        handleDelete(selectedKitabId);
+                    }
+                    setShowDeleteDialog(false);
+                }}
+                selectedKitab={selectedKitab}
+            />
         </>
     );
 }

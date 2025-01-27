@@ -61,13 +61,13 @@ export function EditKitabDialog({ kitab, isOpen, onClose, onSuccess }: EditKitab
         <Dialog 
             isOpen={isOpen} 
             onClose={onClose}
-            title="কিতাব এডিট করুন"
+            title=""
         >
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>কিতাব এডিট করুন</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                <form onSubmit={handleSubmit} className="space-y-4 mt-2">
                     <div className="space-y-2">
                         <Label htmlFor="bengaliName">কিতাবের নাম (বাংলা)</Label>
                         <Input
@@ -96,10 +96,10 @@ export function EditKitabDialog({ kitab, isOpen, onClose, onSuccess }: EditKitab
                         />
                     </div>
                     <div className="flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={onClose}>
+                        {/* <Button type="button" variant="outline" onClick={onClose}>
                             বাতিল করুন
-                        </Button>
-                        <Button type="submit" className="bg-[#52B788] hover:bg-[#429670]">
+                        </Button> */}
+                        <Button type="submit" className="bg-[#52B788] hover:bg-[#429670] text-white">
                             আপডেট করুন
                         </Button>
                     </div>
