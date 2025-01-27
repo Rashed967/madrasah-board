@@ -1,6 +1,7 @@
 import { API_URL } from '@/config/env';
-import { post, get, del } from '@/core/api/apiService';
+import { post, get, del, put, patch } from '@/core/api/apiService';
 import { CreateMarhalaData, IMarhala } from './marhala.interface';
+import path from 'path';
 
 export interface Kitab {
   _id: string;
@@ -67,6 +68,18 @@ export const deleteMarhala = async (id: string): Promise<ApiResponse<IMarhala>> 
     return {
       success: false,
       message: 'মারহালা মুছে ফেলতে সমস্যা হয়েছে'
+    };
+  }
+};
+
+export const updateMarhala = async (id: string, marhalaData: Partial<CreateMarhalaData>): Promise<ApiResponse<IMarhala>> => {
+  try {
+    const response = await patch<IMarhala>(`/marhalas/${id}`, marhalaData);
+    return response;
+  } catch (error) {
+    return {
+      success: false,
+      message: 'মারহালা আপডেট করতে সমস্যা হয়েছে'
     };
   }
 };

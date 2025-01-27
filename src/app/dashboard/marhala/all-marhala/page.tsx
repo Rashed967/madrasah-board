@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DeleteConfirmation } from './components/DeleteConfirmation';
+import { EditMarhalaDialog } from './components/EditMarhalaDialog';
 
 export default function AllMarhalaPage() {
   const [marhalaList, setMarhalaList] = useState<IMarhala[]>([]);
@@ -30,25 +31,27 @@ export default function AllMarhalaPage() {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [marhalaToDelete, setMarhalaToDelete] = useState<IMarhala | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const marhalaPerPage = 10;
 
-  useEffect(() => {
-    const fetchMarhalas = async () => {
-      try {
-        const response = await getAllMarhalas();
-        if (response.success) {
-          setMarhalaList(response.data || []);
-        } else {
-          toast.error(response.message);
-        }
-      } catch (error) {
-        toast.error('মারহালা লোড করতে সমস্যা হয়েছে');
-      } finally {
-        setIsLoading(false);
+  const loadMarhalas = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getAllMarhalas();
+      if (response.success) {
+        setMarhalaList(response.data || []);
+      } else {
+        toast.error(response.message);
       }
-    };
+    } catch (error) {
+      toast.error('মারহালা লোড করতে সমস্যা হয়েছে');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchMarhalas();
+  useEffect(() => {
+    loadMarhalas();
   }, []);
 
   // Pagination Logic
@@ -72,8 +75,17 @@ export default function AllMarhalaPage() {
   };
 
   // Edit Marhala
-  const handleEditMarhala = (marhala: IMarhala) => {
-    setEditingMarhala({...marhala});
+  const handleEditClick = (marhala: IMarhala) => {
+    setEditingMarhala(marhala);
+    setEditDialogOpen(true);
+  };
+
+  const handleEditSuccess = (updatedMarhala: IMarhala) => {
+    setMarhalaList(prev => prev.map(m => 
+      m._id === updatedMarhala._id ? updatedMarhala : m
+    ));
+    setEditDialogOpen(false);
+    setEditingMarhala(null);
   };
 
   // Save Edited Marhala
@@ -139,10 +151,10 @@ export default function AllMarhalaPage() {
   }
 
   return (
-    <div className="p-8 mt-12 mx-6">
-      <h1 className="text-lg font-bold mb-8">সকল মারহালা</h1>
+    <div className="p-2 mt-12 mx-1 md:mx-6">
+      <h1 className="text-lg font-bold mb-4">সকল মারহালা</h1>
       
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow overflow-scroll">
         <table className="w-full">
           <thead className="bg-[#52b788] text-white">
             <tr>
@@ -177,7 +189,10 @@ export default function AllMarhalaPage() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className='bg-gray-200' align="end">
-                      <DropdownMenuItem onClick={() => handleEditMarhala(marhala)}>
+                      <DropdownMenuItem 
+                        onClick={() => handleEditClick(marhala)}
+                        className="text-gray-700"
+                      >
                         <MdEdit className="mr-2" />
                         সম্পাদনা করুন
                       </DropdownMenuItem>
@@ -199,7 +214,7 @@ export default function AllMarhalaPage() {
         {/* Pagination */}
         <div className="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            মোট {marhalaList.length}টি মারহালা
+            মোট {Number(marhalaList.length).toLocaleString('bn-BD')}টি মারহালা
           </div>
           <div className="flex space-x-2">
             <button
@@ -254,7 +269,7 @@ export default function AllMarhalaPage() {
                   const kitabObj = kitab as unknown as IKitab;
                   return (
                     <div key={typeof kitab === 'object' && '_id' in kitab ? kitab._id.toString() : index} className="text-gray-700">
-                      {index + 1}. {typeof kitab === 'object' && 'name' in kitab && kitabObj.name ? (
+                      {Number(index + 1).toLocaleString('bn-BD')}. {typeof kitab === 'object' && 'name' in kitab && kitabObj.name ? (
                         <>
                           {kitabObj.name.bengaliName}
                           {kitabObj.name.arabicName && (
@@ -270,6 +285,19 @@ export default function AllMarhalaPage() {
           </div>
         )}
       </Dialog>
+
+      {/* Edit Dialog */}
+      {editingMarhala && (
+        <EditMarhalaDialog
+          marhala={editingMarhala}
+          isOpen={editDialogOpen}
+          onClose={() => {
+            setEditDialogOpen(false);
+            setEditingMarhala(null);
+          }}
+          onSuccess={handleEditSuccess}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmation 
