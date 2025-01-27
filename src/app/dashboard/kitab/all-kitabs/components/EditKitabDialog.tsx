@@ -63,7 +63,7 @@ export function EditKitabDialog({ kitab, isOpen, onClose, onSuccess }: EditKitab
             onClose={onClose}
             title=""
         >
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] text-gray-800">
                 <DialogHeader>
                     <DialogTitle>কিতাব এডিট করুন</DialogTitle>
                 </DialogHeader>
@@ -96,9 +96,6 @@ export function EditKitabDialog({ kitab, isOpen, onClose, onSuccess }: EditKitab
                         />
                     </div>
                     <div className="flex justify-end gap-2">
-                        {/* <Button type="button" variant="outline" onClick={onClose}>
-                            বাতিল করুন
-                        </Button> */}
                         <Button type="submit" className="bg-[#52B788] hover:bg-[#429670] text-white">
                             আপডেট করুন
                         </Button>

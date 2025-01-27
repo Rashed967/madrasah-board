@@ -108,7 +108,7 @@ export default function AllKitabsPage() {
                                         </TableRow>
                                     ) : (
                                         kitabs.map((kitab, index) => (
-                                            <TableRow key={kitab._id?.toString()} className={index % 2 === 1 ? 'bg-gray-300' : ''}>
+                                            <TableRow key={kitab._id?.toString()} className={index % 2 === 1 ? 'bg-gray-300 text-gray-800' : 'text-gray-800'}>
                                                 <TableCell>{Number(index + 1).toLocaleString('bn-BD')}</TableCell>
                                                 <TableCell>{kitab.name.bengaliName}</TableCell>
                                                 <TableCell>{kitab.name.arabicName || '-'}</TableCell>
@@ -121,7 +121,7 @@ export default function AllKitabsPage() {
                                                                 <MoreHorizontal className="h-4 w-4 text-white" />
                                                             </Button>
                                                         </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="bg-white/70">
+                                                        <DropdownMenuContent align="end" className="bg-white/70 text-gray-700">
                                                             <DropdownMenuItem onClick={() => handleEdit(kitab)}>
                                                                 এডিট করুন
                                                             </DropdownMenuItem>

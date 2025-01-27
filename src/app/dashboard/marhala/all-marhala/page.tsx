@@ -151,12 +151,12 @@ export default function AllMarhalaPage() {
   }
 
   return (
-    <div className="p-2 mt-12 mx-1 md:mx-6">
-      <h1 className="text-lg font-bold mb-4">সকল মারহালা</h1>
+    <div className="p-2 mt-12 mx-1 md:mx-6 text-gray-700">
+      <h1 className="text-lg font-bold mb-4 text-gray-800">সকল মারহালা</h1>
       
       <div className="bg-white rounded-lg shadow overflow-scroll">
-        <table className="w-full">
-          <thead className="bg-[#52b788] text-white">
+        <table className="w-full ">
+          <thead className="bg-[#52b788] text-white ">
             <tr>
               <th className="px-4 py-3 text-left font-normal">মারহালা কোড</th>
               <th className="px-4 py-3 text-left font-normal">মারহালা নাম</th>
@@ -211,8 +211,10 @@ export default function AllMarhalaPage() {
           </tbody>
         </table>
 
-        {/* Pagination */}
-        <div className="px-4 py-3 bg-gray-50 border-t flex justify-between items-center">
+    
+      </div>
+          {/* Pagination */}
+          <div className="px-4 py-3 bg-gray-50 border-t flex justify-between items-center mt-2 text-gray-800">
           <div className="text-sm text-gray-600">
             মোট {Number(marhalaList.length).toLocaleString('bn-BD')}টি মারহালা
           </div>
@@ -233,7 +235,6 @@ export default function AllMarhalaPage() {
             </button>
           </div>
         </div>
-      </div>
 
       {/* Details Dialog */}
       <Dialog 
@@ -242,7 +243,7 @@ export default function AllMarhalaPage() {
         title="মারহালা বিস্তারিত"
       >
         {selectedMarhala && (
-          <div className="space-y-4">
+          <div className="space-y-4 text-gray-800">
             <div>
               <h5 className="font-semibold">মারহালা নাম</h5>
               <p className="text-gray-700">{selectedMarhala.name.bengaliName}</p>

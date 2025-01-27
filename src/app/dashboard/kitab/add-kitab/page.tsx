@@ -95,8 +95,8 @@ export default function AddKitab() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+    <div className="container mx-auto px-4 py-8 mt-12 sm:mt-6">
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md my-auto">
         <h2 className="text-lg font-bold mb-6 text-gray-800">নতুন কিতাব যোগ করুন</h2>
         
         {/* Bengali Name Input */}

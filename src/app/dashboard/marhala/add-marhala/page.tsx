@@ -88,13 +88,13 @@ export default function AddMarhalaPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 lg:px-0 mt-20">
+    <div className="container mx-auto px-4 lg:px-0 mt-10 md:mt-14 mb-3">
       <div className="max-w-xl mx-auto">
         <h1 className="text-lg font-bold mb-8">নতুন মারহালা যুক্ত করুন</h1>
 
         <form 
           onSubmit={handleSubmit} 
-          className="bg-white rounded-lg shadow-md p-8 md:grid md:grid-cols-2 gap-4"
+          className="bg-white rounded-lg shadow-md p-8 md:grid md:grid-cols-2 gap-4 text-gray-700"
         >
           <div className="mb-6">
             <label 
