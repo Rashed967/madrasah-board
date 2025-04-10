@@ -1,9 +1,9 @@
 "use client";
 import IBoardInfo from '@/features/boardInfo/boardInfo.interface'
 import IPreExamineeRegistration from '@/features/preExamineeRegistration/interfaces'
-import jsreport from '@jsreport/browser-client'
+// import jsreport from '@jsreport/browser-client'
 
-jsreport.serverUrl = 'http://localhost:5488'
+// jsreport.serverUrl = 'http://localhost:5488'
 
 
 
@@ -162,20 +162,32 @@ export const generatePreExamineeReceipt = async (data: ReceiptData) => {
     //   ? `${madrasahDetails.address.village}, ${madrasahDetails.address.district}, ${madrasahDetails.address.division}`
     //   : '';
 
-      const report = await jsreport.render({
-        template: {
-          // তুমি jsreport UI তে যে template name দিয়েছো
-          name: '/preRegistationReport/myTemplate',
+      // const report = await jsreport.render({
+      //   template: {
+      //     // তুমি jsreport UI তে যে template name দিয়েছো
+      //     name: '/preRegistationReport/myTemplate',
+      //   },
+      //   data: data,
+      //   options: {
+      //     reportName: 'নিবন্ধন_রিপোর্ট_{{registrationData.receiptNo}}'
+      //   }
+      // })
+      // console.log('report', report)
+
+      // await report.download('report.pdf')
+      // console.log('data', data)
+
+      const response = await fetch('http://localhost:5490/generate-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        data: data,
-        options: {
-          reportName: 'নিবন্ধন_রিপোর্ট_{{registrationData.receiptNo}}'
-        }
+        body: JSON.stringify(data)
       })
-      console.log('report', report)
-
-      await report.download('report.pdf')
-
+      console.log('response', response)
+      const blob = await response.blob()
+      const pdfUrl = URL.createObjectURL(blob);
+      window.open(pdfUrl, '_blank');
 
   } catch (error) {
     console.error('Error generating PDF:', error);
