@@ -1,18 +1,22 @@
 import { Input } from '@/components/ui/input'
-import { memo } from 'react'
+import { memo } from 'react';
+import React from 'react';
 
 interface MarhalaTableProps {
   examineesPerMahala: Array<{
     marhalaName: string
     marhalaId: string
-    totalExamineesSlots: number
+    regularExamineesSlots: number
+    irregularExamineesSlots: number
     startingRegistrationNumber: number
     endingRegistrationNumber: number
     totalFeesAmount: number
   }>
-  onExamineeCountChange: (marhalaName: string, count: number) => void
+  
+  onExamineeCountChange: (marhalaId: string, data: { regularExamineesSlots: number, irregularExamineesSlots: number }, useLateRegistrationFee: boolean) => void
   totalExaminees: number
   totalAmount: number
+  useLateRegistrationFee: boolean
 }
 
 const MarhalaRegistrationTable = memo(
@@ -20,11 +24,13 @@ const MarhalaRegistrationTable = memo(
     examineesPerMahala,
     onExamineeCountChange,
     totalExaminees,
-    totalAmount
+    totalAmount,
+    useLateRegistrationFee
   }: MarhalaTableProps) => {
+    console.log(useLateRegistrationFee)
     return (
       <div className="border rounded-lg overflow-x-auto">
-        <style jsx global>{`
+        <style>{`
           input[type='number']::-webkit-inner-spin-button,
           input[type='number']::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -39,7 +45,10 @@ const MarhalaRegistrationTable = memo(
             <tr className="bg-gray-50 text-sm border-b">
               <th className="py-2 px-3 text-left font-medium">মারহালা</th>
               <th className="py-2 px-3 text-center font-medium">
-                পরীক্ষার্থী সংখ্যা
+                নিয়মিত পরীক্ষার্থী
+              </th>
+              <th className="py-2 px-3 text-center font-medium">
+                অনিয়মিত পরীক্ষার্থী
               </th>
               <th className="py-2 px-3 text-center font-medium">
                 রেজিস্ট্রেশন নম্বর
@@ -55,14 +64,28 @@ const MarhalaRegistrationTable = memo(
                   <Input
                     type="number"
                     placeholder="0"
-                    value={marhala.totalExamineesSlots || ''}
+                    value={marhala.regularExamineesSlots}
                     onChange={(e) =>
-                      onExamineeCountChange(
-                        marhala.marhalaName,
-                        parseInt(e.target.value) || 0
-                      )
+                      onExamineeCountChange(marhala.marhalaId, {
+                        regularExamineesSlots: parseInt(e.target.value) || 0,
+                        irregularExamineesSlots: marhala.irregularExamineesSlots
+                      }, useLateRegistrationFee)
                     }
-                    className="!h-7 text-center text-sm w-24 mx-auto"
+                    className="!h-7 text-center text-sm w-24 mx-auto bg-white"
+                  />
+                </td>
+                <td className="py-2 px-3">
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={marhala.irregularExamineesSlots}
+                    onChange={(e) =>
+                      onExamineeCountChange(marhala.marhalaId, {
+                        regularExamineesSlots: marhala.regularExamineesSlots,
+                        irregularExamineesSlots: parseInt(e.target.value) || 0
+                      }, useLateRegistrationFee)
+                    }
+                    className="!h-7 text-center text-sm w-24 mx-auto bg-white"
                   />
                 </td>
                 <td className="py-2 px-3">
@@ -91,7 +114,7 @@ const MarhalaRegistrationTable = memo(
           <tfoot className="bg-gray-50 border-t">
             <tr>
               <td className="py-2 px-3 text-sm font-medium">মোট</td>
-              <td className="py-2 px-3 text-center text-sm">
+              <td colSpan={2} className="py-2 px-3 text-center text-sm">
                 {totalExaminees} জন
               </td>
               <td className="py-2 px-3 text-center text-sm"></td>

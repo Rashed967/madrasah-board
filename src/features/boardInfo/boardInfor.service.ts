@@ -20,11 +20,12 @@ export async function createBoardInfo(boardInfoData: IBoardInfo) {
 }
 
 // get single board info
-const id = '67bb52249fbe4879db797d88'; // fro dev db
-// const id = '67a33fba65cd9dbf7e912ec4'; // for production db
+// const id = '67bb52249fbe4879db797d88'; // fro dev db
+const id = '67bb52249fbe4879db797d88'; // for production db
 export async function getBoardInfo() {
   try {
     const response = await get(`/board-info/${id}`)
+    console.log('response', response)
     return response
   } catch (error) {
     return {

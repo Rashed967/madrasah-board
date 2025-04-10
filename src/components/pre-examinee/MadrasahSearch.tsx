@@ -9,6 +9,7 @@ interface MadrasahSearchProps {
   searchResults: any[]
   showDropdown: boolean
   onMadrasahSelect: (madrasah: any) => void
+  madrasahSearchInputError: string
 }
 
 const MadrasahSearch = memo(
@@ -17,7 +18,8 @@ const MadrasahSearch = memo(
     onSearchChange,
     searchResults,
     showDropdown,
-    onMadrasahSelect
+    onMadrasahSelect,
+    madrasahSearchInputError
   }: MadrasahSearchProps) => {
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
@@ -37,6 +39,7 @@ const MadrasahSearch = memo(
             onChange={(e) => onSearchChange(e)}
             onKeyDown={handleKeyDown}
           />
+          <span className="text-xs text-red-500 italic">{madrasahSearchInputError} </span>
         </div>
 
         {showDropdown && searchResults.length > 0 && (

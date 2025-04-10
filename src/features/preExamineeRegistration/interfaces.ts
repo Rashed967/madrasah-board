@@ -1,18 +1,30 @@
 import { Types } from 'mongoose'
 
+
 export interface IExamineesPerMahala {
   _id?: Types.ObjectId
   marhala: {
     name: {
       bengaliName: string
-      englishName: string
     }
   }
-  marhalaName: string
-  totalExamineesSlots: number
+  marhalaName?: string
+  regularExamineesSlots: number
+  irregularExamineesSlots: number
   startingRegistrationNumber: number
   endingRegistrationNumber: number
-  remainingSlots: number
+}
+
+interface ITransactionDetails {
+  totalAmount: number
+  paidAmount: number
+  transactionCategory: string
+  description?: string
+  paymentDetails: Array<{
+    amount: number
+    paymentMethod: string
+    referenceNumber?: string
+  }>
 }
 
 export interface IPreExamineeRegistration {
@@ -20,8 +32,7 @@ export interface IPreExamineeRegistration {
   exam: Types.ObjectId
   madrasah: Types.ObjectId
   examineesPerMahala: IExamineesPerMahala[]
-  totalExaminees?: number
-  totalFeesAmount?: number
+  transactionDetails: ITransactionDetails
   receiptNo?: number
   transactionId?: string
   isDeleted?: boolean

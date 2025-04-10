@@ -1,15 +1,39 @@
 export interface ExamType {
   _id: string
   examName: string
-  preRegistrationFee: number
-  currentRegistrationNumber: number
+  endRegistrationDate: string
   registrationStartNumber: number
+  currentRegistrationNumber: number
+  registrationFeeForRegularStudent: number
+  registrationFeeForIrregularStudent: number
+  lateRegistrationFeeForRegularStudent: number
+  lateRegistrationFeeForIrregularStudent: number
+  examFeeForBoys: Array<{
+    marhala: string
+    examFeeForRegularStudent: number
+    examFeeForIrregularStudent: number
+    lateExamFeeForRegularStudent: number
+    lateExamFeeForIrregularStudent: number
+    startRollNumber: number
+    currentRollNumber: number
+  }>
+  examFeeForGirls: Array<{
+    marhala: string
+    examFeeForRegularStudent: number
+    examFeeForIrregularStudent: number
+    lateExamFeeForRegularStudent: number
+    lateExamFeeForIrregularStudent: number
+    startRollNumber: number
+    currentRollNumber: number
+  }>
 }
+
 
 export interface MarhalaExaminee {
   marhala: string
   marhalaName?: string
-  totalExamineesSlots: number
+  regularExamineesSlots: number
+  irregularExamineesSlots: number
   startingRegistrationNumber: number
   endingRegistrationNumber: number
 }
@@ -20,19 +44,20 @@ export type TPaymentMethod =
   | 'mobile_banking'
   | 'bank_transfer'
 
-export interface IPaymentDetail {
+export interface PaymentDetail {
   amount: number
   paymentMethod: TPaymentMethod
   referenceNumber?: string
   paymentDate?: string
 }
 
+
 export interface TransactionDetails {
   totalAmount: number
   paidAmount?: number
   transactionCategory: string
   description?: string
-  paymentDetails: IPaymentDetail[] // Changed from single paymentMethod to array of payment details
+  paymentDetails: PaymentDetail[] // Changed from single paymentMethod to array of payment details
 }
 
 export interface PreExamineeRegistrationData {
@@ -40,13 +65,14 @@ export interface PreExamineeRegistrationData {
     exam: string
     madrasah: string
     examineesPerMahala: MarhalaExaminee[]
-    // totalFeesAmount: number;
+    isLateRegistrationFeeTaken?: boolean
   }
   transactionDetails: TransactionDetails
   receiptNo?: string
   code?: string
   madrasahAddress?: string
   totalAmountInWords?: string
+  
 }
 
 export interface StatusDialogState {

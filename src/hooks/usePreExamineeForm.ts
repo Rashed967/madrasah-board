@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react'
-import debounce from 'lodash/debounce'
+
 import { madrasahServices } from '@/services/madrasahService'
 import { getAllMarhalas } from '@/features/marhala/marhala.service'
 import {
   PreExamineeRegistrationData,
-  IPaymentDetail,
+  PaymentDetail,
   TPaymentMethod
 } from '@/types/preExaminee.types'
 import { preExamineeRegistrationServices } from '@/services/preExamineeRegistrationService'
@@ -24,7 +24,8 @@ const initialFormState = {
       {
         amount: 0,
         paymentMethod: '' as TPaymentMethod,
-        referenceNumber: ''
+        referenceNumber: '',
+        paymentDate: ''
       }
     ]
   }
@@ -51,6 +52,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
   const [latestRegistrationNumber, setLatestRegistrationNumber] = useState(0)
   const [marhalas, setMarhalas] = useState<Array<IMarhala>>([])
   const [paymentError, setPaymentError] = useState('')
+  const [madrasahSearchInputError, setMadrasahSearchInputError] = useState('')
 
   // Debounced search function
   const handleSearch = useCallback(
@@ -77,16 +79,8 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           const response =
             await madrasahServices.getAllMadrasahs(queryParams.toString())
             console.log ('from preExaminee', response)
-          // const filteredResults = response.data.filter(
-          //   (madrasah: any) =>
-          //     madrasah.madrasahNames.bengaliName
-          //       .toLowerCase()
-          //       .includes(value.toLowerCase()) ||
-          //     madrasah.madrasahNames.englishName
-          //       ?.toLowerCase()
-          //       .includes(value.toLowerCase()) ||
-          //     madrasah.code.toLowerCase().includes(value.toLowerCase())
-          // )
+
+
           setSearchResults(response.data)
           setShowDropdown(true)
         } catch (error) {
@@ -100,6 +94,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
   )
 
   const handleMadrasahSelect = async (madrasah: any) => {
+    console.log('Selected madrasah:', madrasah)
     setFormData((prev) => ({ ...prev, madrasah: madrasah._id }))
     setSelectedMadrasahDetails({
       _id: madrasah._id,
@@ -129,7 +124,9 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
         marhalaType
       )
 
+      console.log('Marhalas response:', response)
       if (response.success) {
+        // filter((marhala) => marhala.level > madrasah.madrasah_information.highestMarhala.level)
         const formattedMarhalas = response.data.map((marhala: any) => ({
           marhalaName: marhala.name.bengaliName,
           marhalaId: marhala._id,
@@ -138,8 +135,16 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           endingRegistrationNumber: 0,
           totalFeesAmount: 0
         }))
+        console.log('formattedMarhalas', formattedMarhalas)
 
-        setMarhalas(formattedMarhalas)
+
+        if (formattedMarhalas.length <= 0) {
+          setMadrasahSearchInputError("নিবন্ধনের জন্য কোনো মারহালা নেই")
+        }else{
+          setMadrasahSearchInputError("")
+        }
+       setMarhalas(formattedMarhalas)
+        
         setFormData((prev) => ({
           ...prev,
           examineesPerMahala: formattedMarhalas.map((marhala) => ({
@@ -147,39 +152,68 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
             marhalaId: marhala.marhalaId
           }))
         }))
+
       }
     } catch (error) {
       console.error('Error loading marhalas:', error)
     }
   }
 
-  const handleExamineeCountChange = (marhalaName: string, count: number) => {
+  const handleExamineeCountChange = (
+    marhalaId: string,
+    { regularExamineesSlots, irregularExamineesSlots }: { regularExamineesSlots: number, irregularExamineesSlots: number },
+    useLateRegistrationFee: boolean
+  ) => {
     if (!selectedExamDetails) return
+
+    const calculateFeesForMarhala = (marhalaId: string, regularCount: number, irregularCount: number) => {
+      // Check if current date is past the registration end date
+      const endDate = new Date(selectedExamDetails.endRegistrationDate)
+      const currentDate = new Date()
+      const isLateRegistration = currentDate > endDate
+
+      // Ensure numbers are valid, default to 0 if undefined
+      const safeRegularCount = regularCount || 0
+      const safeIrregularCount = irregularCount || 0
+
+      // Use late registration fee if enabled and past end date
+      const fees = (useLateRegistrationFee && isLateRegistration)
+        ? safeRegularCount * (selectedExamDetails.lateRegistrationFeeForRegularStudent || 0) +
+          safeIrregularCount * (selectedExamDetails.lateRegistrationFeeForIrregularStudent || 0)
+        : safeRegularCount * (selectedExamDetails.registrationFeeForRegularStudent || 0) +
+          safeIrregularCount * (selectedExamDetails.registrationFeeForIrregularStudent || 0)
+
+      return fees
+    }
 
     const updatedExamineesPerMahala = formData.examineesPerMahala.map(
       (marhala) => {
-        if (marhala.marhalaName === marhalaName) {
+        if (marhala.marhalaId === marhalaId) {
+          // Ensure numbers are valid
+          const safeRegular = regularExamineesSlots || 0
+          const safeIrregular = irregularExamineesSlots || 0
+          const totalSlots = safeRegular + safeIrregular
+
           return {
             ...marhala,
-            totalExamineesSlots: count,
-            totalFeesAmount:
-              count * (selectedExamDetails.preRegistrationFee || 0)
+            regularExamineesSlots: safeRegular,
+            irregularExamineesSlots: safeIrregular,
+            totalFeesAmount: calculateFeesForMarhala(marhalaId, safeRegular, safeIrregular)
           }
         }
         return marhala
       }
     )
 
-    let currentStartNumber =
-      selectedExamDetails.currentRegistrationNumber === 0
-        ? selectedExamDetails.registrationStartNumber
-        : selectedExamDetails.currentRegistrationNumber + 1
+    // Calculate registration numbers based on total slots
+    let currentStartNumber = selectedExamDetails.currentRegistrationNumber || selectedExamDetails.registrationStartNumber || 1
 
     const finalUpdatedExamineesPerMahala = updatedExamineesPerMahala.map(
       (marhala) => {
-        if (marhala.totalExamineesSlots > 0) {
+        const totalSlots = (marhala.regularExamineesSlots || 0) + (marhala.irregularExamineesSlots || 0)
+        if (totalSlots > 0) {
           const startingNumber = currentStartNumber
-          const endingNumber = startingNumber + marhala.totalExamineesSlots - 1
+          const endingNumber = currentStartNumber + totalSlots - 1
           currentStartNumber = endingNumber + 1
 
           return {
@@ -197,28 +231,28 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     )
 
     const totalFeesAmount = finalUpdatedExamineesPerMahala.reduce(
-      (sum, marhala) => sum + marhala.totalFeesAmount,
+      (sum, marhala) => sum + (marhala.totalFeesAmount || 0),
       0
     )
 
     setFormData((prev) => ({
       ...prev,
       examineesPerMahala: finalUpdatedExamineesPerMahala,
-      totalFeesAmount,
       transactionDetails: {
         ...prev.transactionDetails,
         totalAmount: totalFeesAmount
       }
     }))
 
+    // Update latest registration number
     const lastMarhalaWithCount = finalUpdatedExamineesPerMahala
-      .filter((m) => m.totalExamineesSlots > 0)
+      .filter((m) => ((m.regularExamineesSlots || 0) + (m.irregularExamineesSlots || 0)) > 0)
       .pop()
 
     setLatestRegistrationNumber(
       lastMarhalaWithCount
         ? lastMarhalaWithCount.endingRegistrationNumber + 1
-        : 0
+        : currentStartNumber
     )
   }
 
@@ -231,8 +265,8 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
 
       // Calculate total paid amount from payment details
       if (field === 'paymentDetails') {
-        // Type assertion to ensure value is IPaymentDetail[]
-        const paymentDetails = value as IPaymentDetail[]
+        // Type assertion to ensure value is PaymentDetail[]
+        const paymentDetails = value as PaymentDetail[]
         const totalPaid = paymentDetails.reduce(
           (sum, detail) => sum + (detail.amount || 0),
           0
@@ -261,15 +295,13 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
       e.preventDefault()
 
       // Check if payment amount is valid
-      if (
-        formData.transactionDetails.paidAmount >
-        formData.transactionDetails.totalAmount
-      ) {
-        setPaymentError(
-          'পরিশোধিত টাকার পরিমাণ মোট টাকার চেয়ে বেশি হতে পারবে না'
-        )
+      if ((formData.transactionDetails.paidAmount || 0) > formData.transactionDetails.totalAmount) {
+        setPaymentError('পরিশোধিত টাকার পরিমাণ মোট টাকার চেয়ে বেশি হতে পারবে না')
         return
       }
+
+      // Clear any previous payment error
+      setPaymentError('')
 
       const modifiedFromData: PreExamineeRegistrationData = {
         preExaminneRegistrationDetails: {
@@ -277,7 +309,8 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           madrasah: formData.madrasah,
           examineesPerMahala: formData.examineesPerMahala.map((marhala) => ({
             marhala: marhala.marhalaId,
-            totalExamineesSlots: marhala.totalExamineesSlots,
+            regularExamineesSlots: marhala.regularExamineesSlots || 0,
+            irregularExamineesSlots: marhala.irregularExamineesSlots || 0,
             startingRegistrationNumber: marhala.startingRegistrationNumber,
             endingRegistrationNumber: marhala.endingRegistrationNumber
           }))
@@ -293,7 +326,8 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
             (payment) => ({
               amount: payment.amount,
               paymentMethod: payment.paymentMethod,
-              referenceNumber: payment.referenceNumber || ''
+              referenceNumber: payment.referenceNumber || '',
+              paymentDate: payment.paymentDate || new Date().toISOString().split('T')[0]
             })
           )
         }
@@ -346,6 +380,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     handleExamineeCountChange,
     handleTransactionChange,
     handleSubmit,
-    paymentError
+    paymentError,
+    madrasahSearchInputError
   }
 }

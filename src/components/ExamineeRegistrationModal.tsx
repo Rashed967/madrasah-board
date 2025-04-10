@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import ImageUpload from '@/app/dashboard/exam/examine-registration/components/ImageUpload'
+// import ImageUpload from '@/app/dashboard/exam/examine-registration/components/ImageUpload'
 
 interface ExamineeRegistrationModalProps {
   preExaminee: any
@@ -257,7 +257,7 @@ export default function ExamineeRegistrationModal({
 
           {/* Photo Upload */}
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800">
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800">
               <ImageUpload
                 label="পরীক্ষার্থীর ছবি *"
                 fieldName="image"
@@ -265,7 +265,7 @@ export default function ExamineeRegistrationModal({
                 onChange={handleInputChange}
                 error={null}
               />
-            </div>
+            </div> */}
           </div>
         </div>
 

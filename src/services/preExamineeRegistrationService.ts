@@ -11,14 +11,7 @@ export const preExamineeRegistrationServices = {
   create: async (data: PreExamineeRegistrationData) => {
     try {
       const response = await post('/pre-examinee-registrations', {
-        ...data,
-        examineesPerMahala:
-          data.preExaminneRegistrationDetails.examineesPerMahala
-            .filter((marhala) => marhala.totalExamineesSlots > 0)
-            .map((marhala) => ({
-              marhala: marhala.marhala,
-              totalExamineesSlots: marhala.totalExamineesSlots
-            }))
+        ...data
       })
       return {
         success: true,

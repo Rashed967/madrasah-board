@@ -1,8 +1,5 @@
 import { z } from 'zod'
-import {
-  PAYMENT_METHOD,
-  TRANSACTION_CATEGORY
-} from '../transaction/transaction.constants'
+import { PAYMENT_METHOD } from '../transaction/transaction.constants'
 
 // Create Pre Examinee Registration using this model
 
@@ -25,11 +22,22 @@ const createPreExamineeRegistrationValidationSchema = z.object({
             required_error: 'মারহালার নাম আবশ্যক'
           })
           .nonempty('মাহালার নাম আবশ্যক'),
-        totalExamineesSlots: z.number({
-          required_error: 'পরীক্ষার স্লট আবশ্যক'
+        regularExamineesSlots: z
+          .number({
+            required_error: 'নিয়মিত পরীক্ষার্থীর সংখ্যা আবশ্যক'
+          })
+          .min(0, 'নিয়মিত পরীক্ষার্থীর সংখ্যা ০ বা তার বেশি হতে হবে'),
+        irregularExamineesSlots: z
+          .number({
+            required_error: 'অনিয়মিত পরীক্ষার্থীর সংখ্যা আবশ্যক'
+          })
+          .min(0, 'অনিয়মিত পরীক্ষার্থীর সংখ্যা ০ বা তার বেশি হতে হবে'),
+        startingRegistrationNumber: z.number({
+          required_error: 'শুরুর রেজিস্ট্রেশন নম্বর আবশ্যক'
         }),
-        startingRegistrationNumber: z.number().optional(),
-        endingRegistrationNumber: z.number().optional()
+        endingRegistrationNumber: z.number({
+          required_error: 'শেষ রেজিস্ট্রেশন নম্বর আবশ্যক'
+        })
       })
     )
   }),
@@ -37,11 +45,6 @@ const createPreExamineeRegistrationValidationSchema = z.object({
   transactionDetails: z.object({
     totalAmount: z.number({ required_error: 'টোটাল আমাউন্ট আবশ্যক' }),
     paidAmount: z.number({ required_error: 'পেইড আমাউন্ট আবশ্যক' }),
-    transactionCategory: z
-      .string({
-        required_error: 'ট্রান্স্যাকশন ক্যাটাগরি আবশ্যক'
-      })
-      .nonempty('ট্রান্স্যাকশন ক্যাটাগরি আবশ্যক'),
     description: z.string().optional(),
     paymentDetails: z.array(
       z.object({
@@ -67,7 +70,8 @@ const updatePreExamineeRegistrationValidationSchema = z.object({
       .array(
         z.object({
           marhalaName: z.string().optional(),
-          totalExamineesSlots: z.number().optional(),
+          regularExamineesSlots: z.number().optional(),
+          irregularExamineesSlots: z.number().optional(),
           startingRegistrationNumber: z.number().optional(),
           endingRegistrationNumber: z.number().optional()
         })
