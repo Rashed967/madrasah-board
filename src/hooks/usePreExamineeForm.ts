@@ -125,9 +125,10 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
       )
 
       console.log('Marhalas response:', response)
+      console.log('highestMarhala', madrasah.madrasah_information.highestMarhala.level)
       if (response.success) {
-        // filter((marhala) => marhala.level > madrasah.madrasah_information.highestMarhala.level)
-        const formattedMarhalas = response.data.map((marhala: any) => ({
+        
+        const formattedMarhalas = response.data.filter((marhala) => marhala.level > madrasah.madrasah_information.highestMarhala.level).map((marhala: any) => ({
           marhalaName: marhala.name.bengaliName,
           marhalaId: marhala._id,
           totalExamineesSlots: 0,
@@ -143,7 +144,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
         }else{
           setMadrasahSearchInputError("")
         }
-       setMarhalas(formattedMarhalas)
+      //  setMarhalas(formattedMarhalas)
         
         setFormData((prev) => ({
           ...prev,
