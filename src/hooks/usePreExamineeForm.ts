@@ -10,7 +10,7 @@ import {
 import { preExamineeRegistrationServices } from '@/services/preExamineeRegistrationService'
 import { useStatusDialog } from '@/hooks/useStatusDialog'
 
-const initialFormState = {
+export const initialFormState = {
   exam: '',
   madrasah: '',
   examineesPerMahala: [],
@@ -457,6 +457,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     handleSubmit,
     paymentError,
     madrasahSearchInputError,
-    recalculateFees
+    recalculateFees,
+    setSearchTerm
   }
 }

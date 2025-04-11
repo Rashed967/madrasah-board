@@ -74,12 +74,12 @@ export default function Sidebar() {
           icon: MdFormatListBulletedAdd 
         },
         {
-          name: 'প্রাক নিবন্ধন',
+          name: 'নিবন্ধন ফি গ্রহণ',
           href: '/dashboard/exam/pre-examinee-registration',
           icon: MdAdd
         },
         {
-          name: 'সকল প্রাক নিবন্ধন',
+          name: 'নিবন্ধন ফি গ্রহণের তালিকা',
           href: '/dashboard/exam/all-pre-examinee-registrations',
           icon: MdSavedSearch
         },

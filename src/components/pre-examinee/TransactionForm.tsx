@@ -173,6 +173,15 @@ const TransactionForm = memo(
                 <p className="text-red-500 text-sm mt-1">{paymentError}</p>
               )}
             </div>
+            <div>
+              <Label>বাকি টাকা</Label>
+              <Input
+                type="number"
+                value={transactionDetails.totalAmount - (transactionDetails.paidAmount || 0)}
+                disabled
+                className="bg-gray-50"
+              />
+            </div>
           </div>
         )}
 

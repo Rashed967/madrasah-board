@@ -17,7 +17,7 @@ import { examServices } from '@/services/examService'
 import { PreExamineeRegistrationValidation } from '@/features/preExamineeRegistration/validation'
 import globalValidateRequest from '@/middleware/globalValidateRequest'
 import { preExamineeRegistrationServices } from '@/services/preExamineeRegistrationService'
-import { usePreExamineeForm } from '@/hooks/usePreExamineeForm'
+import { initialFormState, usePreExamineeForm } from '@/hooks/usePreExamineeForm'
 import { useStatusDialog } from '@/hooks/useStatusDialog'
 import {
   ExamType,
@@ -96,6 +96,8 @@ export default function PreExamineeRegistrationPage() {
   const [marhalas, setMarhalas] = useState<IMarhala[]>([])
   const [useLateRegistrationFee, setUseLateRegistrationFee] = useState(false)
   const [isLateRegistrationEnabled, setIsLateRegistrationEnabled] = useState(false)
+  const [isExamSelected, setIsExamSelected] = useState(false)
+
 
   const { statusDialog, showSuccessDialog, showErrorDialog, closeDialog } =
     useStatusDialog()
@@ -116,7 +118,8 @@ export default function PreExamineeRegistrationPage() {
     handleSubmit: handleFormSubmit,
     paymentError,
     madrasahSearchInputError,
-    recalculateFees
+    recalculateFees,
+    setSearchTerm
   } = usePreExamineeForm(selectedExamDetails)
 
   // fetch all exams from database
@@ -180,7 +183,10 @@ export default function PreExamineeRegistrationPage() {
     (value: string) => {
       const examDetails = exams.find((exam) => exam._id === value)
       console.log(examDetails)
+      setIsLateRegistrationEnabled(false)
+      setUseLateRegistrationFee(false)
       if (examDetails) {
+        setIsExamSelected(true)
         setSelectedExamDetails(examDetails)
         setFormData((prev) => ({
           ...prev,
@@ -289,6 +295,13 @@ export default function PreExamineeRegistrationPage() {
         return
       }
 
+      if (formData.transactionDetails.paidAmount > formData.transactionDetails.totalAmount) {
+        showErrorDialog(
+          'পরিশোধিত টাকার পরিমান মোট টাকার চেয়ে বেশি হতে পারবে না'
+        )
+        return
+      }
+
       try {
         setIsSubmitting(true)
         const response =
@@ -298,6 +311,10 @@ export default function PreExamineeRegistrationPage() {
           showSuccessDialog(
             response.message || 'পরীক্ষার্থী প্রি-নিবন্ধন তৈরি করা হয়েছে'
           )
+          // reset the form
+          setFormData(initialFormState)
+          setSearchTerm('')
+          setUseLateRegistrationFee(false)
           generatePDF(response.data as IPreExamineeRegistration)
         }
       } catch (error) {
@@ -335,7 +352,7 @@ export default function PreExamineeRegistrationPage() {
       <Card className="bg-white shadow-sm">
         <CardHeader className="border-b">
           <CardTitle className="text-lg font-semibold">
-            পরীক্ষার্থী প্রি-নিবন্ধন
+            নিবন্ধন ফি গ্রহণ
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -356,6 +373,7 @@ export default function PreExamineeRegistrationPage() {
                 showDropdown={showDropdown}
                 onMadrasahSelect={handleMadrasahSelect}
                 madrasahSearchInputError={madrasahSearchInputError}
+                isExamSelected={isExamSelected}
               />
             </div>
 
