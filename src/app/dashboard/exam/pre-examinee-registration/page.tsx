@@ -105,13 +105,18 @@ export default function PreExamineeRegistrationPage() {
     setFormData,
     searchTerm,
     searchResults,
+    isSearching,
     showDropdown,
+    selectedMadrasahDetails,
+    latestRegistrationNumber,
     handleSearch,
     handleMadrasahSelect,
     handleExamineeCountChange,
     handleTransactionChange,
-    selectedMadrasahDetails,
-    madrasahSearchInputError
+    handleSubmit: handleFormSubmit,
+    paymentError,
+    madrasahSearchInputError,
+    recalculateFees
   } = usePreExamineeForm(selectedExamDetails)
 
   // fetch all exams from database
@@ -358,7 +363,12 @@ export default function PreExamineeRegistrationPage() {
               <div className="flex items-center gap-2 mb-4">
                 <Switch
                   checked={useLateRegistrationFee}
-                  onCheckedChange={setUseLateRegistrationFee}
+                  onCheckedChange={(checked) => {
+                    console.log('Toggle button clicked, new value:', checked);
+                    setUseLateRegistrationFee(checked);
+                    // Recalculate fees when toggle changes
+                    recalculateFees(checked);
+                  }}
                   disabled={!isLateRegistrationEnabled}
                 />
                 <Label>বিলম্ব ফি প্রয়োগ করুন</Label>
@@ -373,6 +383,7 @@ export default function PreExamineeRegistrationPage() {
                 মারহালা-ভিত্তিক নিবন্ধন সংখ্যা
               </h3>
               {/* MarhalaRegistrationTable component */}
+              {(() => { console.log('Passing useLateRegistrationFee to MarhalaRegistrationTable:', useLateRegistrationFee); return null; })()}
               <MarhalaRegistrationTable
                 examineesPerMahala={formData.examineesPerMahala}
                 onExamineeCountChange={handleExamineeCountChange}

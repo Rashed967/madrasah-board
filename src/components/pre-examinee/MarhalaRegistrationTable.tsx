@@ -27,7 +27,7 @@ const MarhalaRegistrationTable = memo(
     totalAmount,
     useLateRegistrationFee
   }: MarhalaTableProps) => {
-    console.log(useLateRegistrationFee)
+    console.log('MarhalaRegistrationTable rendered with useLateRegistrationFee:', useLateRegistrationFee)
     return (
       <div className="border rounded-lg overflow-x-auto">
         <style>{`

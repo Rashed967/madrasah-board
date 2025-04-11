@@ -182,6 +182,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     { regularExamineesSlots, irregularExamineesSlots }: { regularExamineesSlots: number, irregularExamineesSlots: number },
     useLateRegistrationFee: boolean
   ) => {
+    console.log('handleExamineeCountChange called with useLateRegistrationFee:', useLateRegistrationFee);
     if (!selectedExamDetails) return
 
     const calculateFeesForMarhala = (marhalaId: string, regularCount: number, irregularCount: number) => {
@@ -194,13 +195,19 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
       const safeRegularCount = regularCount || 0
       const safeIrregularCount = irregularCount || 0
 
-      // Use late registration fee if enabled and past end date
-      const fees = (useLateRegistrationFee && isLateRegistration)
-        ? safeRegularCount * (selectedExamDetails.lateRegistrationFeeForRegularStudent || 0) +
-          safeIrregularCount * (selectedExamDetails.lateRegistrationFeeForIrregularStudent || 0)
-        : safeRegularCount * (selectedExamDetails.registrationFeeForRegularStudent || 0) +
-          safeIrregularCount * (selectedExamDetails.registrationFeeForIrregularStudent || 0)
+      // Use late registration fee if enabled
+      let fees = 0;
+      if (useLateRegistrationFee) {
+        // Use late registration fees
+        fees = safeRegularCount * (selectedExamDetails.lateRegistrationFeeForRegularStudent || 0) +
+               safeIrregularCount * (selectedExamDetails.lateRegistrationFeeForIrregularStudent || 0);
+      } else {
+        // Use regular registration fees
+        fees = safeRegularCount * (selectedExamDetails.registrationFeeForRegularStudent || 0) +
+               safeIrregularCount * (selectedExamDetails.registrationFeeForIrregularStudent || 0);
+      }
 
+      console.log('Calculated fees:', fees, 'using late registration fee:', useLateRegistrationFee);
       return fees
     }
 
@@ -273,6 +280,56 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
         : currentStartNumber
     )
   }
+
+  // New function to recalculate fees when late registration toggle changes
+  const recalculateFees = (useLateRegistrationFee: boolean) => {
+    console.log('Recalculating fees with useLateRegistrationFee:', useLateRegistrationFee);
+    if (!selectedExamDetails) return;
+
+    const calculateFeesForMarhala = (regularCount: number, irregularCount: number) => {
+      // Ensure numbers are valid, default to 0 if undefined
+      const safeRegularCount = regularCount || 0;
+      const safeIrregularCount = irregularCount || 0;
+
+      // Use late registration fee if enabled
+      let fees = 0;
+      if (useLateRegistrationFee) {
+        // Use late registration fees
+        fees = safeRegularCount * (selectedExamDetails.lateRegistrationFeeForRegularStudent || 0) +
+               safeIrregularCount * (selectedExamDetails.lateRegistrationFeeForIrregularStudent || 0);
+      } else {
+        // Use regular registration fees
+        fees = safeRegularCount * (selectedExamDetails.registrationFeeForRegularStudent || 0) +
+               safeIrregularCount * (selectedExamDetails.registrationFeeForIrregularStudent || 0);
+      }
+
+      return fees;
+    };
+
+    const updatedExamineesPerMahala = formData.examineesPerMahala.map(marhala => {
+      const regularCount = marhala.regularExamineesSlots || 0;
+      const irregularCount = marhala.irregularExamineesSlots || 0;
+      
+      return {
+        ...marhala,
+        totalFeesAmount: calculateFeesForMarhala(regularCount, irregularCount)
+      };
+    });
+
+    const totalFeesAmount = updatedExamineesPerMahala.reduce(
+      (sum, marhala) => sum + (marhala.totalFeesAmount || 0),
+      0
+    );
+
+    setFormData(prev => ({
+      ...prev,
+      examineesPerMahala: updatedExamineesPerMahala,
+      transactionDetails: {
+        ...prev.transactionDetails,
+        totalAmount: totalFeesAmount
+      }
+    }));
+  };
 
   const handleTransactionChange = (field: string, value: any) => {
     setFormData((prev) => {
@@ -399,6 +456,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     handleTransactionChange,
     handleSubmit,
     paymentError,
-    madrasahSearchInputError
+    madrasahSearchInputError,
+    recalculateFees
   }
 }
