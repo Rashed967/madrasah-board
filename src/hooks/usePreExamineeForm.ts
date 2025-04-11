@@ -128,7 +128,24 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
       console.log('highestMarhala', madrasah.madrasah_information.highestMarhala.level)
       if (response.success) {
         
-        const formattedMarhalas = response.data.filter((marhala) => marhala.level > madrasah.madrasah_information.highestMarhala.level).map((marhala: any) => ({
+        // First filter marhalas with level higher than madrasah's highest marhala level
+        const higherLevelMarhalas = response.data.filter(
+          (marhala) => marhala.level > madrasah.madrasah_information.highestMarhala.level
+        );
+        
+        // Then filter marhalas that have fees set for the selected exam
+        const marhalasWithFees = higherLevelMarhalas.filter((marhala) => {
+          if (!selectedExamDetails) return false;
+          
+          // Check if the marhala has fees set in the exam
+          const examFees = marhalaType === 'girls' 
+            ? selectedExamDetails.examFeeForGirls 
+            : selectedExamDetails.examFeeForBoys;
+            
+          return examFees.some(fee => fee.marhala === marhala._id);
+        });
+        
+        const formattedMarhalas = marhalasWithFees.map((marhala: any) => ({
           marhalaName: marhala.name.bengaliName,
           marhalaId: marhala._id,
           totalExamineesSlots: 0,
