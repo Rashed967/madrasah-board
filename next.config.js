@@ -11,7 +11,8 @@ const nextConfig = {
   },
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['@mui/icons-material', '@mui/material']
+    optimizePackageImports: ['@mui/icons-material', '@mui/material'],
+    serverActions: true
   },
   poweredByHeader: false,
   compress: true,
