@@ -58,7 +58,7 @@ interface MadrasahResponse {
 }
 
 interface MadrasahSelectionForExamineeRegistrationProps {
-  onMadrasahSelect?: (madrasah: Madrasah) => void;
+  onMadrasahSelect?: (madrasah: Madrasah | null) => void;
 }
 
 const MadrasahSelectionForExamineeRegistration = ({ 
@@ -70,6 +70,7 @@ const MadrasahSelectionForExamineeRegistration = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,6 +93,13 @@ const MadrasahSelectionForExamineeRegistration = ({
     if (!term.trim() || term.length < 3) {
       setMadrasahs([]);
       setError(null);
+      // Clear selected madrasah when search term is too short
+      if (selectedMadrasah) {
+        setSelectedMadrasah(null);
+        if (onMadrasahSelect) {
+          onMadrasahSelect(null);
+        }
+      }
       return;
     }
 
@@ -114,14 +122,35 @@ const MadrasahSelectionForExamineeRegistration = ({
         setMadrasahs(response.data.data);
         if (response.data.data.length === 0) {
           setError("কোন মাদ্রাসা পাওয়া যায়নি");
+          // Clear selected madrasah when no results found
+          if (selectedMadrasah) {
+            setSelectedMadrasah(null);
+            if (onMadrasahSelect) {
+              onMadrasahSelect(null);
+            }
+          }
         }
         setShowSuggestions(true);
       } else {
         setError("মাদ্রাসার তথ্য পাওয়া যায়নি");
+        // Clear selected madrasah when no results found
+        if (selectedMadrasah) {
+          setSelectedMadrasah(null);
+          if (onMadrasahSelect) {
+            onMadrasahSelect(null);
+          }
+        }
       }
     } catch (err) {
       console.error("Error searching madrasahs:", err);
       setError("মাদ্রাসা খুঁজতে সমস্যা হয়েছে");
+      // Clear selected madrasah on error
+      if (selectedMadrasah) {
+        setSelectedMadrasah(null);
+        if (onMadrasahSelect) {
+          onMadrasahSelect(null);
+        }
+      }
     } finally {
       setIsLoading(false);
     }
@@ -148,6 +177,34 @@ const MadrasahSelectionForExamineeRegistration = ({
     searchTimeoutRef.current = setTimeout(() => {
       handleSearch(value);
     }, 500); // 500ms debounce
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Prevent form submission on Enter key
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch(searchTerm);
+      return;
+    }
+
+    // Keyboard navigation
+    if (madrasahs.length > 0 && showSuggestions) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setHighlightedIndex(prev => 
+          prev < madrasahs.length - 1 ? prev + 1 : prev
+        );
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setHighlightedIndex(prev => prev > 0 ? prev - 1 : prev);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        setShowSuggestions(false);
+      } else if (e.key === 'Enter' && highlightedIndex >= 0) {
+        e.preventDefault();
+        handleMadrasahSelect(madrasahs[highlightedIndex]);
+      }
+    }
   };
 
   const handleMadrasahSelect = (madrasah: Madrasah) => {
@@ -181,6 +238,7 @@ const MadrasahSelectionForExamineeRegistration = ({
             className="w-full pr-8"
             value={searchTerm}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             onFocus={() => {
               if (madrasahs.length > 0 && !selectedMadrasah) {
                 setShowSuggestions(true);
@@ -215,11 +273,14 @@ const MadrasahSelectionForExamineeRegistration = ({
           ref={suggestionsRef}
           className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
         >
-          {madrasahs.map((madrasah) => (
+          {madrasahs.map((madrasah, index) => (
             <div
               key={madrasah._id}
-              className="p-2 hover:bg-gray-100 cursor-pointer"
+              className={`p-2 cursor-pointer ${
+                index === highlightedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
+              }`}
               onClick={() => handleMadrasahSelect(madrasah)}
+              onMouseEnter={() => setHighlightedIndex(index)}
             >
               <div className="font-medium">{madrasah.madrasahNames.bengaliName}</div>
               <div className="text-sm text-gray-600">কোড: {madrasah.code}</div>

@@ -97,14 +97,18 @@ const ExamineeRegistrationTable = ({
   const [registrations, setRegistrations] = useState<PreExamineeRegistration[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedMadrasahName, setSelectedMadrasahName] = useState<string>("");
 
   useEffect(() => {
-    const fetchRegistrations = async () => {
-      if (!selectedExamId || !selectedMadrasahId) {
-        setRegistrations([]);
-        return;
-      }
+    // Clear registrations when either selectedExamId or selectedMadrasahId is empty
+    if (!selectedExamId || !selectedMadrasahId) {
+      setRegistrations([]);
+      setError(null);
+      setSelectedMadrasahName("");
+      return;
+    }
 
+    const fetchRegistrations = async () => {
       try {
         setIsLoading(true);
         setError(null);
@@ -122,12 +126,19 @@ const ExamineeRegistrationTable = ({
 
         if (response.data && response.data.success && response.data.data && response.data.data.data) {
           setRegistrations(response.data.data.data);
+          if (response.data.data.data.length > 0) {
+            setSelectedMadrasahName(response.data.data.data[0].madrasah.madrasahNames.bengaliName);
+          }
         } else {
           setError("নিবন্ধনের তথ্য পাওয়া যায়নি");
+          setRegistrations([]);
+          setSelectedMadrasahName("");
         }
       } catch (err) {
         console.error("Error fetching registrations:", err);
-        setError("নিবন্ধনের তথ্য লোড করতে সমস্যা হয়েছে");
+        setError("নিবন্ধনের তথ্য পাওয়া যায়নি");
+        setRegistrations([]);
+        setSelectedMadrasahName("");
       } finally {
         setIsLoading(false);
       }
@@ -174,42 +185,48 @@ const ExamineeRegistrationTable = ({
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>মাদ্রাসা</TableHead>
-            <TableHead>মহালা</TableHead>
-            <TableHead>নিয়মিত পরীক্ষার্থী</TableHead>
-            <TableHead>অনিয়মিত পরীক্ষার্থী</TableHead>
-            <TableHead>অ্যাকশন</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {registrations.map((registration) => (
-            registration.examineesPerMahala.map((examineePerMahala) => (
-              <TableRow key={`${registration._id}-${examineePerMahala._id}`}>
-                <TableCell>{registration.madrasah.madrasahNames.bengaliName}</TableCell>
-                <TableCell>{examineePerMahala.marhala.name.bengaliName}</TableCell>
-                <TableCell>
-                  {examineePerMahala.regularExamineesSlots - examineePerMahala.remainingRegularExamineesSlots} / {examineePerMahala.regularExamineesSlots}
-                </TableCell>
-                <TableCell>
-                  {examineePerMahala.irregularExamineesSlots - examineePerMahala.remainingIrregularExamineesSlots} / {examineePerMahala.irregularExamineesSlots}
-                </TableCell>
-                <TableCell>
-                  <Button 
-                    onClick={() => handleSubmit(registration._id)}
-                    className="bg-[#52B788] hover:bg-[#52B788]/90 text-white"
-                  >
-                    সাবমিট
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
-          ))}
-        </TableBody>
-      </Table>
+    <div className="space-y-4">
+      {selectedMadrasahName && (
+        <div className="text-lg font-semibold text-center">
+          {selectedMadrasahName}
+        </div>
+      )}
+      
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>মহালা</TableHead>
+              <TableHead>নিয়মিত পরীক্ষার্থী</TableHead>
+              <TableHead>অনিয়মিত পরীক্ষার্থী</TableHead>
+              <TableHead>অ্যাকশন</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {registrations.map((registration) => (
+              registration.examineesPerMahala.map((examineePerMahala) => (
+                <TableRow key={`${registration._id}-${examineePerMahala._id}`}>
+                  <TableCell>{examineePerMahala.marhala.name.bengaliName}</TableCell>
+                  <TableCell>
+                    {examineePerMahala.regularExamineesSlots - examineePerMahala.remainingRegularExamineesSlots} / {examineePerMahala.regularExamineesSlots}
+                  </TableCell>
+                  <TableCell>
+                    {examineePerMahala.irregularExamineesSlots - examineePerMahala.remainingIrregularExamineesSlots} / {examineePerMahala.irregularExamineesSlots}
+                  </TableCell>
+                  <TableCell>
+                    <Button 
+                      onClick={() => handleSubmit(registration._id)}
+                      className="bg-[#52B788] hover:bg-[#52B788]/90 text-white"
+                    >
+                      নিবন্ধন করুন
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
