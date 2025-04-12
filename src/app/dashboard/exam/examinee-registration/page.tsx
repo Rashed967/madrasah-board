@@ -36,9 +36,50 @@ interface ExamResponse {
   data: Exam[];
 }
 
+interface MadrasahNames {
+  bengaliName: string;
+  arabicName: string;
+  englishName: string;
+  _id: string;
+  id: string;
+}
+
+interface MadrasahAddress {
+  _id: string;
+  division: string;
+  district: string;
+  subDistrict_policeStation: string;
+  postOffice: string;
+  village: string;
+  holdingNumber: string;
+  id: string;
+}
+
+interface MadrasahInformation {
+  _id: string;
+  madrasahType: string;
+  totalStudents: number;
+  totalTeacherAndStuff: number;
+  id: string;
+}
+
+interface Madrasah {
+  _id: string;
+  madrasahNames: MadrasahNames;
+  code: string;
+  email: string;
+  communicatorName: string;
+  contactNo1: string;
+  contactNo2: string;
+  address: MadrasahAddress;
+  madrasah_information: MadrasahInformation;
+  id: string;
+}
+
 const ExamineeRegistrationPage = () => {
   const [exams, setExams] = useState<Exam[]>([]);
   const [selectedExamId, setSelectedExamId] = useState<string>("");
+  const [selectedMadrasah, setSelectedMadrasah] = useState<Madrasah | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,14 +112,14 @@ const ExamineeRegistrationPage = () => {
     fetchExams();
   }, []);
 
-
-  // select madrasah with search 
-  
-
   const handleExamSelect = (examId: string) => {
     setSelectedExamId(examId);
     console.log("Selected exam ID:", examId);
-    // Here you can add additional logic when an exam is selected
+  };
+
+  const handleMadrasahSelect = (madrasah: Madrasah | null) => {
+    setSelectedMadrasah(madrasah);
+    console.log("Selected madrasah:", madrasah);
   };
 
   return (
@@ -91,18 +132,23 @@ const ExamineeRegistrationPage = () => {
         </CardHeader>
         <CardContent className="p-6">
           <form className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="flex gap-4">
               {/* Select Dropdown */}
               <ExamSelectionForExamineeRegistrationPage 
                 exams={exams} 
                 onExamSelect={handleExamSelect}
               />
               {/* Search Input with Button */}
-              <MadrasahSelectionForExamineeRegistration />
+              <MadrasahSelectionForExamineeRegistration 
+                onMadrasahSelect={handleMadrasahSelect}
+              />
             </div>
             
             {/* Table Component */}
-            <ExamineeRegistrationTable />
+            <ExamineeRegistrationTable 
+              selectedExamId={selectedExamId}
+              selectedMadrasahId={selectedMadrasah?._id}
+            />
           </form>
         </CardContent>
       </Card>

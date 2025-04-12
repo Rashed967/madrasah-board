@@ -32,7 +32,7 @@ const ExamSelectionForExamineeRegistrationPage = ({
   };
 
   return (
-    <div>
+    <div className="w-1/3">
       <Select value={selectedExam} onValueChange={handleExamChange}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="পরীক্ষা নির্বাচন করুন" />
