@@ -85,8 +85,8 @@ export default function Sidebar() {
         },
         {
           name: 'পরীক্ষার্থী নিবন্ধন',
-          href: '/dashboard/exam/examine-registration',
-          icon: MdAdd
+          href: '/dashboard/exam/examinee-registration',
+          icon: MdSavedSearch
         },
         {
           name: 'সকল নিবন্ধিত পরীক্ষার্থী',
