@@ -123,7 +123,7 @@ const ExamineeRegistrationPage = () => {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto mt-8 px-4 text-gray-800">
+    <div className="container w-full mx-auto mt-8 px-4 text-gray-800">
       <Card className="bg-white shadow-sm">
         <CardHeader className="border-b">
           <CardTitle className="text-lg font-semibold">
@@ -131,7 +131,7 @@ const ExamineeRegistrationPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
             <div className="flex gap-4">
               {/* Select Dropdown */}
               <ExamSelectionForExamineeRegistrationPage 
@@ -143,13 +143,13 @@ const ExamineeRegistrationPage = () => {
                 onMadrasahSelect={handleMadrasahSelect}
               />
             </div>
+            </form>
             
             {/* Table Component */}
             <ExamineeRegistrationTable 
               selectedExamId={selectedExamId}
               selectedMadrasahId={selectedMadrasah?._id}
             />
-          </form>
         </CardContent>
       </Card>
     </div>
