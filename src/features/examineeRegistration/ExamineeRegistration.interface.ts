@@ -31,7 +31,8 @@ export interface IRegesteredExaminee {
     registrationNumber: number;
     marks: Types.ObjectId;
     imageUrl?: string;
-    status: TExamineeStatus;
+    examineeStatus: TExamineeStatus;
+    roll: number;
     isDeleted?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
@@ -67,7 +68,8 @@ export interface IRegesteredExamineeResponse {
     registrationNumber: number;
     marks: Types.ObjectId;
     imageUrl?: string;
-    status: TExamineeStatus;
+    examineeStatus: TExamineeStatus;
+    roll: number;
     isDeleted?: boolean;
     createdAt?: Date;
 }   

@@ -235,12 +235,12 @@ export default function AllRegisteredExaminees() {
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${
-                          examinee.status === 'নির্বাচিত'
+                          examinee.examineeStatus === 'নির্বাচিত'
                             ? 'bg-green-100 text-green-800'
                             : 'bg-yellow-100 text-yellow-800'
                         }`}
                       >
-                        {examinee.status}
+                        {examinee.examineeStatus}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
