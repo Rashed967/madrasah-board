@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Table,
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select'
 import { Pagination } from '@/components/ui/pagination'
 import { StatusDialog } from '@/components/ui/status-dialog'
-import { MoreVertical, Edit, Trash, FileText } from 'lucide-react'
+import { MoreVertical, Edit, Trash, FileText, List, FileDown } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +36,8 @@ import IRegesteredExaminee, { IRegesteredExamineeResponse } from '@/features/exa
 import { ApiResponse } from '@/core/api/apiService'
 import { convertToBengali } from '@/utils/convertToBengali'
 import { SmallSwitch, Switch } from '@/components/ui/switch'
+import MadrasahSelectionForExamineeRegistration from '@/components/examinee-registration/MadrasahSelectionForExamineeRegistration'
+import Madrasah from '@/types/madrasah'
 
 
 
@@ -61,13 +63,23 @@ export default function AllRegisteredExaminees() {
   const [limitPerPage, setLimitPerPage] = useState(ITEMS_PER_PAGE)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedExam, setSelectedExam] = useState('')
+  const [selectedMadrasah, setSelectedMadrasah] = useState('')
+  const [madrasahSearchTerm, setMadrasahSearchTerm] = useState('')
+  const [madrasahSuggestions, setMadrasahSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [selectedMadrasahName, setSelectedMadrasahName] = useState('')
   const [exams, setExams] = useState([])
+  const [madrasahs, setMadrasahs] = useState([])
   const [statusDialog, setStatusDialog] = useState({
     isOpen: false,
     type: 'success' as 'success' | 'error',
     title: '',
     message: ''
   })
+  const madrasahSearchRef = useRef(null)
+  const [hasExaminees, setHasExaminees] = useState(false)
+
+
 
   const fetchExams = async () => {
     try {
@@ -80,8 +92,21 @@ export default function AllRegisteredExaminees() {
     }
   }
 
+  const fetchMadrasahs = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/madrasahs?limit=1000`)
+      const data = await response.json()
+      if (data.success) {
+        setMadrasahs(data.data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch madrasahs:', err)
+    }
+  }
+
   useEffect(() => {
     fetchExams()
+    fetchMadrasahs()
   }, [])
 
   const fetchExaminees = async () => {
@@ -89,26 +114,46 @@ export default function AllRegisteredExaminees() {
     setError(null)
     try {
       console.log('Fetching examinees...')
-      const response = await examineeRegistrationService.getAll(currentPage, limitPerPage)
-      console.log('API Response:', response)
-      console.log('Response data:', response.data)
-      console.log('Response meta:', response.meta)
-      if (response.success) {
-        setExaminees(response.data as unknown as IRegesteredExamineeResponse[])
-        setTotalDocuments(response.meta.total)
-        setTotalPages(Math.ceil(response.meta.total / limitPerPage))
+      // get access token from local storage
+      const accessToken = localStorage.getItem('access_token')
+      
+      // Build the URL with query parameters
+      let url = `${process.env.NEXT_PUBLIC_MAIN_URL}/regestered-examinees?page=${currentPage}&limit=${limitPerPage}`
+      
+      if (selectedExam) {
+        url += `&exam=${selectedExam}`
+      }
+      
+      if (selectedMadrasah) {
+        url += `&madrasah=${selectedMadrasah}`
+      }
+      
+      console.log('API URL:', url)
+      
+      // Make the API call with authorization header
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      
+      const data = await response.json()
+      console.log('API Response:', data)
+      
+      if (data.success) {
+        setExaminees(data.data)
+        setTotalDocuments(data.meta.total)
+        setTotalPages(Math.ceil(data.meta.total / limitPerPage))
+        // Check if there are any examinees
+        setHasExaminees(data.data && data.data.length > 0)
       } else {
-        throw new Error(response.message || 'Failed to fetch examinees')
+        throw new Error(data.message || 'Failed to fetch examinees')
       }
     } catch (err: any) {
       console.error('Fetch Error:', err)
       setError(err.message)
-      setStatusDialog({
-        isOpen: true,
-        type: 'error',
-        title: 'Error',
-        message: err.message
-      })
+
+      setHasExaminees(false)
     } finally {
       setLoading(false)
     }
@@ -116,7 +161,7 @@ export default function AllRegisteredExaminees() {
 
   useEffect(() => {
     fetchExaminees()
-  }, [currentPage, limitPerPage])
+  }, [currentPage, limitPerPage, selectedExam, selectedMadrasah])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -175,9 +220,131 @@ export default function AllRegisteredExaminees() {
     }
   }
 
+  const handleDownloadFeeForm = async () => {
+    if (!selectedExam || !selectedMadrasah) {
+      setStatusDialog({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: 'পরীক্ষা ও মাদ্রাসা নির্বাচন করুন'
+      })
+      return
+    }
+    // get access token from local storage
+    const accessToken = localStorage.getItem('access_token')
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/regestered-examinees?madrasah=${selectedMadrasah}&exam=${selectedExam}&limit=100`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      const data = await response.json()
+      console.log('All registered examinees for PDF:', data.data)
+    } catch (error) {
+      console.error('Error fetching data for PDF:', error)
+    }
+  }
+
+  const handleDownloadInvoice = async () => {
+    if (!selectedExam || !selectedMadrasah) {
+      setStatusDialog({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: 'পরীক্ষা ও মাদ্রাসা নির্বাচন করুন'
+      })
+      return
+    }
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/regestered-examinees?madrasah=${selectedMadrasah}&exam=${selectedExam}`)
+      const data = await response.json()
+      console.log('All registered examinees for Invoice:', data)
+    } catch (error) {
+      console.error('Error fetching data for Invoice:', error)
+    }
+  }
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (madrasahSearchRef.current && !madrasahSearchRef.current.contains(event.target)) {
+        setShowSuggestions(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  // Fetch madrasah suggestions when search term changes
+  useEffect(() => {
+    const fetchMadrasahSuggestions = async () => {
+      // get access token from local storage
+      const accessToken = localStorage.getItem('access_token')
+
+      if (madrasahSearchTerm.length < 2) {
+        setMadrasahSuggestions([])
+        setShowSuggestions(false)
+        return
+      }
+
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/madrasah?searchTerm=${madrasahSearchTerm}`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        })
+        const data = await response.json()
+        if (data.success) {
+          setMadrasahSuggestions(data.data)
+          setShowSuggestions(true)
+        }
+      } catch (err) {
+        console.error('Failed to fetch madrasah suggestions:', err)
+      }
+    }
+
+    const debounceTimer = setTimeout(() => {
+      fetchMadrasahSuggestions()
+    }, 300)
+
+    return () => clearTimeout(debounceTimer)
+  }, [madrasahSearchTerm])
+
+  const handleMadrasahSelect = (madrasah) => {
+    setSelectedMadrasah(madrasah._id)
+    setSelectedMadrasahName(`${madrasah.madrasahNames.bengaliName} - ${madrasah.code}`)
+    setMadrasahSearchTerm(`${madrasah.madrasahNames.bengaliName} - ${madrasah.code}`)
+    setShowSuggestions(false)
+  }
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-xl font-semibold mb-2 text-gray-800">সকল নিবন্ধিত পরীক্ষার্থী</h1>
+
+      {/* PDF Download Buttons */}
+      <div className="flex gap-4 mb-4">
+        <Button 
+          onClick={handleDownloadFeeForm} 
+          disabled={!selectedExam || !selectedMadrasah || !hasExaminees}
+          className="bg-[#52B788] text-white"
+        >
+          <List className="mr-2 h-4 w-4" />
+          ফি জমা ফরম
+        </Button>
+        <Button 
+          onClick={handleDownloadInvoice} 
+          disabled={!selectedExam || !selectedMadrasah || !hasExaminees}
+          className="bg-[#52B788] text-white"
+        >
+          <FileDown className="mr-2 h-4 w-4" />
+          ইনভয়েস ডাউনলোড
+        </Button>
+      </div>
 
       {/* Filter Section */}
       <Card className="mb-4">
@@ -198,15 +365,29 @@ export default function AllRegisteredExaminees() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 relative" ref={madrasahSearchRef}>
                 <Input
                   type="text"
-                  placeholder="নাম অথবা রেজিস্ট্রেশন নম্বর..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="মাদ্রাসার নাম বা কোড..."
+                  value={madrasahSearchTerm}
+                  onChange={(e) => setMadrasahSearchTerm(e.target.value)}
                   className="text-gray-700"
                 />
+                {showSuggestions && madrasahSuggestions.length > 0 && (
+                  <div className="text-black absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                    {madrasahSuggestions.map((madrasah) => (
+                      <div
+                        key={madrasah._id}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleMadrasahSelect(madrasah)}
+                      >
+                        {madrasah.madrasahNames.bengaliName} - {madrasah.code}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+
               <Button type="submit" className="bg-[#52B788] text-white">
                 <MdFilterList className="mr-2" />
                 ফিল্টার করুন

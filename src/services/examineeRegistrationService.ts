@@ -30,7 +30,7 @@ export const examineeRegistrationService = {
     }
   },
 
-  getAll: async (page: number = 1, limit: number = 10): Promise<ApiResponse<ExamineeListResponse>> => {
+  getAll: async (page: number = 1, limit: number = 10, exam: string, madrasah: string): Promise<ApiResponse<ExamineeListResponse>> => {
     try {
       const response = await get<ExamineeListResponse>(`/regestered-examinees?page=${page}&limit=${limit}`)
       return response
