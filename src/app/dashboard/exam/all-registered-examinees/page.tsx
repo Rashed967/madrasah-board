@@ -35,6 +35,9 @@ import { examineeRegistrationService } from '@/services/examineeRegistrationServ
 import IRegesteredExaminee, { IRegesteredExamineeResponse } from '@/features/examineeRegistration/ExamineeRegistration.interface'
 import { ApiResponse } from '@/core/api/apiService'
 import { convertToBengali } from '@/utils/convertToBengali'
+import { SmallSwitch, Switch } from '@/components/ui/switch'
+
+
 
 const ITEMS_PER_PAGE = 10
 
@@ -149,6 +152,29 @@ export default function AllRegisteredExaminees() {
     }
   }
 
+  const handleStatusChange = async (id: string, checked: boolean) => {
+    console.log('Status changing...', id)
+    try {
+      const response = await examineeRegistrationService.updateStatus(id)
+      if (response.success && response.data) {
+        // Update the state with the new data including the roll number
+        setExaminees(prevExaminees => 
+          prevExaminees.map(examinee => 
+            examinee._id?.toString() === id 
+              ? { 
+                  ...examinee, 
+                  examineeStatus: checked ? 'নির্বাচিত' : 'অনির্বাচিত',
+                  roll: response.data.roll
+                } 
+              : examinee
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Status change error:', error)
+    }
+  }
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-xl font-semibold mb-2 text-gray-800">সকল নিবন্ধিত পরীক্ষার্থী</h1>
@@ -197,6 +223,7 @@ export default function AllRegisteredExaminees() {
             <TableHeader className="bg-[#52B788] text-white">
             <TableRow>
                 <TableHead>রেজিস্ট্রেশন নং</TableHead>
+                <TableHead>রোল</TableHead>
                 <TableHead>নাম</TableHead>
                 <TableHead>পিতার নাম</TableHead>
                 <TableHead>মারহালা</TableHead>
@@ -228,11 +255,23 @@ export default function AllRegisteredExaminees() {
                 examinees.map((examinee) => (
                   <TableRow key={examinee._id?.toString()}>
                     <TableCell className="text-gray-700">{convertToBengali(examinee.registrationNumber.toString())}</TableCell>
+                    <TableCell className="text-gray-700">{examinee.roll}</TableCell>
                     <TableCell className="text-gray-700">{examinee.examineeName?.bengaliName}</TableCell>
                     <TableCell className="text-gray-700">{examinee.fatherName?.bengaliName}</TableCell>
                     <TableCell className="text-gray-700">{examinee.marhala?.name?.bengaliName}</TableCell>
                     <TableCell className="text-gray-700">{examinee.madrasah?.madrasahNames?.bengaliName}</TableCell>
                     <TableCell>
+                      {/* add a beautiful and small toggle, toggle on in case of নির্বাচিত and toggle off in case of বাছাই করা */}
+                      {/* need more too small */}
+                      <div className='flex flex-col items-center gap-1'>
+                      <div>
+                      <SmallSwitch
+                        checked={examinee.examineeStatus === 'নির্বাচিত'}
+                        onCheckedChange={(checked) => handleStatusChange(examinee._id?.toString() || '', checked)}
+                      />
+                      </div>
+                      
+                      <div>
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${
                           examinee.examineeStatus === 'নির্বাচিত'
@@ -242,6 +281,9 @@ export default function AllRegisteredExaminees() {
                       >
                         {examinee.examineeStatus}
                       </span>
+                      </div>
+                      </div>
+                     
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu  >

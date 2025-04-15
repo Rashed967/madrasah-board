@@ -1,4 +1,4 @@
-import { ApiResponse, post, get, del } from '@/core/api/apiService'
+import { ApiResponse, post, get, del, patch } from '@/core/api/apiService'
 import IRegesteredExaminee from '@/features/examineeRegistration/ExamineeRegistration.interface'
 // import { IRegesteredExaminee } from '@/features/ExamineeRegistration/ExamineeRegistration.interface'
 
@@ -40,6 +40,21 @@ export const examineeRegistrationService = {
         statusCode: error?.response?.status || 500,
         message: error?.response?.data?.message || 'পরীক্ষার্থী তালিকা পেতে সমস্যা হয়েছে',
         data: { data: [], meta: { total: 0, page, limit } }
+      }
+    }
+  },
+
+  // update regestered examinee status, just with id, 
+  updateStatus: async (id: string): Promise<ApiResponse<IRegesteredExaminee>> => {
+    try {
+      const response = await patch<IRegesteredExaminee>(`/regestered-examinees/${id}/update-status-and-roll`)
+      return response
+    } catch (error: any) {
+      return {
+        success: false,
+        statusCode: error?.response?.status || 500,
+        message: error?.response?.data?.message || 'পরীক্ষার্থী স্ট্যাটাস পরিবর্তন করতে সমস্যা হয়েছে',
+        data: null
       }
     }
   },
