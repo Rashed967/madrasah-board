@@ -124,17 +124,17 @@ const formSchema = z.object({
   }),
   examineeName: z.object({
     bengaliName: z.string().min(1, { message: "পরীক্ষার্থীর বাংলা নাম আবশ্যক" }),
-    arabicName: z.string().min(1, { message: "পরীক্ষার্থীর আরবী নাম আবশ্যক" }),
+    arabicName: z.string().optional(),
     englishName: z.string().optional(),
   }),
   fatherName: z.object({
     bengaliName: z.string().min(1, { message: "পিতার বাংলা নাম আবশ্যক" }),
-    arabicName: z.string().min(1, { message: "পিতার আরবী নাম আবশ্যক" }),
+    arabicName: z.string().optional(),
     englishName: z.string().optional(),
   }),
   motherName: z.object({
     bengaliName: z.string().min(1, { message: "মাতার বাংলা নাম আবশ্যক" }),
-    arabicName: z.string().min(1, { message: "মাতার আরবী নাম আবশ্যক" }),
+    arabicName: z.string().optional(),
     englishName: z.string().optional(),
   }),
   birthDate: z.string().min(1, { message: "জন্ম তারিখ আবশ্যক" }),
@@ -287,6 +287,31 @@ const ExamineeRegistrationTable = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!selectedRegistration || !selectedExamId || !selectedMadrasahId) {
       showErrorDialog("সব তথ্য পূরণ করুন");
+      return;
+    }
+
+    // Check if the selected marhala is ফযীলত or মিশকাত
+    const selectedMarhala = selectedRegistration.examineesPerMahala.find(
+      (epm) => epm.marhala._id === values.marhala
+    )?.marhala;
+    
+    const isFazilatOrMishkat = selectedMarhala?.name?.bengaliName?.includes('ফযীলত') || 
+                              selectedMarhala?.name?.bengaliName?.includes('মিশকাত');
+    
+    // If it's ফযীলত or মিশকাত, validate Arabic names
+    if (isFazilatOrMishkat && (!values.examineeName.arabicName || values.examineeName.arabicName.trim() === '')) {
+      form.setError("examineeName.arabicName", {
+        type: "manual",
+        message: "ফযীলত/মিশকাত মারহালার জন্য পরীক্ষার্থীর আরবী নাম আবশ্যক"
+      });
+      return;
+    }
+    
+    if (isFazilatOrMishkat && (!values.fatherName.arabicName || values.fatherName.arabicName.trim() === '')) {
+      form.setError("fatherName.arabicName", {
+        type: "manual",
+        message: "ফযীলত/মিশকাত মারহালার জন্য পিতার আরবী নাম আবশ্যক"
+      });
       return;
     }
 
