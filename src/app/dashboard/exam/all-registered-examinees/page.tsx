@@ -234,13 +234,110 @@ export default function AllRegisteredExaminees() {
     const accessToken = localStorage.getItem('access_token')
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/regestered-examinees?madrasah=${selectedMadrasah}&exam=${selectedExam}&limit=100`, {
+      const registeredExamineesResponse = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/regestered-examinees?madrasah=${selectedMadrasah}&exam=${selectedExam}&limit=100`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
       })
-      const data = await response.json()
-      console.log('All registered examinees for PDF:', data.data)
+
+      const selectedExamResponse = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/exams/${selectedExam}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      const selectedExamData = await selectedExamResponse.json()
+      const registeredExaminees = await registeredExamineesResponse.json()
+
+      // get board info 
+      const boardInfoResponse = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/board-info/67bb52249fbe4879db797d88`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      const boardInfoData = await boardInfoResponse.json()
+
+      // ‍select madrasah 
+      const madrasahResponse = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/madrasah/${selectedMadrasah}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+      const madrasahData = await madrasahResponse.json()
+      console.log('madrasah data ', madrasahData.data)
+
+      // Clean up the examinees data by removing nested objects
+      const cleanedExaminees = registeredExaminees.data.map(examinee => {
+        // Create a new object with only the needed properties
+        const { 
+          _id, 
+          examineeName, 
+          fatherName, 
+          motherName, 
+          nid_or_birth_certificate_number, 
+          birthDate, 
+          registrationNumber, 
+          marks, 
+          imageUrl, 
+          examineeType, 
+          registrationType, 
+          isDeleted, 
+          createdAt, 
+          updatedAt, 
+          examineeStatus, 
+          roll,
+          marhala
+        } = examinee;
+        
+        // Keep only the specified properties in the marhala object
+        const cleanedMarhala = marhala ? {
+          name: marhala.name,
+          marhalaCategory: marhala.marhalaCategory,
+          marhalaType: marhala.marhalaType,
+          id: marhala.id
+        } : null;
+
+
+        return {
+          _id,
+          examineeName,
+          fatherName,
+          motherName,
+          nid_or_birth_certificate_number,
+          birthDate,
+          registrationNumber,
+          marks,
+          imageUrl,
+          examineeType,
+          registrationType,
+          isDeleted,
+          createdAt,
+          updatedAt,
+          examineeStatus,
+          roll,
+          marhala: cleanedMarhala
+        };
+      });
+
+      const finalData = {
+        registeredExaminees: cleanedExaminees,
+        selectedExam: selectedExamData.data,
+        boardInfo: boardInfoData.data,
+        madrasah: madrasahData.data
+      }
+      console.log('final data ', finalData)
+      // generate report and download it
+      const response = await fetch(`${process.env.NEXT_PUBLIC_JSREPORT_SERVER_URL}/examinee-list`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(finalData)
+      })
+      console.log('response', response)
+      const blob = await response.blob()
+      const pdfUrl = URL.createObjectURL(blob);
+      window.open(pdfUrl, '_blank');
+    
     } catch (error) {
       console.error('Error fetching data for PDF:', error)
     }
