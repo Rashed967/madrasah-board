@@ -94,6 +94,7 @@ const MarhalaRegistrationTable = memo(
                       type="number"
                       value={marhala.startingRegistrationNumber || ''}
                       readOnly
+                      disabled
                       className="!h-7 !w-20 !px-1 text-center bg-gray-50"
                     />
                     <span className="text-gray-400">-</span>
@@ -101,6 +102,7 @@ const MarhalaRegistrationTable = memo(
                       type="number"
                       value={marhala.endingRegistrationNumber || ''}
                       readOnly
+                      disabled
                       className="!h-7 !w-20 !px-1 text-center bg-gray-50"
                     />
                   </div>

@@ -180,14 +180,48 @@ export default function PreExamineeRegistrationPage() {
   }, [selectedExamDetails?.endRegistrationDate])
 
   const handleExamChange = useCallback(
-    (value: string) => {
+    async (value: string) => {
+      // First, find the exam in the local state
       const examDetails = exams.find((exam) => exam._id === value)
-      console.log(examDetails)
+      console.log('Selected exam from local state:', examDetails)
+      
       setIsLateRegistrationEnabled(false)
       setUseLateRegistrationFee(false)
+      
       if (examDetails) {
         setIsExamSelected(true)
-        setSelectedExamDetails(examDetails)
+        
+        // Always fetch the latest exam details from the database
+        try {
+          const queryParams = new URLSearchParams()
+          queryParams.append('page', '1')
+          queryParams.append('limit', '15')
+          queryParams.append('sortBy', 'createdAt')
+          queryParams.append('sortOrder', 'desc')
+          queryParams.append('isCompleted', 'false')
+          
+          const examResponse = await examServices.getAllExamForPreRegistration(queryParams.toString())
+          if (examResponse.success && examResponse.data) {
+            // Find the current exam in the updated list
+            const updatedExam = examResponse.data.find(exam => exam._id.toString() === value)
+            if (updatedExam) {
+              // Cast the updated exam to ExamType
+              setSelectedExamDetails(updatedExam as unknown as ExamType)
+              console.log('Updated exam details from database:', updatedExam)
+            } else {
+              // Fallback to local state if not found in database
+              setSelectedExamDetails(examDetails)
+            }
+          } else {
+            // Fallback to local state if API call fails
+            setSelectedExamDetails(examDetails)
+          }
+        } catch (error) {
+          console.error('Error fetching latest exam details:', error)
+          // Fallback to local state if API call fails
+          setSelectedExamDetails(examDetails)
+        }
+        
         setFormData((prev) => ({
           ...prev,
           exam: value
@@ -311,10 +345,44 @@ export default function PreExamineeRegistrationPage() {
           showSuccessDialog(
             response.message || 'পরীক্ষার্থী প্রি-নিবন্ধন তৈরি করা হয়েছে'
           )
-          // reset the form
-          setFormData(initialFormState)
+          
+          // Store the current exam ID before resetting the form
+          const currentExamId = formData.exam;
+          
+          // Refresh exam details to get the updated registration number
+          if (currentExamId) {
+            try {
+              // Use getAllExamForPreRegistration to get the latest exam details
+              const queryParams = new URLSearchParams()
+              queryParams.append('page', '1')
+              queryParams.append('limit', '15')
+              queryParams.append('sortBy', 'createdAt')
+              queryParams.append('sortOrder', 'desc')
+              queryParams.append('isCompleted', 'false')
+              
+              const examResponse = await examServices.getAllExamForPreRegistration(queryParams.toString())
+              if (examResponse.success && examResponse.data) {
+                // Find the current exam in the updated list
+                const updatedExam = examResponse.data.find(exam => exam._id.toString() === currentExamId)
+                if (updatedExam) {
+                  // Cast the updated exam to ExamType
+                  setSelectedExamDetails(updatedExam as unknown as ExamType)
+                }
+              }
+            } catch (error) {
+              console.error('Error refreshing exam details:', error)
+            }
+          }
+          
+          // Reset the form but keep the exam selected
+          setFormData((prev) => ({
+            ...initialFormState,
+            exam: currentExamId
+          }))
           setSearchTerm('')
           setUseLateRegistrationFee(false)
+          // Don't reset isExamSelected and selectedExamDetails
+          // Don't reset boardInfo and marhalas
           generatePDF(response.data as IPreExamineeRegistration)
         }
       } catch (error) {
@@ -326,7 +394,7 @@ export default function PreExamineeRegistrationPage() {
         setIsSubmitting(false)
       }
     },
-    [formData, showSuccessDialog, showErrorDialog, generatePDF]
+    [formData, showSuccessDialog, showErrorDialog, generatePDF, setSelectedExamDetails]
   )
 
   const totalExaminees = useMemo(
