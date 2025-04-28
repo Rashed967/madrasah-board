@@ -2,6 +2,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { convertToBengali } from '@/utils/convertToBengali'
 import { memo } from 'react'
+import React from 'react'
 
 interface MadrasahSearchProps {
   searchTerm: string
@@ -42,7 +43,9 @@ const MadrasahSearch = memo(
             onKeyDown={handleKeyDown}
             disabled={!isExamSelected}
           />
-          <span className="text-xs text-red-500 italic">{madrasahSearchInputError} </span>
+          <span className="text-xs text-red-500 italic">
+            {madrasahSearchInputError}{' '}
+          </span>
         </div>
 
         {showDropdown && searchResults.length > 0 && (
@@ -56,7 +59,8 @@ const MadrasahSearch = memo(
                 >
                   <div>{madrasah.name}</div>
                   <div className="text-xs text-gray-500">
-                    {madrasah.madrasahNames.bengaliName} - {convertToBengali(madrasah.code)}
+                    {madrasah.madrasahNames.bengaliName} -{' '}
+                    {convertToBengali(madrasah.code)}
                   </div>
                 </li>
               ))}
