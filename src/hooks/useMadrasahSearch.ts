@@ -109,7 +109,8 @@ const useMadrasahSearch = ({ onMadrasahSelect }: MadrasahSearchProps) => {
     handleMadrasahSelect,
     clearSelection,
     setHighlightedIndex,
-    triggerSearch
+    triggerSearch,
+    setSearchTerm
   }
 }
 
