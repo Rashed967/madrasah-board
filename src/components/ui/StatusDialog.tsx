@@ -1,3 +1,4 @@
+import React from 'react'
 import { Dialog } from '@/components/ui/dialog'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
 
@@ -17,8 +18,8 @@ export default function StatusDialog({
   type
 }: StatusDialogProps) {
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title={title}>
-      <div className="flex flex-col items-center gap-2">
+    <Dialog className="w-96" isOpen={isOpen} onClose={onClose} title={title}>
+      <div className=" flex flex-col items-center gap-2">
         {type === 'success' ? (
           <CheckCircle2 className="h-8 w-8 text-green-500" />
         ) : type === 'error' ? (
@@ -26,7 +27,7 @@ export default function StatusDialog({
         ) : (
           <AlertCircle className="h-8 w-8 text-blue-500" />
         )}
-        <h3 className="text-lg font-semibold">{title}</h3>
+        <h3 className="text-lg font-semibold text-center">{title}</h3>
         <p className="text-sm text-gray-500">{message}</p>
       </div>
     </Dialog>

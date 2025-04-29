@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 
 interface DialogProps {
   isOpen: boolean
@@ -34,7 +33,7 @@ export function Dialog({
   // sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] max-w-md
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 ">
       <div
         className={cn(
           'bg-white rounded-lg shadow-xl w-[95%]  p-4 sm:p-6 space-y-4 relative',
@@ -55,16 +54,12 @@ export function Dialog({
             {title}
           </h2>
           {description && (
-            <p className="text-xs sm:text-sm  text-gray-600 ">
-              {description}
-            </p>
+            <p className="text-xs sm:text-sm  text-gray-600 ">{description}</p>
           )}
         </div>
 
         {/* Dialog Content */}
         {children && <div className="py-2 sm:py-4">{children}</div>}
-
- 
       </div>
     </div>
   )

@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 
 import { Dialog } from '@/components/ui/dialog'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
