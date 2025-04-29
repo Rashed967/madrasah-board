@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Select,
   SelectTrigger,
@@ -15,7 +16,6 @@ interface ZoneDistrictProps {
   onRemoveDistrict: (district: string) => void
 }
 
-
 export default function ZoneDistrict({
   districts,
   selectedDistricts,
@@ -25,9 +25,13 @@ export default function ZoneDistrict({
 }: ZoneDistrictProps) {
   // Filter out districts that are already selected in other zones
   const availableDistricts = districts.filter(
-    district => !allDisallowedDistricts.includes(district)
+    (district) => !allDisallowedDistricts.includes(district)
   )
-  console.log(availableDistricts.length, allDisallowedDistricts.length, selectedDistricts.length)
+  console.log(
+    availableDistricts.length,
+    allDisallowedDistricts.length,
+    selectedDistricts.length
+  )
 
   return (
     <div className="mb-6">
@@ -39,7 +43,7 @@ export default function ZoneDistrict({
         <SelectTrigger className="ring-1 ring-[#52B788]/70">
           <SelectValue placeholder="জেলা নির্বাচন করুন" />
         </SelectTrigger>
-        <SelectContent className='max-h-[150px] overflow-y-auto'>
+        <SelectContent className="max-h-[150px] overflow-y-auto">
           {availableDistricts.map((district) => (
             <SelectItem
               key={district}
@@ -56,7 +60,7 @@ export default function ZoneDistrict({
         {selectedDistricts.map((district) => (
           <Badge
             key={district}
-            variant="secondary"
+            variant="default"
             className="cursor-pointer"
             onClick={() => onRemoveDistrict(district)}
           >
