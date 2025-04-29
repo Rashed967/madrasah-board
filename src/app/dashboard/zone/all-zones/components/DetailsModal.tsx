@@ -15,7 +15,12 @@ export const DetailsModal = ({
   if (!selectedZone) return null
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="জোনের বিস্তারিত তথ্য">
+    <Dialog
+      className="max-w-md"
+      isOpen={isOpen}
+      onClose={onClose}
+      title="জোনের বিস্তারিত তথ্য"
+    >
       <div className="space-y-4">
         <div>
           <label className="font-semibold">জোনের নাম:</label>

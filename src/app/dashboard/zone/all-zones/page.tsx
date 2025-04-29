@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 
 import { useState, useEffect, ChangeEvent } from 'react'
 import type { KeyboardEvent } from 'react'
@@ -53,6 +54,7 @@ export default function AllZones() {
       setIsLoading(true)
       const response = await getAllZones()
       setZones(response.data)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setStatusDialog({
         isOpen: true,
@@ -118,6 +120,7 @@ export default function AllZones() {
           message: result.message || 'জোন ডিলিট করতে সমস্যা হয়েছে'
         })
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setStatusDialog({
         isOpen: true,
