@@ -1,8 +1,16 @@
 'use client'
+import React from 'react'
 
-import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import { Pagination } from '@/components/ui/pagination'
-import { StatusDialog } from '@/components/ui/status-dialog'
 import {
   Select,
   SelectContent,
@@ -10,8 +18,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { StatusDialog } from '@/components/ui/status-dialog'
 import {
   Table,
   TableBody,
@@ -20,20 +27,13 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { Card, CardContent } from '@/components/ui/card'
-import { IPreExamineeRegistration } from '@/features/preExamineeRegistration/interfaces'
-import { preExamineeRegistrationServices } from '@/services/preExamineeRegistrationService'
-import { MoreVertical, Edit, Trash, FileText } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
 import { examServices } from '@/services/examService'
-import { MdFilterList } from 'react-icons/md'
-import { useRouter } from 'next/navigation'
+import { preExamineeRegistrationServices } from '@/services/preExamineeRegistrationService'
 import { convertToBengali } from '@/utils/convertToBengali'
+import { Edit, FileText, MoreVertical } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { MdFilterList } from 'react-icons/md'
 
 const ITEMS_PER_PAGE = 10
 
@@ -230,84 +230,94 @@ export default function AllPreExamineeRegistrations() {
                     {error}
                   </TableCell>
                 </TableRow>
-              )  : (
-                registrations.map((registration, index) => (
-                  console.log(registration),
-                  <TableRow
-                    key={registration._id.toString()}
-                    className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                  >
-                    <TableCell>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <FileText className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                    <TableCell>{convertToBengali(registration.receiptNo)}</TableCell>
-                    <TableCell>{convertToBengali(registration.madrasah.code)}</TableCell>
-                    <TableCell>
-                      <button
-                        onClick={() =>
-                          router.push(
-                            `/dashboard/exam/pre-examinee-registration/${registration._id}`
-                          )
-                        }
-                        className="text-left hover:text-[#52B788] hover:underline"
+              ) : (
+                registrations.map(
+                  (registration, index) => (
+                    console.log(registration),
+                    (
+                      <TableRow
+                        key={registration._id.toString()}
+                        className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                       >
-                        {registration.madrasah.madrasahNames.bengaliName}
-                      </button>
-                    </TableCell>
-                    <TableCell>
-                      {registration.totalExaminees.toLocaleString('bn-BD')}
-                    </TableCell>
-                    <TableCell>
-                      {typeof registration.transaction.totalAmount === 'number'
-                        ? registration.transaction.totalAmount.toLocaleString(
-                            'bn-BD'
-                          )
-                        : (0).toLocaleString('bn-BD')}
-                    </TableCell>
-                    <TableCell>
-                      {typeof registration.transaction.paidAmount === 'number'
-                        ? registration.transaction.paidAmount.toLocaleString(
-                            'bn-BD'
-                          )
-                        : (0).toLocaleString('bn-BD')}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(registration.createdAt).toLocaleDateString(
-                        'bn-BD'
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <TableCell>
                           <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreVertical className="h-4 w-4" />
+                            <FileText className="h-4 w-4" />
                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="bg-gray-100"
-                        >
-                          <DropdownMenuItem
+                        </TableCell>
+                        <TableCell>
+                          {convertToBengali(registration.receiptNo)}
+                        </TableCell>
+                        <TableCell>
+                          {convertToBengali(registration.madrasah.code)}
+                        </TableCell>
+                        <TableCell>
+                          <button
                             onClick={() =>
                               router.push(
-                                `/dashboard/exam/pre-examinee-registration/${registration._id}/edit`
+                                `/dashboard/exam/pre-examinee-registration/${registration._id}`
                               )
                             }
+                            className="text-left hover:text-[#52B788] hover:underline"
                           >
-                            <Edit className="mr-2 h-4 w-4" />
-                            <span>এডিট</span>
-                          </DropdownMenuItem>
-                          {/* <DropdownMenuItem className="text-red-600">
+                            {registration.madrasah.madrasahNames.bengaliName}
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          {registration.totalExaminees.toLocaleString('bn-BD')}
+                        </TableCell>
+                        <TableCell>
+                          {typeof registration.transaction.totalAmount ===
+                          'number'
+                            ? registration.transaction.totalAmount.toLocaleString(
+                                'bn-BD'
+                              )
+                            : (0).toLocaleString('bn-BD')}
+                        </TableCell>
+                        <TableCell>
+                          {typeof registration.transaction.paidAmount ===
+                          'number'
+                            ? registration.transaction.paidAmount.toLocaleString(
+                                'bn-BD'
+                              )
+                            : (0).toLocaleString('bn-BD')}
+                        </TableCell>
+                        <TableCell>
+                          {new Date(registration.createdAt).toLocaleDateString(
+                            'bn-BD'
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="bg-gray-100"
+                            >
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  router.push(
+                                    `/dashboard/exam/pre-examinee-registration/${registration._id}/edit`
+                                  )
+                                }
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                <span>এডিট</span>
+                              </DropdownMenuItem>
+                              {/* <DropdownMenuItem className="text-red-600">
                             <Trash className="mr-2 h-4 w-4" />
                             <span>ডিলিট</span>
                           </DropdownMenuItem> */}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )
+                )
               )}
             </TableBody>
           </Table>

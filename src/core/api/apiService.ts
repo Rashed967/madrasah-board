@@ -139,7 +139,7 @@ export const patch = async <T>(
   endpoint: string,
   body?: any
 ): Promise<ApiResponse<T>> => {
-  try {
+
     const response = await request<T>(endpoint, {
       method: 'PATCH',
       headers: {
@@ -148,9 +148,6 @@ export const patch = async <T>(
       body: JSON.stringify(body)
     })
     return response
-  } catch (error) {
-    throw error
-  }
 }
 
 // DELETE request

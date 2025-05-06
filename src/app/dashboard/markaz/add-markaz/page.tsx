@@ -9,6 +9,7 @@ import ShowSelectedMadrasahList from '@/components/ShowSelectedMadrasahList'
 import useCreateMarkaz from '@/hooks/useCreateMarkaz'
 import IStatusDialog from '@/types/statusDialog'
 import StatusDialog from '@/components/ui/StatusDialog'
+import useGetAllZones from '@/hooks/useGetAllZones'
 
 const AddMarkaz = () => {
   const [statusDialog, setStatusDialog] = useState<IStatusDialog>({
@@ -23,6 +24,10 @@ const AddMarkaz = () => {
 
   const markazRef = useRef<HTMLInputElement>(null)
   const [selectedMadrasah, setSelectedMadrasah] = useState<string>(null)
+  const [zoneSearchTerm, setZoneSearchTerm] = useState('')
+  const [selectedZone, setSelectedZone] = useState(null)
+  const [showDropdown, setShowDropdown] = useState(false)
+  console.log(selectedZone)
   const [allMadrasah, setAllMadrasah] = useState<
     {
       name: string
@@ -31,25 +36,31 @@ const AddMarkaz = () => {
     }[]
   >([])
 
+  const { data: zones } = useGetAllZones(zoneSearchTerm)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (
       !markazRef.current ||
       !markazRef.current.value ||
       !allMadrasah ||
-      !selectedMadrasah
+      !selectedMadrasah ||
+      !selectedZone
     )
       return
     const markaz = {
       madrasah: selectedMadrasah,
       allMadrasah: allMadrasah.map((m) => m._id),
-      code: markazRef.current.value
+      code: markazRef.current.value,
+      zone: selectedZone._id
     }
 
     createMarkaz(markaz, {
       onSuccess: () => {
         markazRef.current.value = ''
         setSelectedMadrasah(null)
+        setSelectedZone(null)
+        setZoneSearchTerm('')
         setAllMadrasah([])
         searchMadrasahRef1.current?.reset()
         searchMadrasahRef2.current?.reset()
@@ -60,13 +71,16 @@ const AddMarkaz = () => {
           message: 'মারকায সফলভাবে যোগ করা হয়েছে।'
         })
       },
-      onError: (error) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onError: (error: any) => {
+        console.log(error)
         setStatusDialog({
           isOpen: true,
           type: 'error',
           title: 'ব্যর্থ হয়েছে!',
           message:
-            error.message || 'মারকায যোগ করা সম্ভব হয়নি। আবার চেষ্টা করুন।'
+            error?.response?.data?.message ||
+            'মারকায যোগ করা সম্ভব হয়নি। আবার চেষ্টা করুন।'
         })
       }
     })
@@ -104,11 +118,53 @@ const AddMarkaz = () => {
               setAllMadrasah((prev) => prev.filter((m) => m._id !== id))
             }
           />
+          <div>
+            <Label>জোন</Label>
+            <Input
+              name="zone"
+              onFocus={() => {
+                if (selectedZone) {
+                  setSelectedZone(null)
+                  setZoneSearchTerm('')
+                }
+              }}
+              type="text"
+              value={selectedZone?.name || zoneSearchTerm}
+              onChange={(e) => {
+                const value = e.target.value
+                setZoneSearchTerm(value)
+                if (value.trim() !== '') {
+                  setShowDropdown(true) // ড্রপডাউন খোলা
+                } else {
+                  setShowDropdown(false) // ড্রপডাউন বন্ধ
+                }
+              }}
+            />
+          </div>
+
+          {zones?.data?.length > 0 && showDropdown && (
+            <div className="absolute z-10 w-1/3 mt-1 bg-white border cursor-pointer border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              {zones?.data.map((zone) => (
+                <div
+                  key={zone._id}
+                  className={`p-2 cursor-pointer'bg-gray-100 hover:bg-gray-50`}
+                  onClick={() => {
+                    setSelectedZone(zone)
+                    setShowDropdown(false)
+                  }}
+                >
+                  <div className="font-medium">{zone.name}</div>
+                  <div className="text-sm text-gray-600">কোড: {zone.code}</div>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="flex flex-col">
             <Label>মারকায কোড</Label>
             <Input ref={markazRef} />
           </div>
+
           <Button variant="primary" size="sm" className="w-full">
             সেভ করুন
           </Button>
