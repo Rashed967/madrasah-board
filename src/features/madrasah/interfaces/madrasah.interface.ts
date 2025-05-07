@@ -1,4 +1,3 @@
-import { Types } from 'mongoose'
 import { TCourierAddress } from './madrasah.address.interface'
 import { TMutawalliDesignation } from './mutawalli.interface'
 
@@ -88,7 +87,8 @@ export interface IMadrasah {
         }
     totalStudents: number
     totalTeacherAndStuff: number
-    madrasahType: TMadrasahType
+    madrasahType: TMadrasahType;
+
   }
 
   madrasahResult: string[]
@@ -99,4 +99,5 @@ export interface IMadrasah {
   userAccountCreated?: boolean
   createdAt: Date
   updatedAt: Date
+  zone: string;
 }

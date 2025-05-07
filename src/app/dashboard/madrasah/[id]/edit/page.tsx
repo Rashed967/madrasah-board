@@ -94,7 +94,8 @@ const initialFormState: IMadrasah = {
   madrasahResult: [],
   status: 'pending',
   createdAt: new Date(),
-  updatedAt: new Date()
+  updatedAt: new Date(),
+  zone: ''
 }
 
 export default function EditMadrasahPage({
@@ -284,7 +285,8 @@ export default function EditMadrasahPage({
       const addressData: IMadrasahAddress = {
         division: formData.address.division.trim() || '',
         district: formData.address.district.trim() || '',
-        subDistrict_policeStation: formData.address.subDistrict_policeStation.trim() || '',
+        subDistrict_policeStation:
+          formData.address.subDistrict_policeStation.trim() || '',
         postOffice: formData.address.postOffice.trim() || '',
         village: formData.address.village.trim() || '',
         holdingNumber: formData.address.holdingNumber.trim() || '',

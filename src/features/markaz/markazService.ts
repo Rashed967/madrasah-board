@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // create markaz 
 
 
 import { get, post, del, patch } from "@/core/api/apiService";
 import IMarkaz from "./markaz.interface";
 import { toast } from "sonner";
-import { IMarkazResponse } from './markaz.interface';
 
 export const createMarkaz = async (data: IMarkaz) => {
     try {
@@ -34,30 +34,12 @@ export const createMarkaz = async (data: IMarkaz) => {
     }
 }
 
+
 // get all markaz 
-export const getAllMarkaz = async (queryParams?: string): Promise<{
-    success: boolean;
-    data: IMarkazResponse[];
-    message: string;
-    meta?: { total: number };
-}> => {
-    try {
-      
+export const getAllMarkaz = async (queryParams?: string) =>{
         const response = await get(`/markazs${queryParams ? `?${queryParams}` : ''}`)
-        console.log(response)
-        return {
-            success: true,
-            data: response.data as IMarkazResponse[],
-            meta: response.meta,
-            message: 'মারকায সফলভাবে পাওয়া গেছে'
-        }
-    } catch (error: any) {
-        return {
-            success: false,
-            data: [],
-            message: error?.response?.data?.message || 'মারকায পেতে সমস্যা হয়েছে'
-        }
-    }
+        return response
+
 }
 
 export const deleteMarkaz = async (id: string) => {

@@ -112,7 +112,8 @@ export default function RegisterMadrasah() {
       highestEducationalQualification: '',
       code: ''
     },
-    ilhakPdf: ''
+    ilhakPdf: '',
+    zone: ''
   }
 
   const [formData, setFormData] =
@@ -154,7 +155,6 @@ export default function RegisterMadrasah() {
       madrasahSchemaForAdmin,
       formData
     )
-
 
     if (Object.keys(validationErrors).length > 0) {
       console.log(validationErrors)

@@ -13,6 +13,8 @@ export interface IMarkaz {
     updatedAt?: Date;
 }
 
+
+
 export interface IMarkazResponse {
     _id?: Types.ObjectId;
     madrasah?: IMadrasah;
