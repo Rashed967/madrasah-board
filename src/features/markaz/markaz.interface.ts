@@ -16,9 +16,9 @@ export interface IMarkaz {
 
 
 export interface IMarkazResponse {
-    _id?: Types.ObjectId;
+    _id?: Types.ObjectId | string;
     madrasah?: IMadrasah;
-    allMadrasah: IMadrasah[];
+    allMadrasah?: IMadrasah[];
     code: string;
     isDeleted?: boolean;
     createdAt?: Date;

@@ -1,3 +1,4 @@
+import React from 'react'
 export function LoadingSpinner() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] p-4">

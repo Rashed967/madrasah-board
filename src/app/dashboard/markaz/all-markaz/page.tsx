@@ -29,6 +29,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { EditMarkazDialog } from './components/EditMarkazDialog'
 import { Dialog } from '@/components/ui/dialog'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 interface MadrasahDataType {
   code: string
@@ -108,10 +109,10 @@ const AllMarkaz = () => {
 
       const response = await getAllMarkaz(queryParams.toString())
 
-      console.log(response)
+      // console.log(response)
       if (response.success) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setMarkazList((response as any)?.data?.data)
+        setMarkazList((response as any)?.data?.markazList)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setAllMadrasah((response as any)?.data?.allMadrasah)
         setTotalPages(Math.ceil(response.meta?.total / limitPerPage))
@@ -219,7 +220,7 @@ const AllMarkaz = () => {
 
   // }
 
-  if (loading) return <div>লোড হচ্ছে...</div>
+  if (loading) return <LoadingSpinner />
   if (error) return <div>{error}</div>
 
   return (
@@ -370,7 +371,7 @@ const AllMarkaz = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {markazList?.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center">
+                  <td colSpan={8} className="text-center py-6">
                     কোনো ডাটা পাওয়া যায়নি
                   </td>
                 </tr>
@@ -479,7 +480,7 @@ const AllMarkaz = () => {
           </table>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className=" max-w-4xl mt-4 mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">প্রতি পেজে:</span>
             <Select

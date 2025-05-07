@@ -1,16 +1,17 @@
 'use client'
+import React from 'react'
 
-import { Dialog } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useState, useEffect } from 'react'
-import { toast } from 'sonner'
-import { IMarkazResponse } from '@/features/markaz/markaz.interface'
 import { IMadrasah } from '@/features/madrasah/interfaces'
-import { getAllMadrasahs } from '@/services/madrasahService'
+import { IMarkazResponse } from '@/features/markaz/markaz.interface'
 import { updateMarkaz } from '@/features/markaz/markazService'
-import { MdDelete, MdAdd } from 'react-icons/md'
+import { getAllMadrasahs } from '@/services/madrasahService'
+import { useEffect, useState } from 'react'
+import { MdDelete } from 'react-icons/md'
+import { toast } from 'sonner'
 
 interface EditMarkazDialogProps {
   markaz: IMarkazResponse
@@ -30,6 +31,7 @@ export function EditMarkazDialog({
     madrasah: '',
     allMadrasah: [] as string[]
   })
+  console.log(markaz)
 
   const [availableMadrasahs, setAvailableMadrasahs] = useState<IMadrasah[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -43,7 +45,7 @@ export function EditMarkazDialog({
       setFormData({
         code: markaz.code,
         madrasah: markaz.madrasah._id.toString(),
-        allMadrasah: markaz.allMadrasah.map(m => m._id.toString())
+        allMadrasah: markaz.allMadrasah.map((m) => m._id.toString())
       })
       setSearchTerm(markaz.madrasah.madrasahNames.bengaliName)
     }
@@ -51,7 +53,10 @@ export function EditMarkazDialog({
 
   useEffect(() => {
     const searchMadrasahs = async () => {
-      if (searchTerm.length < 2 && searchTerm !== markaz.madrasah.madrasahNames.bengaliName) {
+      if (
+        searchTerm.length < 2 &&
+        searchTerm !== markaz.madrasah.madrasahNames.bengaliName
+      ) {
         setShowDropdown(false)
         return
       }
@@ -62,7 +67,8 @@ export function EditMarkazDialog({
           setAvailableMadrasahs(response.data)
           setShowDropdown(true)
         }
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         toast.error('মাদ্রাসা খুঁজতে সমস্যা হয়েছে')
       }
     }
@@ -84,6 +90,7 @@ export function EditMarkazDialog({
           setAvailableMadrasahs(response.data)
           setShowAddDropdown(true)
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         toast.error('মাদ্রাসা খুঁজতে সমস্যা হয়েছে')
       }
@@ -94,6 +101,7 @@ export function EditMarkazDialog({
   }, [searchTermForAdd])
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('updating')
     e.preventDefault()
     setLoading(true)
 
@@ -108,6 +116,7 @@ export function EditMarkazDialog({
         return
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const changes: any = {}
 
       if (formData.code !== markaz.code) {
@@ -118,8 +127,11 @@ export function EditMarkazDialog({
         changes.madrasah = formData.madrasah
       }
 
-      const originalMadrasahs = markaz.allMadrasah.map(m => m._id.toString())
-      if (JSON.stringify(originalMadrasahs) !== JSON.stringify(formData.allMadrasah)) {
+      const originalMadrasahs = markaz.allMadrasah.map((m) => m._id.toString())
+      if (
+        JSON.stringify(originalMadrasahs) !==
+        JSON.stringify(formData.allMadrasah)
+      ) {
         changes.allMadrasah = formData.allMadrasah
       }
 
@@ -137,6 +149,7 @@ export function EditMarkazDialog({
       } else {
         toast.error(response.message || 'মারকায আপডেট করতে সমস্যা হয়েছে')
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error('মারকায আপডেট করতে সমস্যা হয়েছে')
     } finally {
@@ -145,7 +158,7 @@ export function EditMarkazDialog({
   }
 
   const handleMadrasahSelect = (madrasah: IMadrasah) => {
-    setFormData(prev => ({ ...prev, madrasah: madrasah._id.toString() }))
+    setFormData((prev) => ({ ...prev, madrasah: madrasah._id.toString() }))
     setSearchTerm(madrasah.madrasahNames.bengaliName)
     setShowDropdown(false)
   }
@@ -156,7 +169,7 @@ export function EditMarkazDialog({
       return
     }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       allMadrasah: [...prev.allMadrasah, madrasah._id.toString()]
     }))
@@ -165,20 +178,28 @@ export function EditMarkazDialog({
   }
 
   const handleRemoveMadrasah = (madrasahId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      allMadrasah: prev.allMadrasah.filter(id => id !== madrasahId)
+      allMadrasah: prev.allMadrasah.filter((id) => id !== madrasahId)
     }))
   }
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title="মারকায সম্পাদনা">
-      <form onSubmit={handleSubmit} className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          console.log('hello')
+        }}
+        className="space-y-4 max-h-[80vh] overflow-y-auto pr-2"
+      >
         <div>
           <Label>মারকাযের কোড *</Label>
           <Input
             value={formData.code}
-            onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, code: e.target.value }))
+            }
             placeholder="মারকাযের কোড লিখুন"
             required
           />
@@ -202,8 +223,12 @@ export function EditMarkazDialog({
                       className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => handleMadrasahSelect(madrasah)}
                     >
-                      <div className="text-sm">{madrasah.madrasahNames.bengaliName}</div>
-                      <div className="text-xs text-gray-500">কোড: {madrasah.code}</div>
+                      <div className="text-sm">
+                        {madrasah.madrasahNames.bengaliName}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        কোড: {madrasah.code}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -227,15 +252,21 @@ export function EditMarkazDialog({
               <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
                 <div className="max-h-48 overflow-y-auto">
                   {availableMadrasahs
-                    .filter(m => !formData.allMadrasah.includes(m._id.toString()))
+                    .filter(
+                      (m) => !formData.allMadrasah.includes(m._id.toString())
+                    )
                     .map((madrasah) => (
                       <div
                         key={madrasah._id.toString()}
                         className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                         onClick={() => handleAddMadrasah(madrasah)}
                       >
-                        <div className="text-sm">{madrasah.madrasahNames.bengaliName}</div>
-                        <div className="text-xs text-gray-500">কোড: {madrasah.code}</div>
+                        <div className="text-sm">
+                          {madrasah.madrasahNames.bengaliName}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          কোড: {madrasah.code}
+                        </div>
                       </div>
                     ))}
                 </div>
@@ -249,13 +280,25 @@ export function EditMarkazDialog({
           <div className="mt-2 border rounded-lg p-2 max-h-48 overflow-y-auto">
             <div className="space-y-1">
               {formData.allMadrasah.map((madrasahId) => {
-                const madrasah = availableMadrasahs.find(m => m._id.toString() === madrasahId) ||
-                  markaz.allMadrasah.find(m => m._id.toString() === madrasahId)
+                const madrasah =
+                  availableMadrasahs.find(
+                    (m) => m._id.toString() === madrasahId
+                  ) ||
+                  markaz.allMadrasah.find(
+                    (m) => m._id.toString() === madrasahId
+                  )
                 return (
-                  <div key={madrasahId} className="flex items-center justify-between bg-gray-50 px-2 py-1 rounded text-sm">
+                  <div
+                    key={madrasahId}
+                    className="flex items-center justify-between bg-gray-50 px-2 py-1 rounded text-sm"
+                  >
                     <div className="flex-1 mr-2">
-                      <div className="text-sm">{madrasah?.madrasahNames.bengaliName}</div>
-                      <div className="text-xs text-gray-500">কোড: {madrasah?.code}</div>
+                      <div className="text-sm">
+                        {madrasah?.madrasahNames.bengaliName}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        কোড: {madrasah?.code}
+                      </div>
                     </div>
                     <Button
                       type="button"
@@ -292,4 +335,4 @@ export function EditMarkazDialog({
       </form>
     </Dialog>
   )
-} 
+}
