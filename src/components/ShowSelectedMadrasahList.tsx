@@ -25,7 +25,7 @@ export default function ShowSelectedMadrasahList({
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="mt-2">
+    <div className="mt-1 bg-green-100 py-1 px-2">
       <div className="flex space-x-3">
         <p className="text-sm">
           মোট সিলেক্টেড মাদ্রাসা:{' '}
@@ -52,8 +52,8 @@ export default function ShowSelectedMadrasahList({
       >
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md bg-base-100 p-6 rounded-lg shadow-lg">
+        <div className="fixed inset-0 flex items-center justify-center p-4 ">
+          <Dialog.Panel className="w-full max-w-md bg-base-100 p-6 rounded-lg shadow-lg bg-white">
             <div className="flex items-center justify-between mb-4">
               <Dialog.Title className="text-md font-bold">
                 সিলেক্টেড মাদ্রাসাসমূহ
