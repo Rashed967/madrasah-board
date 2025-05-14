@@ -43,12 +43,10 @@ export const getAllMadrasahs = async (
   queryParams: string = ''
 ): Promise<ApiResponse<IMadrasah[]>> => {
   try {
-    console.log(queryParams)
     const response = await get<IMadrasah[]>(
       `/madrasah?select=${selectedFields}&${queryParams ? `&queryParams=${queryParams}` : ''}`
     )
     const url = `/madrasah?select=${selectedFields}&sort=${sortOrder}&sortBy=${sortBy}${queryParams ? `&queryParams=${queryParams}` : ''}`;
-console.log(url)
     return {
       success: true as const,
       message: response.message,

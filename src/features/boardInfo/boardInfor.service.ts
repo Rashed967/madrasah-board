@@ -25,7 +25,6 @@ const id = '67bb52249fbe4879db797d88'; // for production db
 export async function getBoardInfo() {
   try {
     const response = await get(`/board-info/${id}`)
-    console.log('response', response)
     return response
   } catch (error) {
     return {

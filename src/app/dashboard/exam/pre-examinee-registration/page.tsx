@@ -183,7 +183,6 @@ export default function PreExamineeRegistrationPage() {
     async (value: string) => {
       // First, find the exam in the local state
       const examDetails = exams.find((exam) => exam._id === value)
-      console.log('Selected exam from local state:', examDetails)
       
       setIsLateRegistrationEnabled(false)
       setUseLateRegistrationFee(false)
@@ -207,7 +206,6 @@ export default function PreExamineeRegistrationPage() {
             if (updatedExam) {
               // Cast the updated exam to ExamType
               setSelectedExamDetails(updatedExam as unknown as ExamType)
-              console.log('Updated exam details from database:', updatedExam)
             } else {
               // Fallback to local state if not found in database
               setSelectedExamDetails(examDetails)
@@ -231,10 +229,8 @@ export default function PreExamineeRegistrationPage() {
     [exams, setFormData]
   )
 
-  console.log('boardInfo', boardInfo)
    const generatePDF = useCallback(
     (registrationData: IPreExamineeRegistration) => {
-      console.log('boardInfo', boardInfo)
       try {
         if (!boardInfo) {
           throw new Error('Board information is required')
@@ -317,7 +313,6 @@ export default function PreExamineeRegistrationPage() {
         
       }
 
-      console.log('Data being sent to server:', JSON.stringify(modifiedFromData, null, 2))
       const validationErrors = globalValidateRequest(
         PreExamineeRegistrationValidation.createPreExamineeRegistrationValidationSchema,
         modifiedFromData
@@ -341,7 +336,6 @@ export default function PreExamineeRegistrationPage() {
         const response =
           await preExamineeRegistrationServices.create(modifiedFromData)
         if (response.success) {
-          console.log(response)
           showSuccessDialog(
             response.message || 'পরীক্ষার্থী প্রি-নিবন্ধন তৈরি করা হয়েছে'
           )
@@ -450,7 +444,6 @@ export default function PreExamineeRegistrationPage() {
                 <Switch
                   checked={useLateRegistrationFee}
                   onCheckedChange={(checked) => {
-                    console.log('Toggle button clicked, new value:', checked);
                     setUseLateRegistrationFee(checked);
                     // Recalculate fees when toggle changes
                     recalculateFees(checked);
@@ -469,7 +462,6 @@ export default function PreExamineeRegistrationPage() {
                 মারহালা-ভিত্তিক নিবন্ধন সংখ্যা
               </h3>
               {/* MarhalaRegistrationTable component */}
-              {(() => { console.log('Passing useLateRegistrationFee to MarhalaRegistrationTable:', useLateRegistrationFee); return null; })()}
               <MarhalaRegistrationTable
                 examineesPerMahala={formData.examineesPerMahala}
                 onExamineeCountChange={handleExamineeCountChange}

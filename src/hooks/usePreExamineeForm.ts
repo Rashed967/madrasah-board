@@ -65,7 +65,6 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
   
       
       setSearchTerm(value.toString())
-      console.log('value', searchTerm)
 
       // Only search if it's a keyboard event and the key is Enter
       if ('key' in e && e.key === 'Enter' && value.length >= 2) {
@@ -75,10 +74,8 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           queryParams.append('page', '1');
           queryParams.append('limit', '10');
           if (value) queryParams.append('searchTerm', value);
-          console.log(queryParams.toString())
           const response =
             await madrasahServices.getAllMadrasahs(queryParams.toString())
-            console.log ('from preExaminee', response)
 
 
           setSearchResults(response.data)
@@ -94,7 +91,6 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
   )
 
   const handleMadrasahSelect = async (madrasah: any) => {
-    console.log('Selected madrasah:', madrasah)
     setFormData((prev) => ({ ...prev, madrasah: madrasah._id }))
     setSelectedMadrasahDetails({
       _id: madrasah._id,
@@ -108,14 +104,13 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
 
     try {
       // Get marhalas based on madrasah type
-      const marhalaType =
-        madrasah.madrasah_information.madrasahType.toLowerCase() === 'বালিকা'
+      const marhalaType = madrasah.madrasah_information.madrasahType.toLowerCase() === 'বালিকা'
           ? 'girls'
-          : 'boys'
-      const fields = ''
-      const populate = false
-      const page = 1
-      const limit = 30
+          : 'boys';
+      const fields = '';
+      const populate = false;
+      const page = 1;
+      const limit = 30;
       const response = await getAllMarhalas(
         fields,
         populate,
@@ -124,8 +119,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
         marhalaType
       )
 
-      console.log('Marhalas response:', response)
-      console.log('highestMarhala', madrasah.madrasah_information.highestMarhala.level)
+      
       if (response.success) {
         
         // First filter marhalas with level higher than madrasah's highest marhala level
@@ -145,6 +139,8 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           return examFees.some(fee => fee.marhala === marhala._id);
         });
         
+        console.log('selectedExamDetails', selectedExamDetails)
+        
         const formattedMarhalas = marhalasWithFees.map((marhala: any) => ({
           marhalaName: marhala.name.bengaliName,
           marhalaId: marhala._id,
@@ -154,7 +150,6 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           totalFeesAmount: 0
         }))
         console.log('formattedMarhalas', formattedMarhalas)
-
 
         if (formattedMarhalas.length <= 0) {
           setMadrasahSearchInputError("নিবন্ধনের জন্য কোনো মারহালা নেই")
@@ -182,7 +177,6 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     { regularExamineesSlots, irregularExamineesSlots }: { regularExamineesSlots: number, irregularExamineesSlots: number },
     useLateRegistrationFee: boolean
   ) => {
-    console.log('handleExamineeCountChange called with useLateRegistrationFee:', useLateRegistrationFee);
     if (!selectedExamDetails) return
 
     const calculateFeesForMarhala = (marhalaId: string, regularCount: number, irregularCount: number) => {
@@ -207,7 +201,6 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
                safeIrregularCount * (selectedExamDetails.registrationFeeForIrregularStudent || 0);
       }
 
-      console.log('Calculated fees:', fees, 'using late registration fee:', useLateRegistrationFee);
       return fees
     }
 
@@ -283,7 +276,6 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
 
   // New function to recalculate fees when late registration toggle changes
   const recalculateFees = (useLateRegistrationFee: boolean) => {
-    console.log('Recalculating fees with useLateRegistrationFee:', useLateRegistrationFee);
     if (!selectedExamDetails) return;
 
     const calculateFeesForMarhala = (regularCount: number, irregularCount: number) => {
@@ -409,10 +401,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
       }
 
       // Log the modified data for debugging
-      console.log(
-        'Data being sent to server:',
-        JSON.stringify(modifiedFromData, null, 2)
-      )
+
 
       try {
         setIsSubmitting(true)
