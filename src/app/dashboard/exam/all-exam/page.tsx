@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { examServices } from '@/services/examService';
 import { FaLock, FaUnlock } from 'react-icons/fa';
 import { convertToBengali } from '@/utils/convertToBengali';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const AllExamsPage = () => {
   const [exams, setExams] = useState([]);
@@ -24,12 +25,17 @@ const AllExamsPage = () => {
     fetchExams();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div>Error: {error}</div>;
+  if(exams.length === 0) return <div className='min-h-screen flex justify-center items-center text-lg' >
+    <p>কোন পরীক্ষা নেই</p>
+  </div>
+
 
   return (
     <div className='m-6'>
       <div className='text-lg font-bold mb-4'>সকল পরীক্ষা</div>
+
       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md overflow-scroll">
       <thead className="bg-[#52B788] text-white">
         <tr>
@@ -42,6 +48,7 @@ const AllExamsPage = () => {
           <th className="py-2 px-4 border-b font-normal text-sm">এ্যাকশন</th>
         </tr>
       </thead>
+
       <tbody>
         {exams.map((exam) => (
           <tr key={exam._id} className="hover:bg-gray-100">
