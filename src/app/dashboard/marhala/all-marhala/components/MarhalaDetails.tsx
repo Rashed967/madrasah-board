@@ -14,7 +14,7 @@ export default function MarhalaDetails({ marhala, isOpen, onClose }: MarhalaDeta
   console.log(marhala)
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="মারহালা বিস্তারিত">
+    <Dialog className='w-11/12 h-72 md:w-3/6 md:h-80 overflow-auto' isOpen={isOpen} onClose={onClose} title="মারহালা বিস্তারিত">
       <div className="space-y-4 text-gray-800">
         <InfoItem
           label="মারহালা নাম"
