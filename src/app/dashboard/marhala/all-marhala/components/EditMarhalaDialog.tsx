@@ -34,6 +34,7 @@ export default function EditMarhalaDialog({
   onClose,
   onSuccess
 }: EditMarhalaDialogProps) {
+
   const [formData, setFormData] = useState({
     bengaliName: '',
     arabicName: '',
@@ -42,6 +43,7 @@ export default function EditMarhalaDialog({
     level: 0,
     listOfKitabs: [] as (string | { _id: string })[]
   })
+  
 
   const [availableKitabs, setAvailableKitabs] = useState<IKitab[]>([])
   const [selectedKitab, setSelectedKitab] = useState<string>('')
@@ -65,6 +67,9 @@ export default function EditMarhalaDialog({
     loadKitabs()
   }, [marhala])
 
+
+
+
   const loadKitabs = async () => {
     try {
       const response = await getAllKitabs(1, 100) // Get all kitabs
@@ -76,8 +81,10 @@ export default function EditMarhalaDialog({
     }
   }
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log(formData)
 
     // Validate required fields
     if (!formData.bengaliName.trim()) {
@@ -85,6 +92,7 @@ export default function EditMarhalaDialog({
       return
     }
 
+    console.log(formData)
     if (!formData.marhalaType) {
       toast.error('মারহালার ধরণ নির্বাচন করুন')
       return
@@ -160,6 +168,14 @@ export default function EditMarhalaDialog({
           toast.success('মারহালা আপডেট করা হয়েছে', { duration: 3000 })
         }
         onSuccess(response.data)
+        setFormData({
+          bengaliName: '',
+    arabicName: '',
+    marhalaType: '',
+    marhalaCategory: '',
+    level: 0,
+    listOfKitabs: [] as (string | { _id: string })[]
+        })
         onClose()
       } else {
         const errorMessage =
@@ -196,7 +212,7 @@ export default function EditMarhalaDialog({
   }
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="মারহালা সম্পাদনা">
+    <Dialog className="md:w-6/12" isOpen={isOpen} onClose={onClose} title="মারহালা সম্পাদনা">
       <form
         onSubmit={handleSubmit}
         className="space-y-4 max-h-[60vh] overflow-y-auto pr-2"
