@@ -4,24 +4,17 @@ import React, { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { useMarhalaOperations } from '../hooks/useMarhalaOperations'
 import dynamic from 'next/dynamic'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 const MARHALA_PER_PAGE = 10
 
-const MarhalaTable = dynamic(() => import('./components/MarhalaTable'), {
-  loading: () => <div>লোড হচ্ছে...</div>
-})
+const MarhalaTable = dynamic(() => import('./components/MarhalaTable'))
 
-const Pagination = dynamic(() => import('./components/Pagination'), {
-  loading: () => <div>লোড হচ্ছে...</div>
-})
+const Pagination = dynamic(() => import('./components/Pagination'))
 
-const MarhalaDetails = dynamic(() => import('./components/MarhalaDetails'), {
-  loading: () => <div>লোড হচ্ছে...</div>
-})
+const MarhalaDetails = dynamic(() => import('./components/MarhalaDetails'))
 
-const EditMarhalaDialog = dynamic(() => import('./components/EditMarhalaDialog'), {
-  loading: () => <div>লোড হচ্ছে...</div>
-})
+const EditMarhalaDialog = dynamic(() => import('./components/EditMarhalaDialog'))
 
 export default function AllMarhalaPage() {
   const {
@@ -47,11 +40,7 @@ export default function AllMarhalaPage() {
   }, [currentPage])
 
   if (isLoading) {
-    return (
-      <div className="p-8 mt-12 mx-6 flex justify-center items-center">
-        <div className="text-lg">লোড হচ্ছে...</div>
-      </div>
-    )
+    return <LoadingSpinner />
   }
 
   return (
