@@ -281,13 +281,14 @@ export default function EditMadrasahPage({
       if (typeof formData.address === 'string') {
         throw new Error('Invalid address format')
       }
+      console.log(formData.address)
 
       const addressData: IMadrasahAddress = {
         division: formData.address.division.trim() || '',
         district: formData.address.district.trim() || '',
         subDistrict_policeStation:
           formData.address.subDistrict_policeStation.trim() || '',
-        postOffice: formData.address.postOffice.trim() || '',
+        postOffice: formData.address?.postOffice?.trim() || '',
         village: formData.address.village.trim() || '',
         holdingNumber: formData.address.holdingNumber.trim() || '',
         zone: formData.address.zone.trim() || '',
