@@ -233,7 +233,6 @@ export default function AllPreExamineeRegistrations() {
               ) : (
                 registrations.map(
                   (registration, index) => (
-                    console.log(registration),
                     (
                       <TableRow
                         key={registration._id.toString()}
@@ -263,7 +262,10 @@ export default function AllPreExamineeRegistrations() {
                           </button>
                         </TableCell>
                         <TableCell>
-                          {registration.totalExaminees.toLocaleString('bn-BD')}
+                          {registrations[0].examineesPerMahala.reduce((acc, curr) => {
+    const total = acc + curr.regularExamineesSlots + curr.irregularExamineesSlots;
+    return total
+  }, 0).toLocaleString('bn-BD')}
                         </TableCell>
                         <TableCell>
                           {typeof registration.transaction.totalAmount ===
