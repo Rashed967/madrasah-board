@@ -157,9 +157,9 @@ export default function RegisterMadrasah() {
     )
 
     if (Object.keys(validationErrors).length > 0) {
-      console.log(validationErrors)
+    
       setErrors(validationErrors)
-      console.log(errors)
+     
       setIsSubmitting(false)
       setStatusDialog({
         isOpen: true,

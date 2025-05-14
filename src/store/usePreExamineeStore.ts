@@ -30,7 +30,7 @@ export const usePreExamineeStore = create<PreExamineeStore>((set) => ({
     set({ loading: true, error: null, preExaminees: [] })
     try {
       const response = await preExamineeRegistrationServices.getByExamAndMadrasah(examId, madrasaId) as PreExamineeApiResponse
-      console.log('Pre-examinee response:', response)
+    
       if (response.success && response.data?.data) {
         set({ preExaminees: response.data.data, loading: false })
       } else {

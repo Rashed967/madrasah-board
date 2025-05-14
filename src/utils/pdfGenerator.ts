@@ -115,7 +115,7 @@ interface ReceiptData {
 
 
 export const generatePreExamineeReceipt = async (data: ReceiptData) => {
-  console.log(data);
+ 
   const {
     registrationData,
     boardInfo,
@@ -125,7 +125,7 @@ export const generatePreExamineeReceipt = async (data: ReceiptData) => {
     preRegistrationFee,
     madrasahDetails,
   } = data;
-  console.log(data)
+  
 
   try {
     // Validate input data
@@ -139,43 +139,7 @@ export const generatePreExamineeReceipt = async (data: ReceiptData) => {
       throw new Error('Board or madrasah details are missing');
     }
 
-    // Calculate total amount and examinees
-    // const totalAmount = registrationData.examineesPerMahala.reduce(
-    //   (sum, item) =>
-    //     sum +
-    //     ((item.regularExamineesSlots || 0) +
-    //       (item.irregularExamineesSlots || 0)) *
-    //       preRegistrationFee,
-    //   0
-    // );
-
-    // const totalExaminees = registrationData.examineesPerMahala.reduce(
-    //   (sum, item) =>
-    //     sum +
-    //     ((item.regularExamineesSlots || 0) +
-    //       (item.irregularExamineesSlots || 0)),
-    //   0
-    // );
-
-    // Format short address
-    // const shortAddress = madrasahDetails?.address
-    //   ? `${madrasahDetails.address.village}, ${madrasahDetails.address.district}, ${madrasahDetails.address.division}`
-    //   : '';
-
-      // const report = await jsreport.render({
-      //   template: {
-      //     // তুমি jsreport UI তে যে template name দিয়েছো
-      //     name: '/preRegistationReport/myTemplate',
-      //   },
-      //   data: data,
-      //   options: {
-      //     reportName: 'নিবন্ধন_রিপোর্ট_{{registrationData.receiptNo}}'
-      //   }
-      // })
-      // console.log('report', report)
-
-      // await report.download('report.pdf')
-      // console.log('data', data)
+   
 
       const response = await fetch('http://localhost:5490/generate-report', {
         method: 'POST',
@@ -184,7 +148,7 @@ export const generatePreExamineeReceipt = async (data: ReceiptData) => {
         },
         body: JSON.stringify(data)
       })
-      console.log('response', response)
+      
       const blob = await response.blob()
       const pdfUrl = URL.createObjectURL(blob);
       window.open(pdfUrl, '_blank');

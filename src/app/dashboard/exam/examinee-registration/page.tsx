@@ -125,12 +125,12 @@ const ExamineeRegistrationPage = () => {
 
   const handleExamSelect = (examId: string) => {
     setSelectedExamId(examId)
-    console.log('Selected exam ID:', examId)
+    
   }
 
   const handleMadrasahSelect = (madrasah: Madrasah | null) => {
     setSelectedMadrasah(madrasah)
-    console.log('Selected madrasah:', madrasah)
+    
   }
 
   return (

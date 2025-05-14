@@ -31,7 +31,7 @@ export function EditMarkazDialog({
     madrasah: '',
     allMadrasah: [] as string[]
   })
-  console.log(markaz)
+  
 
   const [availableMadrasahs, setAvailableMadrasahs] = useState<IMadrasah[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -101,7 +101,7 @@ export function EditMarkazDialog({
   }, [searchTermForAdd])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('updating')
+    
     e.preventDefault()
     setLoading(true)
 
@@ -189,7 +189,7 @@ export function EditMarkazDialog({
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          console.log('hello')
+         
         }}
         className="space-y-4 max-h-[80vh] overflow-y-auto pr-2"
       >

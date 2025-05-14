@@ -2,7 +2,6 @@
 
 export const getAllExams = async () => {
     const accessToken = localStorage.getItem("access_token")
-    console.log(accessToken)
  
 }
 

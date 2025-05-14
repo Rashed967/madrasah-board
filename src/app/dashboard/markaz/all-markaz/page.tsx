@@ -56,7 +56,7 @@ const AllMarkaz = () => {
   const [selectedMarkaz, setSelectedMarkaz] = useState<IMarkazResponse | null>(
     null
   )
-  console.log(selectedMarkaz)
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedMarkazId, setSelectedMarkazId] =
     useState<IMarkazResponse | null>(null)
@@ -83,7 +83,7 @@ const AllMarkaz = () => {
         const response = await getAllZones()
         if (response.success) {
           setZones(response.data)
-          console.log(response.data)
+       
         } else {
           setError(response.message)
         }
@@ -94,7 +94,7 @@ const AllMarkaz = () => {
     fetchZones()
   }, [])
 
-  console.log(zones)
+ 
   const fetchMarkaz = async () => {
     try {
       const queryParams = new URLSearchParams()
@@ -109,7 +109,7 @@ const AllMarkaz = () => {
 
       const response = await getAllMarkaz(queryParams.toString())
 
-      // console.log(response)
+     
       if (response.success) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setMarkazList((response as any)?.data?.markazList)
@@ -159,7 +159,7 @@ const AllMarkaz = () => {
         queryParams.append('page', String(currentPage))
         queryParams.append('limit', String(limitPerPage))
         if (selectedCategory) queryParams.append('category', selectedCategory)
-        console.log(queryParams)
+        
 
         if (selectedZone.length > 0)
           queryParams.append('zoneIds', selectedZone.join(','))
@@ -390,7 +390,7 @@ const AllMarkaz = () => {
                     <td
                       className="px-6 py-4 text-sm text-gray-500 cursor-pointer"
                       onClick={() => {
-                        console.log(selectedMarkaz)
+                      
                         setSelectedMarkaz(markaz)
                         setIsOpenViewInfo(true)
                       }}

@@ -27,11 +27,6 @@ export default function ZoneDistrict({
   const availableDistricts = districts.filter(
     (district) => !allDisallowedDistricts.includes(district)
   )
-  console.log(
-    availableDistricts.length,
-    allDisallowedDistricts.length,
-    selectedDistricts.length
-  )
 
   return (
     <div className="mb-6">

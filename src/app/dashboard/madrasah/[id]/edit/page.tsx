@@ -216,7 +216,7 @@ export default function EditMadrasahPage({
   const handleBasicInfoUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // validate request
-    console.log(formData)
+    
     const validationErrors = globalValidateRequest(basicInfoSchema, formData)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
@@ -237,7 +237,7 @@ export default function EditMadrasahPage({
         contactNo2: formData.contactNo2?.trim() || '',
         description: formData.description?.trim() || ''
       }
-      console.log(basicInfo)
+      
 
       const response = await updateMadrasahBasicInfo(params.id, basicInfo)
 
@@ -283,7 +283,7 @@ export default function EditMadrasahPage({
       if (typeof formData.address === 'string') {
         throw new Error('Invalid address format')
       }
-      console.log(formData.address)
+    
 
       const addressData: IMadrasahAddress = {
         division: formData.address.division.trim() || '',

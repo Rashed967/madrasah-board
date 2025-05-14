@@ -113,7 +113,6 @@ export default function AllRegisteredExaminees() {
     setLoading(true)
     setError(null)
     try {
-      console.log('Fetching examinees...')
       // get access token from local storage
       const accessToken = localStorage.getItem('access_token')
       
@@ -128,7 +127,6 @@ export default function AllRegisteredExaminees() {
         url += `&madrasah=${selectedMadrasah}`
       }
       
-      console.log('API URL:', url)
       
       // Make the API call with authorization header
       const response = await fetch(url, {
@@ -138,7 +136,6 @@ export default function AllRegisteredExaminees() {
       })
       
       const data = await response.json()
-      console.log('API Response:', data)
       
       if (data.success) {
         setExaminees(data.data)
@@ -198,7 +195,6 @@ export default function AllRegisteredExaminees() {
   }
 
   const handleStatusChange = async (id: string, checked: boolean) => {
-    console.log('Status changing...', id)
     try {
       const response = await examineeRegistrationService.updateStatus(id)
       if (response.success && response.data) {
@@ -263,7 +259,6 @@ export default function AllRegisteredExaminees() {
         }
       })
       const madrasahData = await madrasahResponse.json()
-      console.log('madrasah data ', madrasahData.data)
 
       // Clean up the examinees data by removing nested objects
       const cleanedExaminees = registeredExaminees.data.map(examinee => {
@@ -324,7 +319,6 @@ export default function AllRegisteredExaminees() {
         boardInfo: boardInfoData.data,
         madrasah: madrasahData.data
       }
-      console.log('final data ', finalData)
       // generate report and download it
       const response = await fetch(`${process.env.NEXT_PUBLIC_JSREPORT_SERVER_URL}/examinee-list`, {
         method: 'POST',
@@ -333,7 +327,6 @@ export default function AllRegisteredExaminees() {
         },
         body: JSON.stringify(finalData)
       })
-      console.log('response', response)
       const blob = await response.blob()
       const pdfUrl = URL.createObjectURL(blob);
       window.open(pdfUrl, '_blank');
@@ -357,7 +350,6 @@ export default function AllRegisteredExaminees() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/regestered-examinees?madrasah=${selectedMadrasah}&exam=${selectedExam}`)
       const data = await response.json()
-      console.log('All registered examinees for Invoice:', data)
     } catch (error) {
       console.error('Error fetching data for Invoice:', error)
     }

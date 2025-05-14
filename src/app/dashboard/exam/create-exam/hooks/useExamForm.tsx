@@ -158,17 +158,13 @@ export function useExamForm() {
     )
 
     if (Object.keys(validationErrors || {}).length > 0) {
-      console.log(validationErrors)
       setErrors(validationErrors || {})
       setIsSubmitting(false)
       return
     }
-    console.log("after validation", exam)
 
     try {
-      console.log("before create exam", exam)
       const response = await examServices.createExam(exam)
-      console.log("after create exam", response)
       if (response.success) {
         setStatusDialog({
           isOpen: true,

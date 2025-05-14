@@ -139,7 +139,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           return examFees.some(fee => fee.marhala === marhala._id);
         });
         
-        console.log('selectedExamDetails', selectedExamDetails)
+      
         
         const formattedMarhalas = marhalasWithFees.map((marhala: any) => ({
           marhalaName: marhala.name.bengaliName,
@@ -149,7 +149,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
           endingRegistrationNumber: 0,
           totalFeesAmount: 0
         }))
-        console.log('formattedMarhalas', formattedMarhalas)
+      
 
         if (formattedMarhalas.length <= 0) {
           setMadrasahSearchInputError("নিবন্ধনের জন্য কোনো মারহালা নেই")

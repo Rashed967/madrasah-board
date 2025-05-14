@@ -43,7 +43,7 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
         const response = await getMarkazById(params.id)
         if (response.success && response.data) {
           const markazData = response.data as IMarkazResponse
-          console.log('markazData', markazData)
+        
           setMarkaz(markazData.madrasah)
           setAllMadrasah(markaz.allMadrasah)
           setFormData({
@@ -64,7 +64,7 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
     }
     fetchMarkaz()
   }, [params.id])
-  console.log(formData)
+ 
 
   useEffect(() => {
     const searchMadrasahs = async () => {
@@ -152,18 +152,14 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
         changes.allMadrasah = formData.allMadrasah
       }
 
-      // if (Object.keys(changes).length === 0) {
-      //   router.back()
-      //   return
-      // }
-      console.log('editing', formData)
+
 
       const sanitized = Object.fromEntries(
         Object.entries(changes).filter(
           ([_, value]) => value !== null && value !== undefined && value !== ''
         )
       )
-      console.log(sanitized)
+      
 
       const response = await updateMarkaz(markaz._id.toString(), sanitized)
 

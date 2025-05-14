@@ -148,7 +148,6 @@ export default function AllMadrasah() {
       }
 
       const response = await getAllMadrasahs(queryParams.toString())
-      console.log('response', queryParams.toString()) 
       setMadrasahs(response.data)
       setTotalPages(Math.ceil(response.meta.total / limit))
       setTotalDocuments(response.meta.total)
@@ -171,7 +170,6 @@ export default function AllMadrasah() {
     sortOrder
   ])
 
-  console.log('madrasahs', madrasahs)
 
   const fetchDistricts = useCallback(async () => {
     if (selectedDivisions.length > 0) {

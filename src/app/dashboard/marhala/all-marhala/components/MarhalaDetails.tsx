@@ -11,7 +11,7 @@ interface MarhalaDetailsProps {
 export default function MarhalaDetails({ marhala, isOpen, onClose }: MarhalaDetailsProps) {
   if (!marhala) return null
 
-  console.log(marhala)
+ 
 
   return (
     <Dialog className='w-11/12 h-72 md:w-3/6 md:h-80 overflow-auto' isOpen={isOpen} onClose={onClose} title="মারহালা বিস্তারিত">

@@ -84,7 +84,7 @@ export default function EditMarhalaDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(formData)
+   
 
     // Validate required fields
     if (!formData.bengaliName.trim()) {
@@ -92,7 +92,7 @@ export default function EditMarhalaDialog({
       return
     }
 
-    console.log(formData)
+  
     if (!formData.marhalaType) {
       toast.error('মারহালার ধরণ নির্বাচন করুন')
       return
@@ -121,9 +121,9 @@ export default function EditMarhalaDialog({
       // Always include marhalaType and marhalaCategory in changes
       changes.marhalaType = formData.marhalaType as 'boys' | 'girls'
       changes.marhalaCategory = formData.marhalaCategory as MarhalaCategory
-      console.log('Original level from form:', formData.level)
+    
       changes.level = Number(formData.level) // Ensure it's a number
-      console.log('Level being sent to server:', changes.level)
+    
 
       // Compare kitab lists
       const originalKitabs = marhala?.listOfKitabs
@@ -159,7 +159,7 @@ export default function EditMarhalaDialog({
       }
 
       const response = await updateMarhala(marhalaId, changes)
-      console.log('Response from server:', response.data?.level)
+     
 
       if (response.success) {
         if (response.data.level !== formData.level) {

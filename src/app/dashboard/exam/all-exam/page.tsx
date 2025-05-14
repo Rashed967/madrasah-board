@@ -13,7 +13,6 @@ const AllExamsPage = () => {
   useEffect(() => {
     const fetchExams = async () => {
       const response = await examServices.getAllExamForPreRegistration('');
-      console.log(response);
       if (response.success) {
         setExams(response.data);
       } else {
@@ -31,7 +30,6 @@ const AllExamsPage = () => {
     <p>কোন পরীক্ষা নেই</p>
   </div>
 
-console.log(exams);
 
   return (
     <div className='m-6'>

@@ -27,7 +27,7 @@ const AddMarkaz = () => {
   const [zoneSearchTerm, setZoneSearchTerm] = useState('')
   const [selectedZone, setSelectedZone] = useState(null)
   const [showDropdown, setShowDropdown] = useState(false)
-  console.log(selectedZone)
+
   const [allMadrasah, setAllMadrasah] = useState<
     {
       name: string
@@ -73,7 +73,7 @@ const AddMarkaz = () => {
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: any) => {
-        console.log(error)
+    
         setStatusDialog({
           isOpen: true,
           type: 'error',

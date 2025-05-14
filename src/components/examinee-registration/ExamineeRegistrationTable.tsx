@@ -358,7 +358,7 @@ const ExamineeRegistrationTable = ({
       );
       
       if (response.data && response.data.success) {
-        console.log(response.data);
+    
         showSuccessDialog(response.data.message || "পরীক্ষার্থী সফলভাবে নিবন্ধন করা হয়েছে");
         
         // Update remaining slots

@@ -11,10 +11,10 @@ interface IZone {
 const useGetAllZones = (searchTerm: string) => {
     const queryParams = new URLSearchParams()
     queryParams.append('searchTerm', searchTerm)
-    console.log(`/exams?${queryParams}`)
+   
     const fetchZones = async () => {
         const response = await get<IZone[]>(`/zones?${queryParams}`)
-        // console.log(response)
+        
         return response
     }
     return useQuery({
