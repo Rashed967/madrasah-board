@@ -68,7 +68,7 @@ export function EditKitabDialog({
   }
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="">
+    <Dialog className='w-10/12 md:w-2/6' isOpen={isOpen} onClose={onClose} title="">
       <DialogContent className="sm:max-w-[425px] text-gray-800">
         <DialogHeader>
           <DialogTitle>কিতাব এডিট করুন</DialogTitle>
