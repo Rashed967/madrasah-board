@@ -17,7 +17,7 @@ export const madrasahSchemaForAdmin = z.object({
   email: z.string().optional(),
   communicatorName: z.string().min(1, 'যোগাযোগকারীর নাম আবশ্যক'),
   contactNo1: z.string().regex(phoneRegex, 'সঠিক মোবাইল নম্বর দিন'),
-  contactNo2: z.string().optional(),
+  contactNo2: z.string().regex(phoneRegex, 'সঠিক মোবাইল নম্বর দিন'),
 
   address: z.object({
     division: z.string().min(1, 'বিভাগ আবশ্যক'),

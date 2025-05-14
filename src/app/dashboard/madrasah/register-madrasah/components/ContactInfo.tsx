@@ -72,7 +72,9 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
               onChange={(e) => handleChange('contactNo2', e.target.value)}
               className={`mt-1 block w-full rounded-md border  px-3 py-2 text-xs text-gray-700 md:text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500`}
             />
-            
+             {errors.contactNo2 && (
+              <p className="text-red-500 text-xs italic">{errors.contactNo2}</p>
+            )}
           </div>
 
           <div>

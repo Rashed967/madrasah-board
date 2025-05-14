@@ -252,8 +252,10 @@ const AllMarkaz = () => {
 
           <p>
             জোন:{' '}
-            {zones.find((zone) => zone?.id === selectedMarkaz?.madrasah?.zone)
-              .name || ''}
+            {
+              console.log('zone name', zones?.find((zone) => zone?.id === selectedMarkaz?.madrasah?.zone).name)
+            }
+            {zones?.find((zone) => zone?.id === selectedMarkaz?.madrasah?.zone) && zones?.find((zone) => zone?.id === selectedMarkaz?.madrasah?.zone).name || ''}
           </p>
           <p>
             মাদ্রাসার সংখ্যা:{' '}
