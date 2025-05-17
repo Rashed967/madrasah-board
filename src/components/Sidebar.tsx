@@ -18,7 +18,9 @@ import {
   MdList,
   MdLocationOn,
   MdFormatListBulletedAdd
-} from 'react-icons/md'
+} from 'react-icons/md';
+import { FaFilePdf } from "react-icons/fa";
+
 
 export default function Sidebar() {
   const router = useRouter()
@@ -177,6 +179,7 @@ export default function Sidebar() {
         }
       ]
      },
+    { name: 'পিডিএফ জেনারেট', href: '/dashboard/pdf-generate', icon: FaFilePdf },
     { name: 'নোটিফিকেশন', href: '/notifications', icon: MdNotifications },
     { name: 'সেটিংস', href: '/settings', icon: MdSettings }
   ]
