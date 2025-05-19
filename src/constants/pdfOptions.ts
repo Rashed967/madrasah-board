@@ -1,0 +1,53 @@
+import { PDFOption } from '@/types/pdf';
+
+export const pdfOptions: PDFOption[] = [
+  {
+    id: 'madrasah-list',
+    title: 'পরীক্ষাথীর রোলের লিস্ট',
+    description: 'পরীক্ষাথীর রোলের লিস্টের পিডিএফ তৈরি করুন',
+    icon: 'FileText',
+    color: 'bg-blue-50 hover:bg-blue-100'
+  },
+  {
+    id: 'examinee-list',
+    title: 'পরীক্ষার্থী লিস্ট',
+    description: 'পরীক্ষার্থীদের তালিকা পিডিএফ তৈরি করুন',
+    icon: 'Users',
+    color: 'bg-green-50 hover:bg-green-100'
+  },
+  {
+    id: 'kitab-list',
+    title: 'কিতাব লিস্ট',
+    description: 'কিতাবের তালিকা পিডিএফ তৈরি করুন',
+    icon: 'BookOpen',
+    color: 'bg-purple-50 hover:bg-purple-100'
+  },
+  {
+    id: 'result-list',
+    title: 'ফলাফল লিস্ট',
+    description: 'পরীক্ষার ফলাফল পিডিএফ তৈরি করুন',
+    icon: 'Award',
+    color: 'bg-yellow-50 hover:bg-yellow-100'
+  },
+  {
+    id: 'teacher-list',
+    title: 'শিক্ষক লিস্ট',
+    description: 'শিক্ষকদের তালিকা পিডিএফ তৈরি করুন',
+    icon: 'GraduationCap',
+    color: 'bg-red-50 hover:bg-red-100'
+  },
+  {
+    id: 'markaz-list',
+    title: 'মারকায লিস্ট',
+    description: 'মারকাযের তালিকা পিডিএফ তৈরি করুন',
+    icon: 'FileSpreadsheet',
+    color: 'bg-indigo-50 hover:bg-indigo-100'
+  },
+  {
+    id: 'pre-examinee-list',
+    title: 'নিবন্ধিত পরীক্ষার্থী তালিকা',
+    description: 'নিবন্ধিত পরীক্ষার্থী তালিকা পিডিএফ তৈরি করুন',
+    icon: 'FileSpreadsheet',
+    color: 'bg-indigo-50 hover:bg-indigo-100'
+  }
+]; 
