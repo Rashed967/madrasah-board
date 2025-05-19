@@ -16,6 +16,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { CheckboxDropdown } from '@/components/ui/checkbox'
 import { useGetMarkazList } from '@/hooks/useGetMarkazList'
+import { getBoardInfo } from '@/features/boardInfo/boardInfor.service'
+import { useMarkazListPDFGenerator } from '@/hooks/useMarkazListPDFGenerator'
 
 const PdfGeneratePage = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -26,10 +28,15 @@ const PdfGeneratePage = () => {
   const [selectedMadrasahType, setSelectedMadrasahType] = useState<'boys' | 'girls' | 'both' | null>(null)
   const [selectedExamType, setSelectedExamType] = useState<'darsiyat' | 'hifz' | 'both' | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [combinedData, setCombinedData] = useState<{
+    boardInfo: any;
+    allMarkaz: any;
+  } | null>(null);
   
   const { exams, loading: examsLoading, error: examsError } = useGetExams()
   const { zones, getDistrictsForZones, loading: zonesLoading, error: zonesError } = useGetZones()
   const { getMarkazList, loading: markazListLoading, error: markazListError } = useGetMarkazList()
+  const { generatePDF, loading: pdfLoading, error: pdfError, hasPDF } = useMarkazListPDFGenerator();
 
   const pdfOptions = [
     {
@@ -274,22 +281,47 @@ const PdfGeneratePage = () => {
                     setIsLoading(true)
                     const madrasahType = selectedMadrasahType === 'both' ? 'উভয়' : selectedMadrasahType === 'boys' ? 'বালক' : 'বালিকা'
                     
-                    const response = await getMarkazList({
-                      zoneIds: selectedZones,
+                    // Fetch both board info and markaz list in parallel
+                    const [boardInfoResult, markazListResult] = await Promise.all([
+                      getBoardInfo(),
+                      getMarkazList({
+                        zoneIds: selectedZones,
+                        districts: selectedDistricts,
+                        madrasahType,
+                        marhalaCategory: selectedExamType
+                      })
+                    ]);
+
+                    // Combine the results
+                    const combinedResult = {
+                      boardInfo: boardInfoResult.data,
+                      allMarkaz: markazListResult,
+                      madrasahType: madrasahType,
+                      examType: selectedExamType,
                       districts: selectedDistricts,
-                      madrasahType,
-                      marhalaCategory: selectedExamType
-                    })
-                    
-                    console.log('API Response:', response)
+                      zones: selectedZones.map(zoneId => {
+                        const zone = zones.find(z => z._id === zoneId);
+                        return {
+                          id: zoneId,
+                          name: zone?.name || ''
+                        };
+                      }),
+                      exam: exams.find(exam => exam._id === selectedExam) || null
+                    };
+
+                    setCombinedData(combinedResult);
+                    console.log('Combined Data:', combinedResult);
+
+                    // Generate PDF
+                    await generatePDF(combinedResult);
                   } catch (error) {
-                    console.error('Error fetching data:', error)
+                    console.error('Error:', error)
                   } finally {
                     setIsLoading(false)
                   }
                 }}
               >
-                {isLoading || markazListLoading ? (
+                {isLoading || markazListLoading || pdfLoading ? (
                   <div className="flex items-center">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     লোড হচ্ছে...
