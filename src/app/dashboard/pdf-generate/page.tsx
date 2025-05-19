@@ -12,7 +12,7 @@ import { Award, BookOpen, FileSpreadsheet, FileText, GraduationCap, Users } from
 import { useState } from 'react'
 import { pdfOptions } from '@/constants/pdfOptions'
 import { pdfGenerators } from '@/config/pdfGenerators'
-import { PDFFormData } from '@/types/pdf'
+import { PDFFormData } from '@/types/pdfGenerator.types'
 
 const PdfGeneratePage = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)

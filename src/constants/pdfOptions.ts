@@ -1,4 +1,4 @@
-import { PDFOption } from '@/types/pdf';
+import { PDFOption } from '@/types/pdfGenerator.types';
 
 export const pdfOptions: PDFOption[] = [
   {

@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { CheckboxDropdown } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ExamType, MadrasahType, PDFFormData } from '@/types/pdf';
+import { ExamType, MadrasahType, PDFFormData } from '@/types/pdfGenerator.types';
 import { useState } from 'react';
 
-interface MadrasahListFormProps {
+interface MarkazListFormProps {
   exams: any[];
   zones: any[];
   examsLoading: boolean;
@@ -16,7 +16,7 @@ interface MadrasahListFormProps {
   onCancel: () => void;
 }
 
-export const MadrasahListForm = ({
+export const MarkazListForm = ({
   exams,
   zones,
   examsLoading,
@@ -26,7 +26,7 @@ export const MadrasahListForm = ({
   getDistrictsForZones,
   onSubmit,
   onCancel
-}: MadrasahListFormProps) => {
+}: MarkazListFormProps) => {
   const [selectedExam, setSelectedExam] = useState<string | null>(null);
   const [selectedZones, setSelectedZones] = useState<string[]>([]);
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
