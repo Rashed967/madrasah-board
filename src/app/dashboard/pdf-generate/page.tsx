@@ -18,7 +18,7 @@ const PdfGeneratePage = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   
-  const { exams, loading: examsLoading, error: examsError } = useGetExams()
+  const { exams, loading: examsLoading, error: examsError } = useGetExams({ populateMarhala: true })
   const { zones, getDistrictsForZones, loading: zonesLoading, error: zonesError } = useGetZones()
   const { getMarkazList, loading: markazListLoading, error: markazListError } = useGetMarkazList()
   const { generatePDF, loading: pdfLoading, error: pdfError } = useMarkazListPDFGenerator();
@@ -62,6 +62,7 @@ const PdfGeneratePage = () => {
         }),
         exam: exams.find(exam => exam._id === data.examId) || null
       };
+      console.log(combinedResult)
 
       // Generate PDF
       await generatePDF(combinedResult);

@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react'
 import { get } from '@/core/api/apiService'
 import { IExam } from '@/types/exam'
 
+interface UseGetExamsOptions {
+  populateMarhala?: boolean;
+}
+
 interface UseGetExamsReturn {
   exams: IExam[]
   loading: boolean
@@ -9,7 +13,7 @@ interface UseGetExamsReturn {
   searchExams: (query: string) => void
 }
 
-export const useGetExams = (): UseGetExamsReturn => {
+export const useGetExams = (options: UseGetExamsOptions = {}): UseGetExamsReturn => {
   const [exams, setExams] = useState<IExam[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -18,7 +22,15 @@ export const useGetExams = (): UseGetExamsReturn => {
   const fetchExams = async () => {
     try {
       setLoading(true)
-      const response = await get<IExam[]>('/exams?fields=examFeeForBoys,examFeeForGirls,examName')
+      const queryParams = new URLSearchParams({
+        fields: 'examFeeForBoys,examFeeForGirls,examName'
+      });
+
+      if (options.populateMarhala) {
+        queryParams.append('populateMarhala', 'true');
+      }
+
+      const response = await get<IExam[]>(`/exams?${queryParams.toString()}`)
       if (response.success) {
         setExams(response.data)
       } else {
@@ -33,7 +45,7 @@ export const useGetExams = (): UseGetExamsReturn => {
 
   useEffect(() => {
     fetchExams()
-  }, [])
+  }, [options.populateMarhala])
 
   const searchExams = (query: string) => {
     setSearchQuery(query)

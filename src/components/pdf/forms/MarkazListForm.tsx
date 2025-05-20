@@ -72,6 +72,7 @@ export const MarkazListForm = ({
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+
       
       await onSubmit({
         examId: selectedExam,
