@@ -33,7 +33,7 @@ export default function MarhalaTable({ marhalaList, onShowDetails, onEditClick }
           {marhalaList.map((marhala) => (
             <tr key={marhala._id.toString()} className="border-b hover:bg-gray-50">
               <td className="px-4 py-4 text-sm text-gray-600">
-                {Number(marhala.code).toLocaleString('bn-BD')}
+                {marhala.code}
               </td>
               <td
                 className="px-4 py-4 text-sm font-semibold cursor-pointer"

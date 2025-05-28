@@ -73,6 +73,7 @@ export default function AddMarhalaPage() {
         marhalaCategory: category
       }
 
+
       const response = await createMarhala(marhalaData)
 
       if (response.success) {
