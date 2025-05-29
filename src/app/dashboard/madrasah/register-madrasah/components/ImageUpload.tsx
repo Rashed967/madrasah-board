@@ -37,7 +37,7 @@ const PdfUpload: React.FC<PdfUploadProps> = ({
       }
 
       // Validate file size
-      const maxSizeKB = 300
+      const maxSizeKB = 400
       const fileSizeKB = Math.round(file.size / 1024)
       if (fileSizeKB > maxSizeKB) {
         setErrorMessage(
@@ -134,13 +134,14 @@ const PdfUpload: React.FC<PdfUploadProps> = ({
                 <p className="mb-2 text-sm text-gray-500">
                   <span className="font-semibold">PDF ফাইল আপলোড করুন</span>
                 </p>
-                <p className="text-xs text-gray-500">সর্বোচ্চ 300KB</p>
+                <p className="text-xs text-gray-500">সর্বোচ্চ 400KB</p>
               </>
             )}
           </div>
           <input
             id="dropzone-file"
             type="file"
+            multiple
             className="hidden"
             onChange={handlePdfChange}
             accept="application/pdf"
