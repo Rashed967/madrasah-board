@@ -27,6 +27,11 @@ export default function AllZones() {
   const [selectedZoneName, setSelectedZoneName] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [allZoneNames, setAllZoneNames] = useState<string[]>([])
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 50,
+    total: 0
+  })
 
   useEffect(() => {
     const zoneNames = zones.map((zone) => zone.name)
@@ -52,8 +57,17 @@ export default function AllZones() {
   const loadZones = async () => {
     try {
       setIsLoading(true)
-      const response = await getAllZones()
+      const response = await getAllZones({
+        page: pagination.page,
+        limit: pagination.limit
+      })
       setZones(response.data)
+      if (response.meta) {
+        setPagination(prev => ({
+          ...prev,
+          total: response.meta.total
+        }))
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setStatusDialog({

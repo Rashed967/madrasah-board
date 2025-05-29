@@ -10,19 +10,19 @@ interface ZonesTableProps {
 
 export const ZonesTable = ({ zones, onView, onDelete }: ZonesTableProps) => {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white rounded-lg shadow ">
       <div className="overflow-x-auto">
-        <table className="min-w-full table-fixed">
+        <table className="min-w-full">
           <thead className="bg-[#52B788]/70 text-white text-left">
             <tr>
               <th className="px-6 py-3 w-32 ">জোনের কোড</th>
               <th className="px-6 py-3 w-48 ">জোনের নাম</th>
               <th className="px-6 py-3 w-48 ">জেলা</th>
               <th className="px-6 py-3 w-32 ">মারকায সংখ্যা</th>
-              <th className="px-6 py-3 w-32 ">অ্যাকশন</th>
+              <th className="px-6 py-3 w-32 ">অ্যাকশন</th>  
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 ">
             {zones.map((zone, index) => (
               <tr key={zone._id.toString()} className="hover:bg-gray-50">
                 <td className="px-6 py-4 truncate text-gray-700">
@@ -69,3 +69,4 @@ export const ZonesTable = ({ zones, onView, onDelete }: ZonesTableProps) => {
     </div>
   )
 }
+

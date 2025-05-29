@@ -3,6 +3,11 @@ import { validateZone, ZoneInput } from './zone.validations'
 import * as apiService from '@/core/api/apiService'
 import { ApiResponse } from '@/core/api/apiService'
 
+interface PaginationParams {
+  page?: number
+  limit?: number
+}
+
 export async function createZone(data: ZoneInput): Promise<ApiResponse<IZone>> {
   // Validate the data before sending to API
   const validationResult = validateZone(data)
@@ -19,8 +24,15 @@ export async function createZone(data: ZoneInput): Promise<ApiResponse<IZone>> {
   return response
 }
 
-export async function getAllZones(): Promise<ApiResponse<IZone[]>> {
-  const response = await apiService.get<IZone[]>('/zones')
+export async function getAllZones(params?: PaginationParams): Promise<ApiResponse<IZone[]>> {
+  const queryParams = new URLSearchParams()
+  if (params?.page) queryParams.append('page', params.page.toString())
+  if (params?.limit) queryParams.append('limit', params.limit.toString())
+  
+  const queryString = queryParams.toString()
+  const url = `/zones${queryString ? `?${queryString}` : ''}`
+  
+  const response = await apiService.get<IZone[]>(url)
   return response
 }
 
