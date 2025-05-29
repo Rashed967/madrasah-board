@@ -8,6 +8,7 @@ import {
 } from '@/data/locations'
 import { IMadrasahAddress } from '@/features/madrasah/interfaces'
 import courierAddressOptions from '@/data/courierAddress.options'
+import { useGetZones } from '@/hooks/useGetZones'
 
 // Helper function to convert string array to options format
 const toOptions = (arr: string[]) =>
@@ -19,8 +20,24 @@ interface AddressFormProps {
 }
 
 export const AddressForm = ({ address, onChange }: AddressFormProps) => {
+  const { zones, loading } = useGetZones()
+  
+  const zoneOptions = zones.map(zone => ({
+    value: zone._id,
+    label: zone.name
+  }))
+
+  console.log(address)
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 md:mt-4">
+      <SelectField
+        label="জোন"
+        name="address.zone"
+        value={address.zone || ''}
+        onChange={onChange}
+        options={zoneOptions}
+      />
+
       <SelectField
         label="বিভাগ"
         name="address.division"
@@ -28,7 +45,6 @@ export const AddressForm = ({ address, onChange }: AddressFormProps) => {
         onChange={onChange}
         options={toOptions(divisions)}
       />
-
 
       <SelectField
         label="জেলা"
