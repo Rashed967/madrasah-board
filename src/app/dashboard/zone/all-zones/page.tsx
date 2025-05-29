@@ -158,9 +158,6 @@ export default function AllZones() {
     return matchesSearch && matchesZoneName
   })
 
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
