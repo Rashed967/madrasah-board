@@ -235,10 +235,10 @@ export default function EditMadrasahPage({
         communicatorName: formData.communicatorName?.trim() || '',
         contactNo1: formData.contactNo1?.trim() || '',
         contactNo2: formData.contactNo2?.trim() || '',
-        description: formData.description?.trim() || ''
+        description: formData.description?.trim() || '',
+        ilhakPdf: formData.ilhakPdf || ''
       }
       
-
       const response = await updateMadrasahBasicInfo(params.id, basicInfo)
 
       if (response.success) {
