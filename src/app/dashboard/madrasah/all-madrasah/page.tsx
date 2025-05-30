@@ -147,10 +147,16 @@ export default function AllMadrasah() {
         queryParams.append('zone', selectedZone)
       }
 
+      console.log('Fetching page:', currentPage, 'with params:', queryParams.toString())
       const response = await getAllMadrasahs(queryParams.toString())
-      setMadrasahs(response.data)
-      setTotalPages(Math.ceil(response.meta.total / limit))
-      setTotalDocuments(response.meta.total)
+      
+      if (response.data) {
+        // Clear existing data and set new data
+        setMadrasahs([])
+        setMadrasahs(response.data)
+        setTotalPages(Math.ceil(response.meta.total / limit))
+        setTotalDocuments(response.meta.total)
+      }
     } catch (err) {
       setError('মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে')
       toast.error('মাদরাসার তথ্য লোড করতে সমস্যা হয়েছে')
@@ -158,16 +164,16 @@ export default function AllMadrasah() {
       setIsLoading(false)
     }
   }, [
+    currentPage,
+    limit,
+    sortOrder,
     selectedDivisions,
     selectedDistricts,
     selectedSubDistricts,
     selectedPoliceStations,
     selectedMadrasahType,
     searchQuery,
-    currentPage,
-    limit,
-    selectedZone,
-    sortOrder
+    selectedZone
   ])
 
 
@@ -328,6 +334,8 @@ export default function AllMadrasah() {
   }
 
   const handlePageChange = (page: number) => {
+    console.log('Changing to page:', page)
+    setIsLoading(true)
     setCurrentPage(page)
   }
 
@@ -366,7 +374,7 @@ export default function AllMadrasah() {
   // Initial fetch on mount
   useEffect(() => {
     fetchMadrasahs()
-  }, [currentPage])
+  }, [currentPage, limit, sortOrder, selectedDivisions, selectedDistricts, selectedSubDistricts, selectedPoliceStations, selectedMadrasahType, searchQuery, selectedZone])
 
   // Fetch districts when divisions change
   useEffect(() => {

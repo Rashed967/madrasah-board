@@ -9,7 +9,7 @@ export const madrasahNamesSchema = z.object({
 export const basicInfoSchema = z.object({
   madrasahNames: madrasahNamesSchema.optional(),
   communicatorName: z.string().optional(),
-  // email: z.string().optional(),
+  email: z.string().optional(),
   contactNo1: z
     .string()
     .regex(/^01\d{9}$/, 'সঠিক মোবাইল নম্বর দিন (১১ ডিজিট)')
