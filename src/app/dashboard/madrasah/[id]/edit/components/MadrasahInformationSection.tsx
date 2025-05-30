@@ -28,6 +28,7 @@ export function MadrasahInformationSection({
   onSubmit,
   isSubmitting
 }: MadrasahInformationSectionProps) {
+  console.log(formData)
   const [marhalas, setMarhalas] = useState<IMarhala[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -71,10 +72,9 @@ export function MadrasahInformationSection({
           label="সর্বোচ্চ মারহালা"
           name="madrasah_information.highestMarhala"
           value={
-            typeof formData.madrasah_information?.highestMarhala === 'string'
-              ? formData.madrasah_information.highestMarhala
-              : formData.madrasah_information?.highestMarhala?.name
-                  ?.bengaliName || ''
+            typeof formData.madrasah_information?.highestMarhala === 'object'
+              ? formData.madrasah_information.highestMarhala._id
+              : formData.madrasah_information?.highestMarhala || ''
           }
           onChange={onChange}
           options={marhalaOptions}

@@ -352,7 +352,9 @@ export default function EditMadrasahPage({
       }
 
       const madrasahInfo = {
-        highestMarhala: formData.madrasah_information.highestMarhala,
+        highestMarhala: typeof formData.madrasah_information.highestMarhala === 'object' 
+          ? formData.madrasah_information.highestMarhala._id 
+          : formData.madrasah_information.highestMarhala,
         totalStudents: Number(formData.madrasah_information.totalStudents),
         totalTeacherAndStuff: Number(
           formData.madrasah_information.totalTeacherAndStuff
