@@ -35,7 +35,9 @@ const LocationForm: React.FC<Props> = ({ formData, handleChange, errors }) => {
   useEffect(() => {
     const loadZones = async () => {
       try {
-        const response = await getAllZones()
+        const response = await getAllZones({
+          limit: 100
+        })
         setZones(response.data)
       } catch (error) {
       } finally {
