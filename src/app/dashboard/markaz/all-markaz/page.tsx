@@ -23,7 +23,7 @@ import { IMarkazResponse } from '@/features/markaz/markaz.interface'
 import { deleteMarkaz, getAllMarkaz } from '@/features/markaz/markazService'
 import { getAllZones } from '@/features/zone'
 import { convertToBengali } from '@/utils/convertToBengali'
-import { MoreHorizontal } from 'lucide-react'
+import { Filter, MoreHorizontal } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -291,7 +291,7 @@ const AllMarkaz = () => {
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="জোন নির্বাচন করুন" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className='h-[240px]'>
                 <SelectItem value="all">সকল জোন</SelectItem>
                 {zones.map((zone) => (
                   <SelectItem key={zone.id} value={zone._id.toString()}>
@@ -320,7 +320,10 @@ const AllMarkaz = () => {
                 <SelectItem value="বালিকা">বালিকা</SelectItem>
               </SelectContent>
             </Select>
-            <Button className="" onClick={() => fetchMarkaz()}>
+            {/* fancy button  */}
+            {/* className="bg-[#52B788] hover:bg-[#52B788]/90 text-white py-0" */}
+            <Button size='default' variant='primary' onClick={() => fetchMarkaz()}>
+              <Filter size={16} className="mr-2" />
               ফিল্টার
             </Button>
           </div>
