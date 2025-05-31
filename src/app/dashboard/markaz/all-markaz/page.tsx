@@ -259,12 +259,12 @@ const AllMarkaz = () => {
           <p>
             মাদ্রাসার সংখ্যা:{' '}
             {convertToBengali(
-              allMadrasah.length ? allMadrasah?.length.toString() : 0
+              selectedMarkaz?.allMadrasahInMarkaz?.length ? selectedMarkaz?.allMadrasahInMarkaz?.length.toString() : 0
             )}
           </p>
           <h3 className="text-md font-semibold mt-4">মাদ্রাসার তালিকা:</h3>
           <ul className="list-disc pl-5">
-            {allMadrasah?.map((madrasah, index) => (
+            {selectedMarkaz?.allMadrasahInMarkaz?.map((madrasah, index) => (
               <li key={index}>
                 {typeof madrasah === 'object'
                   ? madrasah.madrasahNames?.bengaliName || '-'

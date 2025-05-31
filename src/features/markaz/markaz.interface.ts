@@ -21,6 +21,7 @@ export interface IMarkazResponse {
     allMadrasah?: IMadrasah[];
     code: string;
     zone?: string;
+    allMadrasahInMarkaz?: IMadrasah[];
     isDeleted?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
