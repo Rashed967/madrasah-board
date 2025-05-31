@@ -80,7 +80,9 @@ const AllMarkaz = () => {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const response = await getAllZones()
+        const response = await getAllZones({
+          limit: 50
+        })
         if (response.success) {
           setZones(response.data)
        
@@ -252,7 +254,7 @@ const AllMarkaz = () => {
 
           <p>
             জোন:{' '}
-            {zones?.find((zone) => zone?.id === selectedMarkaz?.madrasah?.zone) && zones?.find((zone) => zone?.id === selectedMarkaz?.madrasah?.zone)?.name || ''}
+            {zones?.find((zone) => zone?._id === selectedMarkaz?.zone) && zones?.find((zone) => zone?._id === selectedMarkaz?.zone)?.name || ''}
           </p>
           <p>
             মাদ্রাসার সংখ্যা:{' '}
@@ -411,9 +413,9 @@ const AllMarkaz = () => {
                       }}
                     >
                       {
-                        (markaz.madrasah.address.district,
-                        markaz.madrasah.address.division,
-                        markaz.madrasah.address.holdingNumber)
+                        (markaz.madrasah?.address?.district,
+                        markaz?.madrasah?.address?.division,
+                        markaz?.madrasah?.address?.holdingNumber)
                       }
                     </td>
 
