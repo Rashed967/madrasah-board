@@ -19,6 +19,7 @@ import { convertToBengali } from '@/utils/convertToBengali'
 import { getAllZones } from '@/features/zone/zone.services'
 import { IZone } from '@/features/zone/zone.interfaces'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { getAllMadrasahWithoutMarkaz } from '@/features/madrasah/services/madrasahService'
 
 export default function EditMarkazPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -106,12 +107,11 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
         if (searchTerm) {
           queryParams.append('searchTerm', searchTerm)
         }
-        const response = await getAllMadrasahs(queryParams.toString())
+        const response = await getAllMadrasahWithoutMarkaz(1, 10, searchTerm)
         if (response.success) {
-          setMainMadrasahs(response.data)
+          setMainMadrasahs(response.data as IMadrasah[])
           setShowDropdown(true)
         }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         toast.error('মাদ্রাসা খুঁজতে সমস্যা হয়েছে')
       }
@@ -291,8 +291,27 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="মাদ্রাসার নাম লিখুন"
                       className="h-10 text-gray-700"
-                      disabled
                     />
+                    {showDropdown && mainMadrasahs.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
+                        <div className="max-h-48 overflow-y-auto">
+                          {mainMadrasahs.map((madrasah) => (
+                            <div
+                              key={madrasah._id.toString()}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => handleMadrasahSelect(madrasah)}
+                            >
+                              <div className="text-sm text-gray-700">
+                                {madrasah.madrasahNames.bengaliName}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                কোড: {convertToBengali(madrasah.code)}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

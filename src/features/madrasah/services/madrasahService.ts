@@ -158,3 +158,19 @@ export const updateMadrasahInformation = async (
     throw error
   }
 }
+
+// get all madrasah without markaz 
+export const getAllMadrasahWithoutMarkaz = async (
+  page: number = 1,
+  limit: number = 10,
+  searchTerm: string = ''
+) => {
+  try {
+    const response = await get(
+      `/madrasah/without-markaz?page=${page}&limit=${limit}&searchTerm=${searchTerm}`
+    )
+    return response
+  } catch (error) {
+    throw error
+  }
+}
