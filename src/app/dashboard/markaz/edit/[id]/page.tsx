@@ -155,39 +155,54 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
     setLoading(true)
 
     try {
-      const changes: any = {}
+      const updateMarkazData: any = {}
+      const addedMadrasahs: string[] = []
+      const removedMadrasahs: string[] = []
 
       // Only include code if it's different and not empty
       if (formData.code !== markaz.code && formData.code) {
-        changes.code = formData.code
+        updateMarkazData.code = formData.code
       }
 
       // Only include madrasah if it's different and not empty
       if (formData.madrasah !== markaz.madrasah?._id.toString() && formData.madrasah) {
-        changes.madrasah = formData.madrasah
+        updateMarkazData.madrasah = formData.madrasah
       }
 
       // Only include zone if it's different and not empty
       if (formData.zone !== markaz.zone && formData.zone) {
-        changes.zone = formData.zone
+        updateMarkazData.zone = formData.zone
       }
 
-      // Only include allMadrasah if it's different
+      // Calculate added and removed madrasahs
       const originalMadrasahs = allMadrasah.map((m) => m._id.toString())
-      if (
-        JSON.stringify(originalMadrasahs) !==
-        JSON.stringify(formData.allMadrasah)
-      ) {
-        changes.allMadrasah = formData.allMadrasah
-      }
+      const currentMadrasahs = formData.allMadrasah
+
+      // Find added madrasahs
+      currentMadrasahs.forEach((madrasahId) => {
+        if (!originalMadrasahs.includes(madrasahId)) {
+          addedMadrasahs.push(madrasahId)
+        }
+      })
+
+      // Find removed madrasahs
+      originalMadrasahs.forEach((madrasahId) => {
+        if (!currentMadrasahs.includes(madrasahId)) {
+          removedMadrasahs.push(madrasahId)
+        }
+      })
 
       const sanitized = Object.fromEntries(
-        Object.entries(changes).filter(
+        Object.entries(updateMarkazData).filter(
           ([_, value]) => value !== null && value !== undefined && value !== ''
         )
       )
 
-      const response = await updateMarkaz(markaz._id.toString(), sanitized)
+      const response = await updateMarkaz(markaz._id.toString(), {
+        ...sanitized,
+        addedMadrasahs,
+        removedMadrasahs
+      })
 
       if (response.success) {
         toast.success('মারকায আপডেট করা হয়েছে')
