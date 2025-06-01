@@ -14,6 +14,7 @@ interface MadrasahSearchProps {
   isExamSelected: boolean
   onClear?: () => void
   onHideDropdown?: () => void
+  onShowDropdown?: () => void
 }
 
 const MadrasahSearch = memo(
@@ -26,7 +27,8 @@ const MadrasahSearch = memo(
     madrasahSearchInputError,
     isExamSelected,
     onClear,
-    onHideDropdown
+    onHideDropdown,
+    onShowDropdown
   }: MadrasahSearchProps) => {
     const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -52,6 +54,12 @@ const MadrasahSearch = memo(
       }
     }
 
+    const handleFocus = () => {
+      if (searchResults.length > 0 && onShowDropdown) {
+        onShowDropdown()
+      }
+    }
+
     return (
       <div className="relative" ref={dropdownRef}>
         <Label>মাদ্রাসা অনুসন্ধান </Label>
@@ -62,6 +70,7 @@ const MadrasahSearch = memo(
             value={searchTerm}
             onChange={(e) => onSearchChange(e)}
             onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
             disabled={!isExamSelected}
           />
           {searchTerm && (

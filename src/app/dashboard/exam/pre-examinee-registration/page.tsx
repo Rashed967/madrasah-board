@@ -121,7 +121,8 @@ export default function PreExamineeRegistrationPage() {
     recalculateFees,
     setSearchTerm,
     handleClear,
-    handleHideDropdown
+    handleHideDropdown,
+    handleShowDropdown
   } = usePreExamineeForm(selectedExamDetails)
 
   // fetch all exams from database
@@ -440,6 +441,7 @@ export default function PreExamineeRegistrationPage() {
                 isExamSelected={isExamSelected}
                 onClear={handleClear}
                 onHideDropdown={handleHideDropdown}
+                onShowDropdown={handleShowDropdown}
               />
             </div>
 

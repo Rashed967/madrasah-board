@@ -100,6 +100,10 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     setShowDropdown(false)
   }, [])
 
+  const handleShowDropdown = useCallback(() => {
+    setShowDropdown(true)
+  }, [])
+
   const handleMadrasahSelect = async (madrasah: any) => {
     setFormData((prev) => ({ ...prev, madrasah: madrasah._id }))
     setSelectedMadrasahDetails({
@@ -459,6 +463,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     recalculateFees,
     setSearchTerm,
     handleClear,
-    handleHideDropdown
+    handleHideDropdown,
+    handleShowDropdown
   }
 }
