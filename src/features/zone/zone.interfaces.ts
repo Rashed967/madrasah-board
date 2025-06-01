@@ -6,6 +6,7 @@ export interface IZone {
   code: string
   allDistricts?: string[]
   allMarkazs?: Types.ObjectId[]
+  totalMarkazs?: number
   isDeleted?: boolean
   createdAt?: Date
   updatedAt?: Date

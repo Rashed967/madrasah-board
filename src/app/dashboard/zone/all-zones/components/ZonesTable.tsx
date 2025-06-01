@@ -9,6 +9,7 @@ interface ZonesTableProps {
 }
 
 export const ZonesTable = ({ zones, onView, onDelete }: ZonesTableProps) => {
+  console.log(zones)
   return (
     <div className="bg-white rounded-lg shadow ">
       <div className="overflow-x-auto">
@@ -37,7 +38,7 @@ export const ZonesTable = ({ zones, onView, onDelete }: ZonesTableProps) => {
                     : 'কোনো জেলা নেই'}
                 </td>
                 <td className="px-6 py-4 truncate text-gray-700">
-                  {zone.allMarkazs.length}
+                  {zone.totalMarkazs.toLocaleString('bn-BD')}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
