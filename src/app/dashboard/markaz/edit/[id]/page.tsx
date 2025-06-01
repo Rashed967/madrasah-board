@@ -43,12 +43,61 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
   const [allMadrasah, setAllMadrasah] = useState<IMadrasah[]>([])
   const [zones, setZones] = useState<IZone[]>([])
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const addDropdownRef = useRef<HTMLDivElement>(null)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
 
-  // Handle click outside
+  // Handle scroll for infinite loading
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
+    if (scrollHeight - scrollTop <= clientHeight * 1.5 && !loadingMore && hasMore) {
+      loadMoreMadrasahs()
+    }
+  }
+
+  const loadMoreMadrasahs = async () => {
+    if (loadingMore || !hasMore) return
+
+    setLoadingMore(true)
+    try {
+      const nextPage = page + 1
+      const response = await getAllMadrasahWithoutMarkaz(nextPage, 10, searchTerm)
+      if (response.success) {
+        const newMadrasahs = response.data as IMadrasah[]
+        if (newMadrasahs.length > 0) {
+          setMainMadrasahs(prev => [...prev, ...newMadrasahs])
+          setPage(nextPage)
+        } else {
+          setHasMore(false)
+        }
+      }
+    } catch (error) {
+      toast.error('মাদ্রাসা লোড করতে সমস্যা হয়েছে')
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  // Handle click outside for main madrasah
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  // Handle click outside for add madrasah
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (addDropdownRef.current && !addDropdownRef.current.contains(event.target as Node)) {
+        setShowAddDropdown(false)
       }
     }
 
@@ -113,6 +162,8 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
       }
 
       try {
+        setPage(1)
+        setHasMore(true)
         const response = await getAllMadrasahWithoutMarkaz(1, 10, searchTerm)
         if (response.success) {
           setMainMadrasahs(response.data as IMadrasah[])
@@ -130,6 +181,8 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const loadInitialMadrasahs = async () => {
       try {
+        setPage(1)
+        setHasMore(true)
         const response = await getAllMadrasahWithoutMarkaz(1, 10)
         if (response.success) {
           setMainMadrasahs(response.data as IMadrasah[])
@@ -327,7 +380,10 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                     )}
                     {showDropdown && mainMadrasahs.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
-                        <div className="max-h-48 overflow-y-auto">
+                        <div 
+                          className="max-h-48 overflow-y-auto"
+                          onScroll={handleScroll}
+                        >
                           {mainMadrasahs.map((madrasah) => (
                             <div
                               key={madrasah._id.toString()}
@@ -342,6 +398,11 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                               </div>
                             </div>
                           ))}
+                          {loadingMore && (
+                            <div className="px-3 py-2 text-center text-sm text-gray-500">
+                              লোড হচ্ছে...
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -358,10 +419,10 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                       setFormData((prev) => ({ ...prev, zone: value }))
                     }
                   >
-                    <SelectTrigger className="h-10 text-gray-700">
+                    <SelectTrigger className=" text-gray-700">
                       <SelectValue placeholder="জোন সিলেক্ট করুন" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className='max-h-[140px] overflow-y-auto'>
                       {zones.map((zone) => (
                         <SelectItem key={zone._id.toString()} value={zone._id.toString()}>
                           {zone.name}
@@ -377,10 +438,11 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                   <Label className="text-base text-gray-800">
                     মাদ্রাসা যোগ করুন
                   </Label>
-                  <div className="relative mt-2">
+                  <div className="relative mt-2" ref={addDropdownRef}>
                     <Input
                       value={searchTermForAdd}
                       onChange={(e) => setSearchTermForAdd(e.target.value)}
+                      onFocus={() => setShowAddDropdown(true)}
                       placeholder="মাদ্রাসার নাম লিখুন"
                       className="h-10 text-gray-700"
                     />
