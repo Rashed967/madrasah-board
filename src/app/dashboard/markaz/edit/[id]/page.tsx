@@ -93,21 +93,12 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const searchMadrasahs = async () => {
-      if (
-        searchTerm.length < 3 &&
-        searchTerm !== markaz?.madrasah.madrasahNames.bengaliName
-      ) {
+      if (searchTerm.length < 3 && searchTerm !== '') {
         setShowDropdown(false)
         return
       }
 
       try {
-        const queryParams = new URLSearchParams()
-        queryParams.append('page', '1')
-        queryParams.append('limit', '10')
-        if (searchTerm) {
-          queryParams.append('searchTerm', searchTerm)
-        }
         const response = await getAllMadrasahWithoutMarkaz(1, 10, searchTerm)
         if (response.success) {
           setMainMadrasahs(response.data as IMadrasah[])
@@ -121,6 +112,22 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
     const debounceTimer = setTimeout(searchMadrasahs, 300)
     return () => clearTimeout(debounceTimer)
   }, [searchTerm, markaz])
+
+  // Initial load of madrasahs
+  useEffect(() => {
+    const loadInitialMadrasahs = async () => {
+      try {
+        const response = await getAllMadrasahWithoutMarkaz(1, 10)
+        if (response.success) {
+          setMainMadrasahs(response.data as IMadrasah[])
+          setShowDropdown(true)
+        }
+      } catch (error) {
+        toast.error('মাদ্রাসা লোড করতে সমস্যা হয়েছে')
+      }
+    }
+    loadInitialMadrasahs()
+  }, [])
 
   useEffect(() => {
     const searchMadrasahsForAdd = async () => {

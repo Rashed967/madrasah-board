@@ -163,7 +163,7 @@ export const updateMadrasahInformation = async (
 export const getAllMadrasahWithoutMarkaz = async (
   page: number = 1,
   limit: number = 10,
-  searchTerm: string = ''
+  searchTerm?: string
 ) => {
   try {
     const response = await get(
