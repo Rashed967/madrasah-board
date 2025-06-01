@@ -31,6 +31,7 @@ export function EditMarkazDialog({
     madrasah: '',
     allMadrasah: [] as string[]
   })
+  console.log(markaz)
   
 
   const [availableMadrasahs, setAvailableMadrasahs] = useState<IMadrasah[]>([])
@@ -42,10 +43,11 @@ export function EditMarkazDialog({
 
   useEffect(() => {
     if (markaz) {
+      console.log(markaz.allMadrasahInMarkaz)
       setFormData({
         code: markaz.code,
         madrasah: markaz.madrasah._id.toString(),
-        allMadrasah: markaz.allMadrasah.map((m) => m._id.toString())
+        allMadrasah: markaz.allMadrasahInMarkaz.map((m) => m._id.toString())
       })
       setSearchTerm(markaz.madrasah.madrasahNames.bengaliName)
     }

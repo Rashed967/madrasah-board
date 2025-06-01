@@ -27,5 +27,13 @@ export interface IMarkazResponse {
     updatedAt?: Date;
 }
 
+export interface IMarkazApiResponse {
+    success: boolean;
+    message: string;
+    data: {
+        markaz: IMarkazResponse;
+        allMadrasahInMarkaz: IMadrasah[];
+    };
+}
 
 export default IMarkaz

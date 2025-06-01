@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useState, useEffect } from 'react'
 // import { toast } from 'sonner'
-import { IMarkazResponse } from '@/features/markaz/markaz.interface'
+import { IMarkazResponse, IMarkazApiResponse } from '@/features/markaz/markaz.interface'
 import { IMadrasah } from '@/features/madrasah/interfaces'
 import { getAllMadrasahs } from '@/services/madrasahService'
 import { updateMarkaz, getMarkazById } from '@/features/markaz/markazService'
@@ -16,50 +16,71 @@ import { MdDelete } from 'react-icons/md'
 import { useRouter } from 'next/navigation'
 import toast, { Toaster } from 'react-hot-toast'
 import { convertToBengali } from '@/utils/convertToBengali'
+import { getAllZones } from '@/features/zone/zone.services'
+import { IZone } from '@/features/zone/zone.interfaces'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function EditMarkazPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const [formData, setFormData] = useState({
     code: '',
     madrasah: '',
-    allMadrasah: [] as string[]
+    allMadrasah: [] as string[],
+    zone: ''
   })
 
   const [mainMadrasahs, setMainMadrasahs] = useState<IMadrasah[]>([])
-  const [additionalMadrasahs, setAdditionalMadrasahs] = useState<IMadrasah[]>(
-    []
-  )
+  const [additionalMadrasahs, setAdditionalMadrasahs] = useState<IMadrasah[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [searchTermForAdd, setSearchTermForAdd] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const [showAddDropdown, setShowAddDropdown] = useState(false)
   const [loading, setLoading] = useState(false)
   const [markaz, setMarkaz] = useState<IMarkazResponse | null>(null)
-  const [allMadrasah, setAllMadrasah] = useState([])
+  const [allMadrasah, setAllMadrasah] = useState<IMadrasah[]>([])
+  const [zones, setZones] = useState<IZone[]>([])
+
+  useEffect(() => {
+    const fetchZones = async () => {
+      try {
+        const response = await getAllZones({limit: 50})
+        if (response.success) {
+          setZones(response.data)
+        }
+      } catch (error) {
+        console.error('জোন লোড করতে সমস্যা হয়েছে:', error)
+      }
+    }
+    fetchZones()
+  }, [])
 
   useEffect(() => {
     const fetchMarkaz = async () => {
       try {
         const response = await getMarkazById(params.id)
-        if (response.success && response.data) {
-          const markazData = response.data as IMarkazResponse
         
-          setMarkaz(markazData.madrasah)
-          setAllMadrasah(markaz.allMadrasah)
+        if (response.success && response.data) {
+          const markazData = response.data as IMarkazApiResponse['data']
+          console.log('markazData', markazData)
+          setMarkaz(markazData.markaz)
+          setAllMadrasah(markazData.allMadrasahInMarkaz || [])
           setFormData({
-            code: markazData.code,
-            madrasah: markazData.madrasah._id.toString(),
-            allMadrasah: markazData.allMadrasah.map((madrasa) => madrasa._id)
+            code: markazData.markaz?.code || '',
+            madrasah: markazData.markaz?.madrasah?._id.toString() || '',
+            allMadrasah: markazData.allMadrasahInMarkaz?.map((madrasa) => madrasa._id) || [],
+            zone: markazData.markaz?.zone || ''
           })
           setSearchTerm(
-            `${markazData.madrasah.madrasahNames.bengaliName} - কোড: ${markazData.madrasah.code}`
+            markazData.markaz?.madrasah?.madrasahNames?.bengaliName 
+              ? `${markazData.markaz.madrasah.madrasahNames.bengaliName} - কোড: ${markazData.markaz.code}`
+              : ''
           )
         } else {
           toast.error(response.message)
         }
       } catch (error) {
         console.error(error.message)
-        // toast.error('মারকাযের তথ্য লোড করতে সমস্যা হয়েছে')
+        toast.error('মারকাযের তথ্য লোড করতে সমস্যা হয়েছে')
       }
     }
     fetchMarkaz()
@@ -134,16 +155,24 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
     setLoading(true)
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const changes: any = {}
 
-      changes.code = formData.code !== markaz.code && formData.code
+      // Only include code if it's different and not empty
+      if (formData.code !== markaz.code && formData.code) {
+        changes.code = formData.code
+      }
 
-      changes.madrasah =
-        formData.madrasah !== markaz.madrasah._id.toString()
-          ? formData.madrasah
-          : ''
+      // Only include madrasah if it's different and not empty
+      if (formData.madrasah !== markaz.madrasah?._id.toString() && formData.madrasah) {
+        changes.madrasah = formData.madrasah
+      }
 
+      // Only include zone if it's different and not empty
+      if (formData.zone !== markaz.zone && formData.zone) {
+        changes.zone = formData.zone
+      }
+
+      // Only include allMadrasah if it's different
       const originalMadrasahs = allMadrasah.map((m) => m._id.toString())
       if (
         JSON.stringify(originalMadrasahs) !==
@@ -152,19 +181,17 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
         changes.allMadrasah = formData.allMadrasah
       }
 
-
-
       const sanitized = Object.fromEntries(
         Object.entries(changes).filter(
           ([_, value]) => value !== null && value !== undefined && value !== ''
         )
       )
-      
 
       const response = await updateMarkaz(markaz._id.toString(), sanitized)
 
       if (response.success) {
         toast.success('মারকায আপডেট করা হয়েছে')
+        router.back()
       } else {
         toast.error(response.message || 'মারকায আপডেট করতে সমস্যা হয়েছে')
         console.error(response.message)
@@ -202,6 +229,8 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
       ...prev,
       allMadrasah: prev.allMadrasah.filter((id) => id !== madrasahId)
     }))
+
+    setAllMadrasah((prev) => prev.filter((m) => m._id.toString() !== madrasahId))
   }
 
   if (!markaz) {
@@ -252,29 +281,32 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="মাদ্রাসার নাম লিখুন"
                       className="h-10 text-gray-700"
+                      disabled
                     />
-                    {showDropdown && mainMadrasahs.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
-                        <div className="max-h-48 overflow-y-auto">
-                          {mainMadrasahs.map((madrasah) => (
-                            <div
-                              key={madrasah._id.toString()}
-                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                              onClick={() => handleMadrasahSelect(madrasah)}
-                            >
-                              <div className="text-sm">
-                                {madrasah.madrasahNames.bengaliName}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {' '}
-                                কোড - {convertToBengali(madrasah.code)}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-base text-gray-800">
+                    জোন *
+                  </Label>
+                  <Select
+                    value={formData.zone}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, zone: value }))
+                    }
+                  >
+                    <SelectTrigger className="h-10 text-gray-700">
+                      <SelectValue placeholder="জোন সিলেক্ট করুন" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {zones.map((zone) => (
+                        <SelectItem key={zone._id.toString()} value={zone._id.toString()}>
+                          {zone.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -331,9 +363,10 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                         mainMadrasahs.find(
                           (m) => m._id.toString() === madrasahId
                         ) ||
-                        markaz.allMadrasah.find(
+                        allMadrasah.find(
                           (m) => m._id.toString() === madrasahId
                         )
+                      const isMainMadrasah = madrasahId === formData.madrasah
                       return (
                         <div
                           key={madrasahId}
@@ -342,6 +375,7 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                           <div className="flex-1 mr-4">
                             <div className="font-medium text-gray-800">
                               {madrasah?.madrasahNames?.bengaliName}
+                              {isMainMadrasah && <span className="ml-2 text-sm text-gray-500">(প্রধান মাদ্রাসা)</span>}
                             </div>
                             <div className="text-sm text-gray-500">
                               কোড: {convertToBengali(madrasah?.code)}
