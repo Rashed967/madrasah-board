@@ -442,8 +442,8 @@ const AllMarkaz = () => {
                         padding: '10px'
                       }}
                     >
-                      {allMadrasah.length &&
-                        convertToBengali(allMadrasah?.length.toString())}
+                      {markaz?.allMadrasahInMarkaz?.length &&
+                        convertToBengali(markaz?.allMadrasahInMarkaz?.length.toString())}
                     </td>
                     <td className="px-6 py-4 text-sm font-medium">
                       <div className="flex items-center">
