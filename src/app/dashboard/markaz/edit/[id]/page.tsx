@@ -26,7 +26,8 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
     code: '',
     madrasah: '',
     allMadrasah: [] as string[],
-    zone: ''
+    zone: '',
+    removedMadrasahs: [] as string[]
   })
 
   const [mainMadrasahs, setMainMadrasahs] = useState<IMadrasah[]>([])
@@ -68,7 +69,8 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
             code: markazData.markaz?.code || '',
             madrasah: markazData.markaz?.madrasah?._id.toString() || '',
             allMadrasah: markazData.allMadrasahInMarkaz?.map((madrasa) => madrasa._id) || [],
-            zone: markazData.markaz?.zone || ''
+            zone: markazData.markaz?.zone || '',
+            removedMadrasahs: []
           })
           setSearchTerm(
             markazData.markaz?.madrasah?.madrasahNames?.bengaliName 
@@ -157,7 +159,6 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
     try {
       const updateMarkazData: any = {}
       const addedMadrasahs: string[] = []
-      const removedMadrasahs: string[] = []
 
       // Only include code if it's different and not empty
       if (formData.code !== markaz.code && formData.code) {
@@ -174,7 +175,7 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
         updateMarkazData.zone = formData.zone
       }
 
-      // Calculate added and removed madrasahs
+      // Calculate added madrasahs
       const originalMadrasahs = allMadrasah.map((m) => m._id.toString())
       const currentMadrasahs = formData.allMadrasah
 
@@ -182,13 +183,6 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
       currentMadrasahs.forEach((madrasahId) => {
         if (!originalMadrasahs.includes(madrasahId)) {
           addedMadrasahs.push(madrasahId)
-        }
-      })
-
-      // Find removed madrasahs
-      originalMadrasahs.forEach((madrasahId) => {
-        if (!currentMadrasahs.includes(madrasahId)) {
-          removedMadrasahs.push(madrasahId)
         }
       })
 
@@ -201,7 +195,7 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
       const response = await updateMarkaz(markaz._id.toString(), {
         ...sanitized,
         addedMadrasahs,
-        removedMadrasahs
+        removedMadrasahs: formData.removedMadrasahs
       })
 
       if (response.success) {
@@ -242,7 +236,8 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
   const handleRemoveMadrasah = (madrasahId: string) => {
     setFormData((prev) => ({
       ...prev,
-      allMadrasah: prev.allMadrasah.filter((id) => id !== madrasahId)
+      allMadrasah: prev.allMadrasah.filter((id) => id !== madrasahId),
+      removedMadrasahs: [...prev.removedMadrasahs, madrasahId]
     }))
 
     setAllMadrasah((prev) => prev.filter((m) => m._id.toString() !== madrasahId))
