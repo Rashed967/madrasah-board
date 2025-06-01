@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 // import { toast } from 'sonner'
 import { IMarkazResponse, IMarkazApiResponse } from '@/features/markaz/markaz.interface'
 import { IMadrasah } from '@/features/madrasah/interfaces'
@@ -42,6 +42,21 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
   const [markaz, setMarkaz] = useState<IMarkazResponse | null>(null)
   const [allMadrasah, setAllMadrasah] = useState<IMadrasah[]>([])
   const [zones, setZones] = useState<IZone[]>([])
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   useEffect(() => {
     const fetchZones = async () => {
@@ -94,7 +109,6 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const searchMadrasahs = async () => {
       if (searchTerm.length < 3 && searchTerm !== '') {
-        setShowDropdown(false)
         return
       }
 
@@ -102,7 +116,6 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
         const response = await getAllMadrasahWithoutMarkaz(1, 10, searchTerm)
         if (response.success) {
           setMainMadrasahs(response.data as IMadrasah[])
-          setShowDropdown(true)
         }
       } catch (error) {
         toast.error('মাদ্রাসা খুঁজতে সমস্যা হয়েছে')
@@ -120,7 +133,6 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
         const response = await getAllMadrasahWithoutMarkaz(1, 10)
         if (response.success) {
           setMainMadrasahs(response.data as IMadrasah[])
-          setShowDropdown(true)
         }
       } catch (error) {
         toast.error('মাদ্রাসা লোড করতে সমস্যা হয়েছে')
@@ -293,10 +305,11 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                   <Label className="text-base text-gray-800">
                     মারকাযের মাদ্রাসা *
                   </Label>
-                  <div className="relative">
+                  <div className="relative" ref={dropdownRef}>
                     <Input
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      onFocus={() => setShowDropdown(true)}
                       placeholder="মাদ্রাসার নাম লিখুন"
                       className="h-10 text-gray-700 pr-10"
                     />
