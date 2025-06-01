@@ -245,12 +245,13 @@ export default function AllRegisteredExaminees() {
       const registeredExaminees = await registeredExamineesResponse.json()
 
       // get board info 
-      const boardInfoResponse = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/board-info/67bb52249fbe4879db797d88`, {
+      const boardInfoResponse = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/board-info/${process.env.NEXT_PUBLIC_BOARD_INFO_ID}`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
       })
       const boardInfoData = await boardInfoResponse.json()
+      console.log('boardInfoData', boardInfoData)
 
       // ‍select madrasah 
       const madrasahResponse = await fetch(`${process.env.NEXT_PUBLIC_MAIN_URL}/madrasah/${selectedMadrasah}`, {
