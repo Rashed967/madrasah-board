@@ -120,7 +120,8 @@ export default function PreExamineeRegistrationPage() {
     madrasahSearchInputError,
     recalculateFees,
     setSearchTerm,
-    handleClear
+    handleClear,
+    handleHideDropdown
   } = usePreExamineeForm(selectedExamDetails)
 
   // fetch all exams from database
@@ -438,6 +439,7 @@ export default function PreExamineeRegistrationPage() {
                 madrasahSearchInputError={madrasahSearchInputError}
                 isExamSelected={isExamSelected}
                 onClear={handleClear}
+                onHideDropdown={handleHideDropdown}
               />
             </div>
 

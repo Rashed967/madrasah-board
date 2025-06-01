@@ -13,6 +13,7 @@ interface MadrasahSearchProps {
   madrasahSearchInputError: string
   isExamSelected: boolean
   onClear?: () => void
+  onHideDropdown?: () => void
 }
 
 const MadrasahSearch = memo(
@@ -24,16 +25,17 @@ const MadrasahSearch = memo(
     onMadrasahSelect,
     madrasahSearchInputError,
     isExamSelected,
-    onClear
+    onClear,
+    onHideDropdown
   }: MadrasahSearchProps) => {
     const dropdownRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-          // You'll need to implement a way to hide the dropdown from the parent component
-          // This could be through a prop like onDropdownClose
-          if (onClear) onClear()
+          if (onHideDropdown) {
+            onHideDropdown()
+          }
         }
       }
 
@@ -41,7 +43,7 @@ const MadrasahSearch = memo(
       return () => {
         document.removeEventListener('mousedown', handleClickOutside)
       }
-    }, [onClear])
+    }, [onHideDropdown])
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
