@@ -20,6 +20,7 @@ import { getAllZones } from '@/features/zone/zone.services'
 import { IZone } from '@/features/zone/zone.interfaces'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getAllMadrasahWithoutMarkaz } from '@/features/madrasah/services/madrasahService'
+import { IoClose } from 'react-icons/io5'
 
 export default function EditMarkazPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -290,8 +291,20 @@ export default function EditMarkazPage({ params }: { params: { id: string } }) {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="মাদ্রাসার নাম লিখুন"
-                      className="h-10 text-gray-700"
+                      className="h-10 text-gray-700 pr-10"
                     />
+                    {searchTerm && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchTerm('')
+                          setFormData(prev => ({ ...prev, madrasah: '' }))
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      >
+                        <IoClose className="w-5 h-5" />
+                      </button>
+                    )}
                     {showDropdown && mainMadrasahs.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
                         <div className="max-h-48 overflow-y-auto">
