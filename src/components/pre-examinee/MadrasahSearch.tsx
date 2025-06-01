@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { convertToBengali } from '@/utils/convertToBengali'
-import { memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import React from 'react'
 
 interface MadrasahSearchProps {
@@ -12,6 +12,7 @@ interface MadrasahSearchProps {
   onMadrasahSelect: (madrasah: any) => void
   madrasahSearchInputError: string
   isExamSelected: boolean
+  onClear?: () => void
 }
 
 const MadrasahSearch = memo(
@@ -22,8 +23,26 @@ const MadrasahSearch = memo(
     showDropdown,
     onMadrasahSelect,
     madrasahSearchInputError,
-    isExamSelected
+    isExamSelected,
+    onClear
   }: MadrasahSearchProps) => {
+    const dropdownRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          // You'll need to implement a way to hide the dropdown from the parent component
+          // This could be through a prop like onDropdownClose
+          if (onClear) onClear()
+        }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }, [onClear])
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         e.preventDefault() // Prevent form submission
@@ -32,17 +51,26 @@ const MadrasahSearch = memo(
     }
 
     return (
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <Label>মাদ্রাসা অনুসন্ধান </Label>
-        <div>
+        <div className="relative">
           <Input
             placeholder="মাদ্রাসার নাম অথবা কোড"
-            className="flex-1 text-xs"
+            className="flex-1 text-xs pr-8"
             value={searchTerm}
             onChange={(e) => onSearchChange(e)}
             onKeyDown={handleKeyDown}
             disabled={!isExamSelected}
           />
+          {searchTerm && (
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              onClick={onClear}
+            >
+              ✕
+            </button>
+          )}
           <span className="text-xs text-red-500 italic">
             {madrasahSearchInputError}{' '}
           </span>

@@ -62,21 +62,16 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
         | React.KeyboardEvent<HTMLInputElement>
     ) => {
       const value = (e.target as HTMLInputElement).value
-  
-      
       setSearchTerm(value.toString())
 
-      // Only search if it's a keyboard event and the key is Enter
-      if ('key' in e && e.key === 'Enter' && value.length >= 2) {
+      if (value.length >= 2) {
         setIsSearching(true)
         try {
           const queryParams = new URLSearchParams()
-          queryParams.append('page', '1');
-          queryParams.append('limit', '10');
-          if (value) queryParams.append('searchTerm', value);
-          const response =
-            await madrasahServices.getAllMadrasahs(queryParams.toString())
-
+          queryParams.append('page', '1')
+          queryParams.append('limit', '10')
+          if (value) queryParams.append('searchTerm', value)
+          const response = await madrasahServices.getAllMadrasahs(queryParams.toString())
 
           setSearchResults(response.data)
           setShowDropdown(true)
@@ -85,10 +80,21 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
         } finally {
           setIsSearching(false)
         }
+      } else {
+        setSearchResults([])
+        setShowDropdown(false)
       }
     },
     []
   )
+
+  const handleClear = useCallback(() => {
+    setSearchTerm('')
+    setSearchResults([])
+    setShowDropdown(false)
+    setSelectedMadrasahDetails(null)
+    setFormData((prev) => ({ ...prev, madrasah: '' }))
+  }, [])
 
   const handleMadrasahSelect = async (madrasah: any) => {
     setFormData((prev) => ({ ...prev, madrasah: madrasah._id }))
@@ -447,6 +453,7 @@ export const usePreExamineeForm = (selectedExamDetails: any) => {
     paymentError,
     madrasahSearchInputError,
     recalculateFees,
-    setSearchTerm
+    setSearchTerm,
+    handleClear
   }
 }
