@@ -5,6 +5,7 @@ import { convertToBengali } from '@/utils/convertToBengali'
 import { convertBengaliToEnglish } from '@/utils/covertBengaliToEnglish'
 import { getPersonalAdmitCardInfo } from '@/services/admitCardSerive'
 import { Spinner } from '@/components/ui/spinner'
+import { toast } from 'sonner'
 import { useState } from 'react'
 
 interface AdmitCardFormProps {
@@ -32,8 +33,12 @@ export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps
       
       const response = await getPersonalAdmitCardInfo(modifiedFormData)
       console.log('Admit Card Response:', response)
-    } catch (error) {
-      console.error('Error:', error)
+      
+      if (!response.success) {
+        return toast.error(response.message || "Something went wrong")
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong")
     } finally {
       setIsLoading(false)
     }

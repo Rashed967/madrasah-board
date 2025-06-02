@@ -2,6 +2,7 @@ import React from 'react'
 import './globals.css'
 import localFont from 'next/font/local'
 import { QueryProvider } from '@/components/providers/QueryProvider'
+import { Toaster } from 'sonner'
 
 const kalpurush = localFont({
   src: '../../public/fonts/kalpurush.ttf',
@@ -54,9 +55,17 @@ export default function RootLayout({
           integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
           crossOrigin="anonymous"
         />
+        <style>{`
+          .sonner-toast {
+            font-family: var(--font-kalpurush), Arial, sans-serif !important;
+          }
+        `}</style>
       </head>
       <body className={kalpurush.className}>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          {children}
+          <Toaster richColors position="top-right" />
+        </QueryProvider>
       </body>
     </html>
   )
