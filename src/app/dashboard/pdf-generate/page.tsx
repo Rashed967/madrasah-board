@@ -38,47 +38,48 @@ const PdfGeneratePage = () => {
       
       if (selectedOption === 'admid-card-persoanl') {
         console.log('Generating admit card for:', data)
-        // TODO: Implement admit card generation
         setSelectedOption(null)
         return
       }
       
-      // Convert madrasahType to Bengali for server
-      const madrasahTypeInBengali = data.madrasahType === 'boys' ? 'বালক' : 
-                                  data.madrasahType === 'girls' ? 'বালিকা' : 
-                                  'উভয়';
-      
-      // Fetch both board info and markaz list in parallel
-      const [boardInfoResult, markazListResult] = await Promise.all([
-        getBoardInfo(),
-        getMarkazList({
-          zoneIds: data.zones || [],
-          districts: data.districts || [],
+      if (selectedOption === 'markaz-list') {
+        // Convert madrasahType to Bengali for server
+        const madrasahTypeInBengali = data.madrasahType === 'boys' ? 'বালক' : 
+                                    data.madrasahType === 'girls' ? 'বালিকা' : 
+                                    'উভয়';
+        
+        // Fetch both board info and markaz list in parallel
+        const [boardInfoResult, markazListResult] = await Promise.all([
+          getBoardInfo(),
+          getMarkazList({
+            zoneIds: data.zones || [],
+            districts: data.districts || [],
+            madrasahType: madrasahTypeInBengali,
+            marhalaCategory: data.examType
+          })
+        ]);
+
+        // Combine the results
+        const combinedResult = {
+          boardInfo: boardInfoResult.data,
+          allMarkaz: markazListResult,
           madrasahType: madrasahTypeInBengali,
-          marhalaCategory: data.examType
-        })
-      ]);
+          examType: data.examType,
+          districts: data.districts,
+          zones: (data.zones || []).map(zoneId => {
+            const zone = zones.find(z => z._id === zoneId);
+            return {
+              id: zoneId,
+              name: zone?.name || ''
+            };
+          }),
+          exam: exams.find(exam => exam._id === data.examId) || null
+        };
+        console.log(combinedResult)
 
-      // Combine the results
-      const combinedResult = {
-        boardInfo: boardInfoResult.data,
-        allMarkaz: markazListResult,
-        madrasahType: madrasahTypeInBengali,
-        examType: data.examType,
-        districts: data.districts,
-        zones: (data.zones || []).map(zoneId => {
-          const zone = zones.find(z => z._id === zoneId);
-          return {
-            id: zoneId,
-            name: zone?.name || ''
-          };
-        }),
-        exam: exams.find(exam => exam._id === data.examId) || null
-      };
-      console.log(combinedResult)
-
-      // Generate PDF
-      await generatePDF(combinedResult);
+        // Generate PDF
+        await generatePDF(combinedResult);
+      }
       
       // Close dialog
       setSelectedOption(null);
@@ -172,10 +173,6 @@ const PdfGeneratePage = () => {
         </Dialog>
       )}
 
-      <AdmitCardForm 
-        isOpen={showAdmitCardForm} 
-        onClose={() => setShowAdmitCardForm(false)} 
-      />
     </div>
   )
 }
