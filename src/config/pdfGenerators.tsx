@@ -1,6 +1,7 @@
 import { PDFGeneratorConfig } from '@/types/pdfGenerator.types';
 import { MarkazListForm } from '@/components/pdf/forms/MarkazListForm';
 import { PlaceholderForm } from '@/components/pdf/forms/PlaceholderForm';
+import AdmitCardForm from '@/components/pre-examinee/AdmitCardForm';
 
 export const pdfGenerators: Record<string, PDFGeneratorConfig> = {
   'madrasah-list': {
@@ -18,9 +19,9 @@ export const pdfGenerators: Record<string, PDFGeneratorConfig> = {
     component: PlaceholderForm,
     requiredFields: []
   },
-  'result-list': {
-    id: 'result-list',
-    component: PlaceholderForm,
+  'admit-card-persoanl': {
+    id: 'admid-card-persoanl',
+    component: AdmitCardForm,
     requiredFields: []
   },
   'teacher-list': {

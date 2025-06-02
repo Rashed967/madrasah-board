@@ -23,7 +23,7 @@ export const pdfOptions: PDFOption[] = [
     color: 'bg-purple-50 hover:bg-purple-100'
   },
   {
-    id: 'result-list',
+    id: 'admit-card-persoanl',
     title: 'প্রবেশপত্র তৈরী (ব্যক্তিগত)',
     description: 'ব্যক্তিগত প্রবেশপত্র তৈরি করুন',
     icon: 'FileBadge2',

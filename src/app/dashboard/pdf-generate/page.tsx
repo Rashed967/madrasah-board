@@ -13,10 +13,16 @@ import { useState } from 'react'
 import { pdfOptions } from '@/constants/pdfOptions'
 import { pdfGenerators } from '@/config/pdfGenerators'
 import { PDFFormData } from '@/types/pdfGenerator.types'
+import dynamic from 'next/dynamic'
+
+const AdmitCardForm = dynamic(() => import('@/components/pre-examinee/AdmitCardForm'), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse rounded-md" />
+})
 
 const PdfGeneratePage = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [showAdmitCardForm, setShowAdmitCardForm] = useState(false)
   
   const { exams, loading: examsLoading, error: examsError } = useGetExams({ populateMarhala: true })
   const { zones, getDistrictsForZones, loading: zonesLoading, error: zonesError } = useGetZones()
@@ -29,6 +35,13 @@ const PdfGeneratePage = () => {
   const handleSubmit = async (data: PDFFormData) => {
     try {
       setIsLoading(true)
+      
+      if (selectedOption === 'admid-card-persoanl') {
+        console.log('Generating admit card for:', data)
+        // TODO: Implement admit card generation
+        setSelectedOption(null)
+        return
+      }
       
       // Convert madrasahType to Bengali for server
       const madrasahTypeInBengali = data.madrasahType === 'boys' ? 'বালক' : 
@@ -96,13 +109,20 @@ const PdfGeneratePage = () => {
     );
   }
 
+  const handleOptionClick = (optionId: string) => {
+    if (optionId === 'admid-card-persoanl') {
+      setShowAdmitCardForm(true)
+    } else {
+      setSelectedOption(optionId)
+    }
+  }
+
   return (
     <div className="container mx-auto py-8 px-4">
       <Card className="bg-white shadow-md">
         <CardHeader className="border-b">
           <CardTitle className="text-2xl font-bold text-gray-800">
             পিডিএফ জেনারেট 
-      
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -123,7 +143,7 @@ const PdfGeneratePage = () => {
                   key={option.id}
                   variant="ghost"
                   className={`w-full h-full p-6 flex flex-col items-center justify-center space-y-4 ${option.color} border-2 border-dashed border-gray-200 rounded-xl transition-all duration-200`}
-                  onClick={() => setSelectedOption(option.id)}
+                  onClick={() => handleOptionClick(option.id)}
                 >
                   <Icon className="w-8 h-8" />
                   <div className="text-center">
@@ -151,6 +171,11 @@ const PdfGeneratePage = () => {
           {renderDialogContent()}
         </Dialog>
       )}
+
+      <AdmitCardForm 
+        isOpen={showAdmitCardForm} 
+        onClose={() => setShowAdmitCardForm(false)} 
+      />
     </div>
   )
 }
