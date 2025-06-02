@@ -1,7 +1,7 @@
 import { post } from "@/core/api/apiService"
 
 interface StudentInfo {
-    registraionNo: number,
+    registrationNo: number,
     rollNo: number
 }
 

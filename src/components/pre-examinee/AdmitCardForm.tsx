@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { convertToBengali } from '@/utils/convertToBengali'
 import { convertBengaliToEnglish } from '@/utils/covertBengaliToEnglish'
+import { getPersonalAdmitCardInfo } from '@/services/admitCardSerive'
+import { Spinner } from '@/components/ui/spinner'
 import { useState } from 'react'
 
 interface AdmitCardFormProps {
@@ -17,19 +19,23 @@ export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps
     registrationNo: "",
     rollNo: ""
   })
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Convert Bengali numbers to English numbers
-
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const modifiedFormData = {
-      registrationNo: convertBengaliToEnglish(formData.registrationNo),
-      rollNo: convertBengaliToEnglish(formData.rollNo)
-    }
-    console.log('Converted form data:', modifiedFormData)
-    if (onSubmit) {
-      onSubmit(modifiedFormData)
+    setIsLoading(true)
+    try {
+      const modifiedFormData = {
+        registrationNo: convertBengaliToEnglish(formData.registrationNo),
+        rollNo: convertBengaliToEnglish(formData.rollNo)
+      }
+      
+      const response = await getPersonalAdmitCardInfo(modifiedFormData)
+      console.log('Admit Card Response:', response)
+    } catch (error) {
+      console.error('Error:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -83,7 +89,9 @@ export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps
           type="submit" 
           className="bg-[#52B788] hover:bg-[#52B788]/90 text-white"
           onClick={handleSubmit}
+          disabled={isLoading}
         >
+          {isLoading && <Spinner className="mr-2 h-4 w-4" />}
           প্রবেশপত্র তৈরী করুন
         </Button>
       </div>
