@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Dialog } from '@/components/ui/dialog'
+import { convertToBengali } from '@/utils/convertToBengali'
+import { convertBengaliToEnglish } from '@/utils/covertBengaliToEnglish'
 import { useState } from 'react'
 
 interface AdmitCardFormProps {
@@ -13,15 +14,22 @@ interface AdmitCardFormProps {
 
 export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps) {
   const [formData, setFormData] = useState({
-    registrationNumber: '',
-    rollNumber: ''
+    registrationNo: "",
+    rollNo: ""
   })
+
+  // Convert Bengali numbers to English numbers
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
+    const modifiedFormData = {
+      registrationNo: convertBengaliToEnglish(formData.registrationNo),
+      rollNo: convertBengaliToEnglish(formData.rollNo)
+    }
+    console.log('Converted form data:', modifiedFormData)
     if (onSubmit) {
-      onSubmit(formData)
+      onSubmit(modifiedFormData)
     }
   }
 
@@ -36,11 +44,12 @@ export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="registrationNumber">নিবন্ধন নং</Label>
+        <Label htmlFor="registrationNo">নিবন্ধন নং</Label>
         <Input
-          id="registrationNumber"
-          name="registrationNumber"
-          value={formData.registrationNumber}
+          id="registrationNo"
+          name="registrationNo"
+          type="text"
+          value={convertToBengali(formData.registrationNo)}
           onChange={handleChange}
           placeholder="নিবন্ধন নং লিখুন"
           required
@@ -48,11 +57,12 @@ export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="rollNumber">রোল নং</Label>
+        <Label htmlFor="rollNo">রোল নং</Label>
         <Input
-          id="rollNumber"
-          name="rollNumber"
-          value={formData.rollNumber}
+          id="rollNo"
+          name="rollNo"
+          type="text"
+          value={convertToBengali(formData.rollNo)}
           onChange={handleChange}
           placeholder="রোল নং লিখুন"
           required
