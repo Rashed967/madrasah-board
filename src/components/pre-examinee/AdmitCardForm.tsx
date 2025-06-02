@@ -31,12 +31,41 @@ export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps
         rollNo: convertBengaliToEnglish(formData.rollNo)
       }
       
-      const response = await getPersonalAdmitCardInfo(modifiedFormData)
-      console.log('Admit Card Response:', response)
+      // First get student info
+      const studentInfo = await getPersonalAdmitCardInfo(modifiedFormData)
+      console.log('Student Info:', studentInfo)
       
-      if (!response.success) {
-        return toast.error(response.message || "Something went wrong")
+      if (!studentInfo.success) {
+        return toast.error(studentInfo.message || "Something went wrong")
       }
+
+      // Then get PDF
+      const response = await fetch('http://localhost:5490/api/pdf/admit-card-personal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(studentInfo.data)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF')
+      }
+
+      // Convert response to blob
+      const blob = await response.blob()
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `admit-card-${formData.registrationNo}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
+      toast.success('প্রবেশপত্র ডাউনলোড করা হয়েছে')
     } catch (error: any) {
       toast.error(error.message || "Something went wrong")
     } finally {
