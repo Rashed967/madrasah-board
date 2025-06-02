@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label'
 import { convertToBengali } from '@/utils/convertToBengali'
 import { convertBengaliToEnglish } from '@/utils/covertBengaliToEnglish'
 import { getPersonalAdmitCardInfo } from '@/services/admitCardSerive'
+import { downloadPdf } from '@/utils/pdfDownloader'
 import { Spinner } from '@/components/ui/spinner'
 import { toast } from 'sonner'
 import { useState } from 'react'
@@ -39,31 +40,12 @@ export default function AdmitCardForm({ onSubmit, onCancel }: AdmitCardFormProps
         return toast.error(studentInfo.message || "Something went wrong")
       }
 
-      // Then get PDF
-      const response = await fetch('http://localhost:5490/api/pdf/admit-card-personal', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(studentInfo.data)
+      // Download PDF
+      await downloadPdf({
+        endpoint: '/admit-card-personal',
+        data: studentInfo.data,
+        fileName: `admit-card-${formData.registrationNo}.pdf`
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to generate PDF')
-      }
-
-      // Convert response to blob
-      const blob = await response.blob()
-      
-      // Create download link
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `admit-card-${formData.registrationNo}.pdf`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
 
       toast.success('প্রবেশপত্র ডাউনলোড করা হয়েছে')
     } catch (error: any) {
