@@ -21,17 +21,19 @@ export const downloadPdf = async ({ endpoint, data, fileName }: PdfDownloadOptio
     // Convert response to blob
     const blob = await response.blob()
 
-    const pdfUrl = URL.createObjectURL(blob);
-      window.open(pdfUrl, '_blank');
+    // just open in new tab
+    // const pdfUrl = URL.createObjectURL(blob);
+    //   window.open(pdfUrl, '_blank');
 
-    // const url = window.URL.createObjectURL(blob)
-    // const link = document.createElement('a')
-    // link.href = url
-    // link.download = fileName
-    // document.body.appendChild(link)
-    // link.click()
-    // document.body.removeChild(link)
-    // window.URL.revokeObjectURL(url)
+    // auto download and open in new tab
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
 
     return true
   } catch (error) {
