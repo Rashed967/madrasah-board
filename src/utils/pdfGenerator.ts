@@ -45,7 +45,8 @@ export const generatePreExamineeReceipt = async (data: ReceiptData) => {
       throw new Error('Board or madrasah details are missing');
     }
 
-   
+
+      console.log(data)
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_JSREPORT_SERVER_URL}/generate-pre-examinee-receipt`, {
         method: 'POST',
@@ -54,6 +55,8 @@ export const generatePreExamineeReceipt = async (data: ReceiptData) => {
         },
         body: JSON.stringify(data)
       })
+      console.log(response)
+
       
       const blob = await response.blob()
       const pdfUrl = URL.createObjectURL(blob);

@@ -149,6 +149,7 @@ export default function PreExamineeRegistrationPage() {
     const fetchBoardInfo = async () => {
       try {
         const response = await getBoardInfo()
+        console.log('boardInfo', response)
         if (response.success) {
           setBoardInfo(response.data)
         }

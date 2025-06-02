@@ -20,7 +20,9 @@ export async function createBoardInfo(boardInfoData: IBoardInfo) {
 }
 
 // get single board info
-const id = process.env.NEXT_PUBLIC_BOARD_ID;
+const id = `${process.env.NEXT_PUBLIC_BOARD_INFO_ID}`;
+console.log(id)
+console.log(`${process.env.NEXT_PUBLIC_BOARD_INFO_ID}`)
 
 export async function getBoardInfo() {
   try {
