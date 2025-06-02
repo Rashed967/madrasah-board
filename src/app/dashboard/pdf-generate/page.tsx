@@ -8,7 +8,7 @@ import { useGetExams } from '@/hooks/useGetExams'
 import { useGetMarkazList } from '@/hooks/useGetMarkazList'
 import { useGetZones } from '@/hooks/useGetZones'
 import { useMarkazListPDFGenerator } from '@/hooks/useMarkazListPDFGenerator'
-import { Award, BookOpen, FileSpreadsheet, FileText, GraduationCap, Users } from 'lucide-react'
+import { Award, BookOpen, FileSpreadsheet, FileText, GraduationCap, Users, FileBadge2 } from 'lucide-react'
 import { useState } from 'react'
 import { pdfOptions } from '@/constants/pdfOptions'
 import { pdfGenerators } from '@/config/pdfGenerators'
@@ -101,7 +101,8 @@ const PdfGeneratePage = () => {
       <Card className="bg-white shadow-md">
         <CardHeader className="border-b">
           <CardTitle className="text-2xl font-bold text-gray-800">
-            পিডিএফ জেনারেট
+            পিডিএফ জেনারেট 
+      
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -113,7 +114,8 @@ const PdfGeneratePage = () => {
                 BookOpen,
                 Award,
                 GraduationCap,
-                FileSpreadsheet
+                FileSpreadsheet,
+                FileBadge2
               }[option.icon];
 
               return (

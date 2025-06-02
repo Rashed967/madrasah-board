@@ -24,9 +24,9 @@ export const pdfOptions: PDFOption[] = [
   },
   {
     id: 'result-list',
-    title: 'ফলাফল লিস্ট',
-    description: 'পরীক্ষার ফলাফল পিডিএফ তৈরি করুন',
-    icon: 'Award',
+    title: 'প্রবেশপত্র তৈরী (ব্যক্তিগত)',
+    description: 'ব্যক্তিগত প্রবেশপত্র তৈরি করুন',
+    icon: 'FileBadge2',
     color: 'bg-yellow-50 hover:bg-yellow-100'
   },
   {
