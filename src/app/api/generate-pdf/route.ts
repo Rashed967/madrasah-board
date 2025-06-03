@@ -1,27 +1,19 @@
 import { NextResponse } from 'next/server'
 import puppeteer from 'puppeteer'
-import { readFileSync } from 'fs'
-import { join } from 'path'
 
 export async function GET() {
   try {
     // Launch a new browser instance
     const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      headless: true
     })
 
     // Create a new page
     const page = await browser.newPage()
 
-    // Read font files
-    // const solaimanLipiBase64 = readFileSync(join(process.cwd(), 'public/fonts/SolaimanLipi.ttf')).toString('base64')
-    // const siyamRupaliBase64 = readFileSync(join(process.cwd(), 'public/fonts/SiyamRupali.ttf')).toString('base64')
-
     // Set content
     await page.setContent(`
-     <!DOCTYPE html>
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
@@ -218,15 +210,11 @@ export async function GET() {
 </body>
 </html>
 
-
     `)
-
-    // Wait for fonts to load
-    await page.evaluateHandle('document.fonts.ready')
 
     // Generate PDF
     const pdf = await page.pdf({
-      format: 'A5',
+      format: 'A4',
       printBackground: true,
       margin: {
         top: '20px',
@@ -253,4 +241,4 @@ export async function GET() {
       { status: 500 }
     )
   }
-} 
+}
