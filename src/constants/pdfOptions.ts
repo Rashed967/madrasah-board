@@ -30,10 +30,10 @@ export const pdfOptions: PDFOption[] = [
     color: 'bg-yellow-50 hover:bg-yellow-100'
   },
   {
-    id: 'teacher-list',
-    title: 'শিক্ষক লিস্ট',
-    description: 'শিক্ষকদের তালিকা পিডিএফ তৈরি করুন',
-    icon: 'GraduationCap',
+    id: 'admit-card-madrasah',
+    title: 'প্রবেশপত্র তৈরী (মাদ্রাসাওয়ারী)',
+    description: 'মাদ্রাসাওয়ারী প্রবেশপত্র তৈরি করুন',
+    icon: 'School',
     color: 'bg-red-50 hover:bg-red-100'
   },
   {

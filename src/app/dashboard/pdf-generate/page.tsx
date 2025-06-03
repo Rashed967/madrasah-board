@@ -8,7 +8,7 @@ import { useGetExams } from '@/hooks/useGetExams'
 import { useGetMarkazList } from '@/hooks/useGetMarkazList'
 import { useGetZones } from '@/hooks/useGetZones'
 import { useMarkazListPDFGenerator } from '@/hooks/useMarkazListPDFGenerator'
-import { Award, BookOpen, FileSpreadsheet, FileText, GraduationCap, Users, FileBadge2 } from 'lucide-react'
+import { Award, BookOpen, FileSpreadsheet, FileText, GraduationCap, Users, FileBadge2, School} from 'lucide-react'
 import { useState } from 'react'
 import { pdfOptions } from '@/constants/pdfOptions'
 import { pdfGenerators } from '@/config/pdfGenerators'
@@ -136,7 +136,8 @@ const PdfGeneratePage = () => {
                 Award,
                 GraduationCap,
                 FileSpreadsheet,
-                FileBadge2
+                FileBadge2,
+                School
               }[option.icon];
 
               return (
