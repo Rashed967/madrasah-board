@@ -4,6 +4,8 @@ import { Form } from '@/components/ui/form'
 import { SelectField } from '@/components/ui/select'
 import { PDFFormData } from '@/types/pdfGenerator.types'
 import { useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import { getAllExamsForSearch } from '@/services/examService'
 
 interface AdmitCardMadrasahFormProps {
   exams: any[]
@@ -11,6 +13,11 @@ interface AdmitCardMadrasahFormProps {
   examsError: any
   onSubmit: (data: PDFFormData) => void
   onCancel: () => void
+}
+
+interface Exam {
+  _id: string
+  examName: string
 }
 
 const AdmitCardMadrasahForm = ({
@@ -21,9 +28,35 @@ const AdmitCardMadrasahForm = ({
   onCancel
 }: AdmitCardMadrasahFormProps) => {
   const form = useForm<PDFFormData>()
+  const [examList, setExamList] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const loadExams = async () => {
+      try {
+        setLoading(true)
+        const response = await getAllExamsForSearch()
+        if (response.success) {
+          setExamList(response.data as Exam[])
+        }
+      } catch (error) {
+        console.error('Failed to load exams:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadExams()
+  }, [])
 
   const handleSubmit = (data: PDFFormData) => {
     onSubmit(data)
+  }
+
+  const handleExamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedExamId = e.target.value
+    console.log('Selected Exam ID:', selectedExamId)
+    form.setValue('examId', selectedExamId)
   }
 
   return (
@@ -35,13 +68,13 @@ const AdmitCardMadrasahForm = ({
               label="পরীক্ষা"
               name="examId"
               value={form.watch('examId') || ''}
-              onChange={(e) => form.setValue('examId', e.target.value)}
-              options={exams.map(exam => ({
-                label: exam.name,
+              onChange={handleExamChange}
+              options={examList.map(exam => ({
+                label: exam.examName,
                 value: exam._id
               }))}
               error={examsError}
-              disabled={examsLoading}
+              disabled={loading}
             />
 
             <SelectField

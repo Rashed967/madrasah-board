@@ -58,6 +58,24 @@ const getAllExamForPreRegistration = async (queryParams: string) => {
   }
 }
 
+export const getAllExamsForSearch = async (queryParams?: string) => {
+  try {
+    const response = await get(
+      `/exams/for-search?${queryParams}`
+    )
+    return {
+      success: true,
+      data: response.data,
+      message: response.message
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error?.message || 'Failed to get exams'
+    }
+  }
+}
+
 // toggle exam isCompleted Value -> exams/67bb4f053d90894210c1d743/toggle-completion
 export const toggleIsCompleted = async (id: string) => {
   try {
