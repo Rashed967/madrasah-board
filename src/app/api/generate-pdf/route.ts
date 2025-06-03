@@ -24,7 +24,7 @@ export async function GET() {
       margin: 0;
     }
     body {
-      font-family: 'SolaimanLipi', 'Siyam Rupali', Arial, sans-serif;
+      font-family:  Arial, sans-serif;
       margin: 0;
       padding: 8mm;
       width: 210mm;
