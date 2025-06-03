@@ -63,6 +63,31 @@ export const getAllMadrasahs = async (
   }
 }
 
+// get all madrasah for search
+export const getAllMadrasahsForSearch = async (queryParams: string) => {
+  try {
+    const response = await get(
+      `/madrasah/for-search?${queryParams}`
+    )
+    return {
+      success: true as const,
+      message: response.message,
+      data: response.data,
+      meta: response.meta
+    }
+  } catch (error: any) {
+    return {
+      success: false as const,
+      message:
+        error?.response?.data?.message ||
+        'মাদরাসার তালিকা লোড করতে সমস্যা হয়েছে',
+      data: null
+    }
+  }
+}
+
+
+
 export const getMadrasahById = async (
   id: string
 ): Promise<ApiResponse<IMadrasah>> => {

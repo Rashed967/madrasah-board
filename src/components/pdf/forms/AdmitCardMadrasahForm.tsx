@@ -6,6 +6,7 @@ import { PDFFormData } from '@/types/pdfGenerator.types'
 import { useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
 import { getAllExamsForSearch } from '@/services/examService'
+import MadrasahSearch from '@/components/shared/MadrasahSearch'
 
 interface AdmitCardMadrasahFormProps {
   exams: any[]
@@ -28,7 +29,7 @@ const AdmitCardMadrasahForm = ({
   onCancel
 }: AdmitCardMadrasahFormProps) => {
   const form = useForm<PDFFormData>()
-  const [examList, setExamList] = useState([])
+  const [examList, setExamList] = useState<Exam[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -59,6 +60,17 @@ const AdmitCardMadrasahForm = ({
     form.setValue('examId', selectedExamId)
   }
 
+  const handleMadrasahChange = (madrasah: { id: string; name: string; code: string } | null) => {
+      if (madrasah) {
+        console.log('Selected Madrasah:', madrasah)
+          form.setValue('madrasahId', madrasah.id)
+          form.setValue('madrasahName', madrasah.name)
+        } else {
+    form.setValue('madrasahId', '')
+      form.setValue('madrasahName', '')
+    }
+  }
+
   return (
     <Card className="p-6">
       <Form {...form}>
@@ -77,13 +89,12 @@ const AdmitCardMadrasahForm = ({
               disabled={loading}
             />
 
-            <SelectField
+            <MadrasahSearch
               label="মাদ্রাসা"
-              name="madrasahId"
-              value={form.watch('madrasahId') || ''}
-              onChange={(e) => form.setValue('madrasahId', e.target.value)}
-              options={[]} // TODO: Add madrasah list
-              disabled={false}
+              onChange={handleMadrasahChange}
+              placeholder="মাদ্রাসা খুঁজুন..."
+              formFieldName="madrasahId"
+              form={form}
             />
           </div>
 
