@@ -13,7 +13,7 @@ export async function GET() {
 
     // Set content
     await page.setContent(`
-    <!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
@@ -24,7 +24,7 @@ export async function GET() {
       margin: 0;
     }
     body {
-      font-family:  Arial, sans-serif;
+      font-family: 'SolaimanLipi', 'Siyam Rupali', Arial, sans-serif;
       margin: 0;
       padding: 8mm;
       width: 210mm;
@@ -214,7 +214,7 @@ export async function GET() {
 
     // Generate PDF
     const pdf = await page.pdf({
-      format: 'A4',
+      format: 'A5',
       printBackground: true,
       margin: {
         top: '20px',
@@ -241,4 +241,4 @@ export async function GET() {
       { status: 500 }
     )
   }
-}
+} 
