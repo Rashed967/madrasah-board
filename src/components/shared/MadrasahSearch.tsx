@@ -59,7 +59,6 @@ const MadrasahSearch: React.FC = () => {
         }
         // মোট ফলাফল এবং বর্তমান লোড হওয়া সংখ্যার উপর ভিত্তি করে আরও ফলাফল আছে কিনা তা পরীক্ষা করা হয়েছে
         setHasMore(response.meta.total > (page * RESULTS_PER_PAGE));
-        setIsOpen(true);
       } else {
         throw new Error(response.message || 'মাদরাসা সার্চ করতে সমস্যা হয়েছে');
       }

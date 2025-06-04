@@ -59,7 +59,6 @@ const ExamSearch: React.FC = () => {
           // যদি meta অবজেক্ট না থাকে, তাহলে বর্তমান পেজে যতগুলো ফলাফল আছে তার উপর ভিত্তি করে আরও ফলাফল আছে কিনা তা পরীক্ষা করা হয়েছে
           setHasMore(response.data.length === RESULTS_PER_PAGE);
         }
-        setIsOpen(true);
       } else {
         throw new Error(response.message || 'পরীক্ষা সার্চ করতে সমস্যা হয়েছে');
       }
