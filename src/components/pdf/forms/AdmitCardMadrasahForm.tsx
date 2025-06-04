@@ -64,13 +64,7 @@ const AdmitCardMadrasahForm = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <div className="space-y-4">
-            <ExamSearch
-              label="পরীক্ষা"
-              onChange={handleExamChange}
-              placeholder="পরীক্ষা খুঁজুন..."
-              formFieldName="examId"
-              form={form}
-            />
+            <ExamSearch />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
