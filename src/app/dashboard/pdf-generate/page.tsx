@@ -14,6 +14,8 @@ import { pdfOptions } from '@/constants/pdfOptions'
 import { pdfGenerators } from '@/config/pdfGenerators'
 import { PDFFormData } from '@/types/pdfGenerator.types'
 import dynamic from 'next/dynamic'
+import { MadrasahProvider } from '@/contexts/MadrasahSearchContext'
+
 
 const AdmitCardForm = dynamic(() => import('@/components/pre-examinee/AdmitCardForm'), {
   loading: () => <div className="h-96 bg-gray-100 animate-pulse rounded-md" />
@@ -119,6 +121,7 @@ const PdfGeneratePage = () => {
   }
 
   return (
+   <MadrasahProvider>
     <div className="container mx-auto py-8 px-4">
       <Card className="bg-white shadow-md">
         <CardHeader className="border-b">
@@ -175,6 +178,7 @@ const PdfGeneratePage = () => {
       )}
 
     </div>
+    </MadrasahProvider>
   )
 }
 

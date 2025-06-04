@@ -38,6 +38,7 @@ export default function DashboardPage() {
 
   return (
     <div className="mt-8 md:mt-12 lg:mt-16 mx-6 mb-8">
+
       <div>
         <h1 className="text-xl md:text-2xl font-bold mb-8">ড্যাশবোর্ড</h1>
       </div>
@@ -54,6 +55,7 @@ export default function DashboardPage() {
       >
         <StatsChart />
       </Suspense>
+
     </div>
   )
 }
