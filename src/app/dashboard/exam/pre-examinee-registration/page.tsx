@@ -36,14 +36,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 
 // Extend jsPDF type to include autoTable
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: (options: any) => any
-    lastAutoTable: {
-      finalY: number
-    }
-  }
-}
+
 
 // Dynamically import components
 const ExamSelection = dynamic(
