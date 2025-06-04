@@ -11,7 +11,7 @@ import { useExam } from '@/contexts/ExamSearchContext'
 import { getMadrasahWiseAdmitCardInfo } from '@/services/admitCardSerive'
 import { useState } from 'react'
 import { downloadPdf } from '@/utils/pdfDownloader'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
 interface AdmitCardMadrasahFormProps {
   exams: any[]
@@ -61,6 +61,7 @@ const AdmitCardMadrasahForm = ({
 
   return (
     <Card className="p-6">
+        <Toaster position="top-right" />
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             
