@@ -12,7 +12,7 @@ interface ApiResponse {
   statusCode: number;
   success: boolean;
   message: string;
-  meta: {
+  meta?: {
     total: number;
     page: number;
     limit: number;
@@ -44,7 +44,7 @@ const ExamSearch: React.FC = () => {
       // searchTerm, page, এবং limit দিয়ে ক্যোয়ারি স্ট্রিং তৈরি করা হয়েছে
       const query = `searchTerm=${term}&page=${page}&limit=${RESULTS_PER_PAGE}`;
       const response: any = await getAllExamsForSearch(query);
-      console.log(response);
+      console.log('Exam search response:', response);
 
       if (response.success) {
         if (append) {
@@ -53,13 +53,17 @@ const ExamSearch: React.FC = () => {
           setExams(response.data);
         }
         // মোট ফলাফল এবং বর্তমান লোড হওয়া সংখ্যার উপর ভিত্তি করে আরও ফলাফল আছে কিনা তা পরীক্ষা করা হয়েছে
-        setHasMore(response.meta.total > (page * RESULTS_PER_PAGE));
+        if (response.meta) {
+          setHasMore(response.meta.total > (page * RESULTS_PER_PAGE));
+        } else {
+          // যদি meta অবজেক্ট না থাকে, তাহলে বর্তমান পেজে যতগুলো ফলাফল আছে তার উপর ভিত্তি করে আরও ফলাফল আছে কিনা তা পরীক্ষা করা হয়েছে
+          setHasMore(response.data.length === RESULTS_PER_PAGE);
+        }
         setIsOpen(true);
       } else {
         throw new Error(response.message || 'পরীক্ষা সার্চ করতে সমস্যা হয়েছে');
       }
     } catch (err: any) {
-      // setError(err.message || 'পরীক্ষা সার্চ করতে সমস্যা হয়েছে');
       console.error('Exam search error:', err);
       setHasMore(false); // ত্রুটি হলে আর কোনো ফলাফল নেই
     } finally {
