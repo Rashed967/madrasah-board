@@ -8,6 +8,10 @@ import MadrasahSearch from '@/components/shared/MadrasahSearch'
 import { useMadrasah } from '@/contexts/MadrasahSearchContext'
 import { useGetExams } from '@/hooks/useGetExams'
 import { useExam } from '@/contexts/ExamSearchContext'
+import { getMadrasahWiseAdmitCardInfo } from '@/services/admitCardSerive'
+import { useState } from 'react'
+import { downloadPdf } from '@/utils/pdfDownloader'
+import toast from 'react-hot-toast'
 
 interface AdmitCardMadrasahFormProps {
   exams: any[]
@@ -26,18 +30,32 @@ const AdmitCardMadrasahForm = ({
   const {selectedExam} = useExam()
   
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    try{
+      e.preventDefault()
     const formData = {
       examId: selectedExam._id,
       madrasahId: selectedMadrasah._id
     }
-    console.log(formData)
-    // Only submit if we have a selected madrasah
-    if (!selectedMadrasah) {
-      alert('দয়া করে একটি মাদরাসা নির্বাচন করুন!')
+    const resonse = await getMadrasahWiseAdmitCardInfo(formData);
+
+    if(!resonse.success){
+      toast.error(resonse.message || 'ডেটা লোড করতে সমস্যা হয়েছে')
       return
     }
+
+    await downloadPdf({
+      endpoint: '/admit-card-by-madrasah',
+      data: resonse.data,
+      fileName: `মাদ্রাসা ভিত্তিক প্রবেশপত্র - ${selectedMadrasah.name}.pdf`
+    })
+
+    toast.success('প্রবেশপত্র ডাউনলোড করা হয়েছে')
+    } catch (error: any) {
+      toast.error(error?.message || 'ডেটা লোড করতে সমস্যা হয়েছে')
+    }
+
+  
 
   }
 
