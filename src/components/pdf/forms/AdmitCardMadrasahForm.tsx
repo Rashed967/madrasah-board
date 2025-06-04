@@ -3,16 +3,16 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { PDFFormData } from '@/types/pdfGenerator.types'
-import { useForm } from 'react-hook-form'
 import ExamSearch from '@/components/shared/ExamSearch'
 import MadrasahSearch from '@/components/shared/MadrasahSearch'
 import { useMadrasah } from '@/contexts/MadrasahSearchContext'
+import { useGetExams } from '@/hooks/useGetExams'
+import { useExam } from '@/contexts/ExamSearchContext'
 
 interface AdmitCardMadrasahFormProps {
   exams: any[]
   examsLoading: boolean
   examsError: any
-  onSubmit: (data: PDFFormData) => void
   onCancel: () => void
 }
 
@@ -20,51 +20,39 @@ const AdmitCardMadrasahForm = ({
   exams,
   examsLoading,
   examsError,
-  onSubmit,
   onCancel
 }: AdmitCardMadrasahFormProps) => {
-  const form = useForm<PDFFormData>()
   const { selectedMadrasah } = useMadrasah() // Context থেকে মাদরাসার তথ্য পাওয়া
+  const {selectedExam} = useExam()
+  
 
-  const handleSubmit = (data: PDFFormData) => {
-    console.log('Selected Madrasah:', selectedMadrasah)
-    
-    // Create a new object with all form data
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     const formData = {
-      ...data,
-      madrasahId: selectedMadrasah?._id || '',
-      madrasahName: selectedMadrasah?.madrasahName || '',
-      madrasahCode: selectedMadrasah?.code || ''
+      examId: selectedExam._id,
+      madrasahId: selectedMadrasah._id
     }
-
-    // Log the complete form data before submission
-    console.log('Form Data:', formData)
-
+    console.log(formData)
     // Only submit if we have a selected madrasah
     if (!selectedMadrasah) {
       alert('দয়া করে একটি মাদরাসা নির্বাচন করুন!')
       return
     }
 
-    onSubmit(formData)
-  }
-
-  const handleExamChange = (exam: { id: string; name: string } | null) => {
-    if (exam) {
-      form.setValue('examId', exam.id)
-      form.setValue('examName', exam.name)
-    } else {
-      form.setValue('examId', '')
-      form.setValue('examName', '')
-    }
   }
 
   return (
     <Card className="p-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
+            
+          <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                পরীক্ষা
+              </label>
+              {/* কোনো props পাঠানোর প্রয়োজন নেই */}
             <ExamSearch />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -91,7 +79,7 @@ const AdmitCardMadrasahForm = ({
             </Button>
           </div>
         </form>
-      </Form>
+
     </Card>
   )
 }
