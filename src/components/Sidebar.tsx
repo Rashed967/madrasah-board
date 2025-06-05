@@ -94,6 +94,11 @@ export default function Sidebar() {
           name: 'সকল নিবন্ধিত পরীক্ষার্থী',
           href: '/dashboard/exam/all-registered-examinees',
           icon: MdSavedSearch
+        },
+        {
+          name: 'পরীক্ষা শিডিউল ক্রিয়েট',
+          href: '/dashboard/exam/create-exam-schedule',
+          icon: MdSavedSearch
         }
       ]
     },
