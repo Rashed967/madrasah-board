@@ -1,11 +1,14 @@
 "use client";
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { toast, Toaster } from 'react-hot-toast'
+import { useExam } from '@/contexts/ExamSearchContext';
+import ExamSearch from '../shared/ExamSearch';
+
 
 // Demo data
 const demoExams = [
@@ -45,6 +48,9 @@ const ExamScheduleForm = () => {
     totalMarks: '',
   })
 
+  const {selectedExam} =  useExam()
+  console.log(selectedExam)
+
   const handleInputChange = (name: string, value: string) => {
     setFormData({
       ...formData,
@@ -69,20 +75,10 @@ const ExamScheduleForm = () => {
       <Toaster position="top-right" />
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
           {/* Exam Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="exam">পরীক্ষা নির্বাচন করুন</Label>
-            <Select onValueChange={(value) => handleInputChange('exam', value)} value={formData.exam}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="পরীক্ষা নির্বাচন করুন" />
-              </SelectTrigger>
-              <SelectContent>
-                {demoExams.map(exam => (
-                  <SelectItem key={exam.id} value={exam.id}>{exam.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <ExamSearch />
+
 
           {/* Marhala Selection */}
           <div className="space-y-2">
